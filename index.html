@@ -6,182 +6,581 @@
 
   <title>Certificate Verification | Tech Resonate</title>
 
+  <meta
+    name="description"
+    content="Verify the authenticity of certificates issued by Tech Resonate."
+  >
+
   <style>
+    :root {
+      --navy: #071a33;
+      --navy-2: #0b2850;
+      --blue: #1683ff;
+      --blue-2: #4da3ff;
+      --light-blue: #eaf5ff;
+      --white: #ffffff;
+      --text: #12304a;
+      --muted: #6b8299;
+      --border: #dceaf7;
+      --success: #16834a;
+      --success-bg: #ecfbf3;
+      --danger: #c73535;
+      --danger-bg: #fff1f1;
+    }
+
     * {
       box-sizing: border-box;
+      margin: 0;
+      padding: 0;
     }
 
     body {
-      margin: 0;
       font-family: Arial, Helvetica, sans-serif;
-      background: #f4f8fc;
-      color: #12304a;
+      background: var(--navy);
+      color: var(--text);
+      min-height: 100vh;
+      overflow-x: hidden;
     }
 
-    .header {
-      background: #0b4f8a;
-      padding: 24px 20px;
-      text-align: center;
+    /* Animated background */
+
+    .background {
+      position: fixed;
+      inset: 0;
+      overflow: hidden;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(2px);
+      opacity: 0.25;
+      animation: float 9s ease-in-out infinite;
+    }
+
+    .orb-one {
+      width: 280px;
+      height: 280px;
+      background: #1683ff;
+      top: -100px;
+      left: -100px;
+    }
+
+    .orb-two {
+      width: 350px;
+      height: 350px;
+      background: #4da3ff;
+      right: -150px;
+      top: 30%;
+      animation-delay: 2s;
+    }
+
+    .orb-three {
+      width: 200px;
+      height: 200px;
+      background: #7ac1ff;
+      bottom: -80px;
+      left: 25%;
+      animation-delay: 4s;
+    }
+
+    @keyframes float {
+      0%, 100% {
+        transform: translateY(0) scale(1);
+      }
+
+      50% {
+        transform: translateY(-25px) scale(1.05);
+      }
+    }
+
+    /* Main */
+
+    .page {
+      position: relative;
+      z-index: 1;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Header */
+
+    header {
+      padding: 22px 20px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .logo-box {
+      background: white;
+      padding: 12px 22px;
+      border-radius: 14px;
+      box-shadow: 0 10px 35px rgba(0, 0, 0, 0.18);
+      animation: slideDown 0.7s ease;
     }
 
     .logo {
-      width: 150px;
-      max-width: 70%;
+      width: 155px;
       height: auto;
+      display: block;
     }
+
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-15px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Hero */
+
+    .hero {
+      text-align: center;
+      color: white;
+      padding: 25px 20px 10px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      padding: 8px 14px;
+      border-radius: 30px;
+      font-size: 13px;
+      margin-bottom: 18px;
+      backdrop-filter: blur(10px);
+    }
+
+    .badge-dot {
+      width: 8px;
+      height: 8px;
+      background: #4da3ff;
+      border-radius: 50%;
+      box-shadow: 0 0 12px #4da3ff;
+    }
+
+    .hero h1 {
+      font-size: clamp(30px, 7vw, 52px);
+      line-height: 1.08;
+      margin-bottom: 14px;
+      letter-spacing: -1px;
+    }
+
+    .hero h1 span {
+      color: #61b0ff;
+    }
+
+    .hero p {
+      max-width: 600px;
+      margin: auto;
+      color: #c8d9ea;
+      line-height: 1.7;
+      font-size: 15px;
+    }
+
+    /* Main card */
 
     .container {
       width: 100%;
-      max-width: 620px;
-      margin: 40px auto;
+      max-width: 720px;
+      margin: 30px auto 50px;
       padding: 0 18px;
     }
 
-    .card {
+    .verification-card {
       background: white;
-      border-radius: 16px;
-      padding: 30px 22px;
-      box-shadow: 0 8px 30px rgba(11, 79, 138, 0.12);
-      text-align: center;
+      border-radius: 24px;
+      padding: 28px;
+      box-shadow:
+        0 25px 70px rgba(0, 0, 0, 0.25),
+        0 5px 20px rgba(22, 131, 255, 0.12);
+      animation: cardUp 0.8s ease;
     }
 
-    h1 {
-      color: #0b4f8a;
-      margin-top: 0;
-      margin-bottom: 10px;
-      font-size: 30px;
+    @keyframes cardUp {
+      from {
+        opacity: 0;
+        transform: translateY(25px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
 
-    .intro {
-      color: #52708a;
-      line-height: 1.6;
-      margin-bottom: 28px;
+    .search-label {
+      font-size: 14px;
+      font-weight: bold;
+      color: var(--text);
+      margin-bottom: 9px;
+      display: block;
     }
 
     .search-box {
       display: flex;
       gap: 10px;
-      margin-bottom: 25px;
     }
 
-    input {
+    .search-box input {
       flex: 1;
       min-width: 0;
-      padding: 14px;
-      border: 1px solid #b8cde0;
-      border-radius: 8px;
-      font-size: 16px;
-      outline: none;
-    }
-
-    input:focus {
-      border-color: #3b82f6;
-    }
-
-    button {
-      padding: 14px 18px;
-      border: none;
-      border-radius: 8px;
-      background: #0b4f8a;
-      color: white;
-      font-size: 16px;
-      font-weight: bold;
-      cursor: pointer;
-    }
-
-    button:hover {
-      background: #0860a8;
-    }
-
-    .result {
-      display: none;
-      text-align: left;
+      height: 52px;
+      padding: 0 16px;
+      border: 1px solid var(--border);
       border-radius: 12px;
-      padding: 22px;
-      margin-top: 20px;
+      font-size: 15px;
+      color: var(--text);
+      background: #f9fcff;
+      outline: none;
+      transition: 0.25s ease;
     }
 
-    .valid {
-      background: #eef9f2;
-      border: 1px solid #8ed1a5;
+    .search-box input:focus {
+      border-color: var(--blue);
+      box-shadow: 0 0 0 4px rgba(22, 131, 255, 0.1);
+      background: white;
     }
 
-    .invalid {
-      background: #fff3f3;
-      border: 1px solid #e5a1a1;
-    }
-
-    .result-title {
-      font-size: 21px;
+    .verify-button {
+      height: 52px;
+      border: none;
+      border-radius: 12px;
+      padding: 0 22px;
+      background: linear-gradient(135deg, #1683ff, #0b5fbd);
+      color: white;
       font-weight: bold;
-      margin-bottom: 18px;
+      font-size: 15px;
+      cursor: pointer;
+      transition: 0.25s ease;
+      box-shadow: 0 8px 20px rgba(22, 131, 255, 0.25);
     }
 
-    .valid .result-title {
-      color: #16803c;
+    .verify-button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 25px rgba(22, 131, 255, 0.35);
     }
 
-    .invalid .result-title {
-      color: #b42318;
+    .verify-button:active {
+      transform: translateY(0);
     }
 
-    .details {
-      display: grid;
-      gap: 12px;
-    }
-
-    .detail {
-      padding-bottom: 10px;
-      border-bottom: 1px solid #dbe7f0;
-    }
-
-    .label {
-      display: block;
-      font-size: 13px;
-      color: #668096;
-      margin-bottom: 4px;
-    }
-
-    .value {
-      font-size: 16px;
-      font-weight: bold;
-      color: #12304a;
-      word-break: break-word;
-    }
-
-    .status {
-      color: #16803c;
-    }
+    /* Loading */
 
     .loading {
       display: none;
-      margin-top: 20px;
-      color: #0b4f8a;
+      text-align: center;
+      padding: 30px 10px 10px;
+    }
+
+    .loader {
+      width: 42px;
+      height: 42px;
+      border: 4px solid #dceeff;
+      border-top-color: var(--blue);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin: auto auto 12px;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .loading p {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    /* Result */
+
+    .result {
+      display: none;
+      margin-top: 25px;
+      animation: resultIn 0.5s ease;
+    }
+
+    @keyframes resultIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Verification icon */
+
+    .verification-icon {
+      width: 72px;
+      height: 72px;
+      margin: 0 auto 15px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 34px;
+      font-weight: bold;
+      animation: pop 0.5s ease;
+    }
+
+    @keyframes pop {
+      0% {
+        transform: scale(0.5);
+        opacity: 0;
+      }
+
+      70% {
+        transform: scale(1.08);
+      }
+
+      100% {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+
+    .valid-result {
+      background: var(--success-bg);
+      border: 1px solid #b9e8cb;
+      border-radius: 18px;
+      padding: 25px;
+      text-align: center;
+    }
+
+    .valid-result .verification-icon {
+      background: #d9f6e5;
+      color: var(--success);
+    }
+
+    .invalid-result {
+      background: var(--danger-bg);
+      border: 1px solid #f0caca;
+      border-radius: 18px;
+      padding: 25px;
+      text-align: center;
+    }
+
+    .invalid-result .verification-icon {
+      background: #ffe0e0;
+      color: var(--danger);
+    }
+
+    .result-title {
+      font-size: 24px;
+      font-weight: bold;
+      margin-bottom: 8px;
+    }
+
+    .valid-result .result-title {
+      color: var(--success);
+    }
+
+    .invalid-result .result-title {
+      color: var(--danger);
+    }
+
+    .result-message {
+      color: var(--muted);
+      line-height: 1.6;
+      font-size: 14px;
+    }
+
+    /* Certificate details infographic */
+
+    .certificate-details {
+      margin-top: 22px;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      text-align: left;
+    }
+
+    .detail-box {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 15px;
+      transition: 0.25s ease;
+    }
+
+    .detail-box:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(22, 131, 255, 0.08);
+    }
+
+    .detail-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 9px;
+      background: var(--light-blue);
+      color: var(--blue);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 15px;
+      margin-bottom: 10px;
+    }
+
+    .detail-label {
+      display: block;
+      color: var(--muted);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 5px;
+    }
+
+    .detail-value {
+      display: block;
+      color: var(--text);
+      font-weight: bold;
+      font-size: 14px;
+      line-height: 1.4;
+      word-break: break-word;
+    }
+
+    .status-valid {
+      color: var(--success);
+    }
+
+    /* How it works */
+
+    .how-it-works {
+      margin-top: 30px;
+      text-align: center;
+    }
+
+    .how-it-works h2 {
+      font-size: 17px;
+      color: var(--text);
+      margin-bottom: 18px;
+    }
+
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+
+    .step {
+      padding: 15px 8px;
+      background: #f7fbff;
+      border-radius: 12px;
+      border: 1px solid #e4eff8;
+    }
+
+    .step-number {
+      width: 28px;
+      height: 28px;
+      margin: auto auto 8px;
+      background: var(--blue);
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
       font-weight: bold;
     }
 
-    .footer {
-      text-align: center;
-      color: #668096;
-      font-size: 13px;
-      margin-top: 25px;
+    .step p {
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.5;
     }
 
-    @media (max-width: 520px) {
+    /* Footer */
+
+    footer {
+      text-align: center;
+      color: #91aac2;
+      padding: 0 20px 28px;
+      font-size: 12px;
+    }
+
+    footer strong {
+      color: #c9dced;
+    }
+
+    /* Mobile */
+
+    @media (max-width: 560px) {
+
+      header {
+        padding-top: 18px;
+      }
+
+      .logo-box {
+        padding: 10px 18px;
+      }
+
+      .logo {
+        width: 135px;
+      }
+
+      .hero {
+        padding-top: 20px;
+      }
+
+      .hero h1 {
+        font-size: 32px;
+      }
+
+      .hero p {
+        font-size: 14px;
+      }
+
+      .container {
+        margin-top: 25px;
+      }
+
+      .verification-card {
+        padding: 20px 16px;
+        border-radius: 20px;
+      }
+
       .search-box {
         flex-direction: column;
       }
 
-      button {
+      .verify-button {
         width: 100%;
       }
 
-      .card {
-        padding: 25px 17px;
+      .certificate-details {
+        grid-template-columns: 1fr;
       }
 
-      h1 {
-        font-size: 26px;
+      .steps {
+        grid-template-columns: 1fr;
+      }
+
+      .step {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        text-align: left;
+      }
+
+      .step-number {
+        flex-shrink: 0;
+        margin: 0;
       }
     }
   </style>
@@ -189,54 +588,116 @@
 
 <body>
 
-  <header class="header">
-    <img
-      src="https://techresonate.com/logo.png"
-      alt="Tech Resonate"
-      class="logo"
-    >
-  </header>
+  <div class="background">
+    <div class="orb orb-one"></div>
+    <div class="orb orb-two"></div>
+    <div class="orb orb-three"></div>
+  </div>
 
-  <main class="container">
+  <div class="page">
 
-    <section class="card">
-
-      <h1>Certificate Verification</h1>
-
-      <p class="intro">
-        Verify the authenticity of a certificate issued by Tech Resonate.
-      </p>
-
-      <div class="search-box">
-        <input
-          type="text"
-          id="certificateId"
-          placeholder="Enter Certificate ID"
+    <header>
+      <div class="logo-box">
+        <img
+          src="https://techresonate.com/logo.png"
+          alt="Tech Resonate"
+          class="logo"
         >
+      </div>
+    </header>
 
-        <button onclick="verifyCertificate()">
-          Verify
-        </button>
+    <section class="hero">
+
+      <div class="badge">
+        <span class="badge-dot"></span>
+        Official Certificate Verification
       </div>
 
-      <div id="loading" class="loading">
-        Verifying certificate...
-      </div>
+      <h1>
+        Certificate <span>Verification</span>
+      </h1>
 
-      <div id="result" class="result"></div>
-
-      <div class="footer">
-        Tech Resonate — Innovation That Resonates
-      </div>
+      <p>
+        Verify the authenticity of certificates issued by
+        Tech Resonate quickly and securely.
+      </p>
 
     </section>
 
-  </main>
+    <main class="container">
+
+      <section class="verification-card">
+
+        <label class="search-label" for="certificateId">
+          Certificate ID
+        </label>
+
+        <div class="search-box">
+
+          <input
+            type="text"
+            id="certificateId"
+            placeholder="e.g. TR-2026-FD-001"
+            autocomplete="off"
+          >
+
+          <button
+            class="verify-button"
+            onclick="verifyCertificate()"
+          >
+            Verify Certificate
+          </button>
+
+        </div>
+
+        <div id="loading" class="loading">
+          <div class="loader"></div>
+          <p>Checking certificate...</p>
+        </div>
+
+        <div id="result" class="result"></div>
+
+        <div class="how-it-works">
+
+          <h2>How verification works</h2>
+
+          <div class="steps">
+
+            <div class="step">
+              <div class="step-number">1</div>
+              <p>Enter the Certificate ID</p>
+            </div>
+
+            <div class="step">
+              <div class="step-number">2</div>
+              <p>We check the official record</p>
+            </div>
+
+            <div class="step">
+              <div class="step-number">3</div>
+              <p>View the verification result</p>
+            </div>
+
+          </div>
+
+        </div>
+
+      </section>
+
+    </main>
+
+    <footer>
+      <strong>TECH RESONATE</strong><br>
+      INNOVATION THAT RESONATES
+    </footer>
+
+  </div>
 
 <script>
 
 const API_URL =
   "https://script.google.com/macros/s/AKfycbwYVlT9WS5ov6i0vZc4wienOAwau2ckKVSKe4uMQwM-QCILz3zSxLt4CjWy82iDRy3F7w/exec";
+
 
 function formatDate(dateString) {
 
@@ -257,10 +718,14 @@ function formatDate(dateString) {
 
 }
 
+
 function verifyCertificate() {
 
+  const input =
+    document.getElementById("certificateId");
+
   const certificateId =
-    document.getElementById("certificateId").value.trim();
+    input.value.trim();
 
   const result =
     document.getElementById("result");
@@ -268,30 +733,42 @@ function verifyCertificate() {
   const loading =
     document.getElementById("loading");
 
+
   if (!certificateId) {
 
     result.style.display = "block";
-    result.className = "result invalid";
+
+    result.className = "result invalid-result";
 
     result.innerHTML = `
-      <div class="result-title">
-        ✕ Certificate ID Required
+
+      <div class="verification-icon">
+        !
       </div>
 
-      <p>
+      <div class="result-title">
+        Certificate ID Required
+      </div>
+
+      <p class="result-message">
         Please enter a Certificate ID to verify the certificate.
       </p>
+
     `;
 
     return;
-
   }
 
+
   result.style.display = "none";
+
   loading.style.display = "block";
 
+
   fetch(
-    API_URL + "?id=" + encodeURIComponent(certificateId)
+    API_URL +
+    "?id=" +
+    encodeURIComponent(certificateId)
   )
 
   .then(response => response.json())
@@ -302,57 +779,131 @@ function verifyCertificate() {
 
     result.style.display = "block";
 
+
     if (data.success) {
 
-      result.className = "result valid";
+      result.className = "result valid-result";
 
       result.innerHTML = `
 
+        <div class="verification-icon">
+          ✓
+        </div>
+
         <div class="result-title">
-          ✓ Certificate Verified
+          Certificate Verified
         </div>
 
-        <div class="details">
+        <p class="result-message">
+          This certificate matches an official
+          Tech Resonate verification record.
+        </p>
 
-          <div class="detail">
-            <span class="label">Certificate ID</span>
-            <span class="value">${data.certificateId}</span>
+        <div class="certificate-details">
+
+          <div class="detail-box">
+
+            <div class="detail-icon">
+              ID
+            </div>
+
+            <span class="detail-label">
+              Certificate ID
+            </span>
+
+            <span class="detail-value">
+              ${data.certificateId}
+            </span>
+
           </div>
 
-          <div class="detail">
-            <span class="label">Student Name</span>
-            <span class="value">${data.studentName}</span>
+
+          <div class="detail-box">
+
+            <div class="detail-icon">
+              👤
+            </div>
+
+            <span class="detail-label">
+              Student Name
+            </span>
+
+            <span class="detail-value">
+              ${data.studentName}
+            </span>
+
           </div>
 
-          <div class="detail">
-            <span class="label">Programme</span>
-            <span class="value">${data.programme}</span>
+
+          <div class="detail-box">
+
+            <div class="detail-icon">
+              🎓
+            </div>
+
+            <span class="detail-label">
+              Programme
+            </span>
+
+            <span class="detail-value">
+              ${data.programme}
+            </span>
+
           </div>
 
-          <div class="detail">
-            <span class="label">Issue Date</span>
-            <span class="value">${formatDate(data.issueDate)}</span>
+
+          <div class="detail-box">
+
+            <div class="detail-icon">
+              📅
+            </div>
+
+            <span class="detail-label">
+              Issue Date
+            </span>
+
+            <span class="detail-value">
+              ${formatDate(data.issueDate)}
+            </span>
+
           </div>
 
-          <div class="detail">
-            <span class="label">Status</span>
-            <span class="value status">${data.status}</span>
+
+          <div class="detail-box">
+
+            <div class="detail-icon">
+              ✓
+            </div>
+
+            <span class="detail-label">
+              Status
+            </span>
+
+            <span class="detail-value status-valid">
+              ${data.status}
+            </span>
+
           </div>
 
         </div>
+
       `;
 
     } else {
 
-      result.className = "result invalid";
+      result.className = "result invalid-result";
 
       result.innerHTML = `
 
-        <div class="result-title">
-          ✕ Certificate Not Found
+        <div class="verification-icon">
+          ✕
         </div>
 
-        <p>
+        <div class="result-title">
+          Certificate Not Found
+        </div>
+
+        <p class="result-message">
           We couldn't verify this certificate.
           Please check the Certificate ID and try again.
         </p>
@@ -368,15 +919,20 @@ function verifyCertificate() {
     loading.style.display = "none";
 
     result.style.display = "block";
-    result.className = "result invalid";
+
+    result.className = "result invalid-result";
 
     result.innerHTML = `
 
-      <div class="result-title">
-        ✕ Verification Error
+      <div class="verification-icon">
+        !
       </div>
 
-      <p>
+      <div class="result-title">
+        Verification Error
+      </div>
+
+      <p class="result-message">
         We couldn't connect to the verification service.
         Please try again later.
       </p>
@@ -386,6 +942,10 @@ function verifyCertificate() {
   });
 
 }
+
+
+/* Automatically verify certificate when opened
+   through a QR-code URL */
 
 window.onload = function() {
 
@@ -404,6 +964,19 @@ window.onload = function() {
   }
 
 };
+
+
+/* Allow Enter key to verify */
+
+document
+  .getElementById("certificateId")
+  .addEventListener("keydown", function(event) {
+
+    if (event.key === "Enter") {
+      verifyCertificate();
+    }
+
+  });
 
 </script>
 
