@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Certificate Verification | Tech Resonate</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: #f4f8fc;
+      color: #12304a;
+    }
+
+    .header {
+      background: #0b4f8a;
+      padding: 24px 20px;
+      text-align: center;
+    }
+
+    .logo {
+      width: 150px;
+      max-width: 70%;
+      height: auto;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 620px;
+      margin: 40px auto;
+      padding: 0 18px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 16px;
+      padding: 30px 22px;
+      box-shadow: 0 8px 30px rgba(11, 79, 138, 0.12);
+      text-align: center;
+    }
+
+    h1 {
+      color: #0b4f8a;
+      margin-top: 0;
+      margin-bottom: 10px;
+      font-size: 30px;
+    }
+
+    .intro {
+      color: #52708a;
+      line-height: 1.6;
+      margin-bottom: 28px;
+    }
+
+    .search-box {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 25px;
+    }
+
+    input {
+      flex: 1;
+      min-width: 0;
+      padding: 14px;
+      border: 1px solid #b8cde0;
+      border-radius: 8px;
+      font-size: 16px;
+      outline: none;
+    }
+
+    input:focus {
+      border-color: #3b82f6;
+    }
+
+    button {
+      padding: 14px 18px;
+      border: none;
+      border-radius: 8px;
+      background: #0b4f8a;
+      color: white;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #0860a8;
+    }
+
+    .result {
+      display: none;
+      text-align: left;
+      border-radius: 12px;
+      padding: 22px;
+      margin-top: 20px;
+    }
+
+    .valid {
+      background: #eef9f2;
+      border: 1px solid #8ed1a5;
+    }
+
+    .invalid {
+      background: #fff3f3;
+      border: 1px solid #e5a1a1;
+    }
+
+    .result-title {
+      font-size: 21px;
+      font-weight: bold;
+      margin-bottom: 18px;
+    }
+
+    .valid .result-title {
+      color: #16803c;
+    }
+
+    .invalid .result-title {
+      color: #b42318;
+    }
+
+    .details {
+      display: grid;
+      gap: 12px;
+    }
+
+    .detail {
+      padding-bottom: 10px;
+      border-bottom: 1px solid #dbe7f0;
+    }
+
+    .label {
+      display: block;
+      font-size: 13px;
+      color: #668096;
+      margin-bottom: 4px;
+    }
+
+    .value {
+      font-size: 16px;
+      font-weight: bold;
+      color: #12304a;
+      word-break: break-word;
+    }
+
+    .status {
+      color: #16803c;
+    }
+
+    .loading {
+      display: none;
+      margin-top: 20px;
+      color: #0b4f8a;
+      font-weight: bold;
+    }
+
+    .footer {
+      text-align: center;
+      color: #668096;
+      font-size: 13px;
+      margin-top: 25px;
+    }
+
+    @media (max-width: 520px) {
+      .search-box {
+        flex-direction: column;
+      }
+
+      button {
+        width: 100%;
+      }
+
+      .card {
+        padding: 25px 17px;
+      }
+
+      h1 {
+        font-size: 26px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <header class="header">
+    <img
+      src="https://techresonate.com/logo.png"
+      alt="Tech Resonate"
+      class="logo"
+    >
+  </header>
+
+  <main class="container">
+
+    <section class="card">
+
+      <h1>Certificate Verification</h1>
+
+      <p class="intro">
+        Verify the authenticity of a certificate issued by Tech Resonate.
+      </p>
+
+      <div class="search-box">
+        <input
+          type="text"
+          id="certificateId"
+          placeholder="Enter Certificate ID"
+        >
+
+        <button onclick="verifyCertificate()">
+          Verify
+        </button>
+      </div>
+
+      <div id="loading" class="loading">
+        Verifying certificate...
+      </div>
+
+      <div id="result" class="result"></div>
+
+      <div class="footer">
+        Tech Resonate — Innovation That Resonates
+      </div>
+
+    </section>
+
+  </main>
+
+<script>
+
+const API_URL =
+  "https://script.google.com/macros/s/AKfycbwYVlT9WS5ov6i0vZc4wienOAwau2ckKVSKe4uMQwM-QCILz3zSxLt4CjWy82iDRy3F7w/exec";
+
+function formatDate(dateString) {
+
+  try {
+
+    return new Intl.DateTimeFormat("en-GB", {
+      day: "numeric",
+      month: "long",
+      year: "numeric",
+      timeZone: "Africa/Lagos"
+    }).format(new Date(dateString));
+
+  } catch (error) {
+
+    return dateString;
+
+  }
+
+}
+
+function verifyCertificate() {
+
+  const certificateId =
+    document.getElementById("certificateId").value.trim();
+
+  const result =
+    document.getElementById("result");
+
+  const loading =
+    document.getElementById("loading");
+
+  if (!certificateId) {
+
+    result.style.display = "block";
+    result.className = "result invalid";
+
+    result.innerHTML = `
+      <div class="result-title">
+        ✕ Certificate ID Required
+      </div>
+
+      <p>
+        Please enter a Certificate ID to verify the certificate.
+      </p>
+    `;
+
+    return;
+
+  }
+
+  result.style.display = "none";
+  loading.style.display = "block";
+
+  fetch(
+    API_URL + "?id=" + encodeURIComponent(certificateId)
+  )
+
+  .then(response => response.json())
+
+  .then(data => {
+
+    loading.style.display = "none";
+
+    result.style.display = "block";
+
+    if (data.success) {
+
+      result.className = "result valid";
+
+      result.innerHTML = `
+
+        <div class="result-title">
+          ✓ Certificate Verified
+        </div>
+
+        <div class="details">
+
+          <div class="detail">
+            <span class="label">Certificate ID</span>
+            <span class="value">${data.certificateId}</span>
+          </div>
+
+          <div class="detail">
+            <span class="label">Student Name</span>
+            <span class="value">${data.studentName}</span>
+          </div>
+
+          <div class="detail">
+            <span class="label">Programme</span>
+            <span class="value">${data.programme}</span>
+          </div>
+
+          <div class="detail">
+            <span class="label">Issue Date</span>
+            <span class="value">${formatDate(data.issueDate)}</span>
+          </div>
+
+          <div class="detail">
+            <span class="label">Status</span>
+            <span class="value status">${data.status}</span>
+          </div>
+
+        </div>
+      `;
+
+    } else {
+
+      result.className = "result invalid";
+
+      result.innerHTML = `
+
+        <div class="result-title">
+          ✕ Certificate Not Found
+        </div>
+
+        <p>
+          We couldn't verify this certificate.
+          Please check the Certificate ID and try again.
+        </p>
+
+      `;
+
+    }
+
+  })
+
+  .catch(error => {
+
+    loading.style.display = "none";
+
+    result.style.display = "block";
+    result.className = "result invalid";
+
+    result.innerHTML = `
+
+      <div class="result-title">
+        ✕ Verification Error
+      </div>
+
+      <p>
+        We couldn't connect to the verification service.
+        Please try again later.
+      </p>
+
+    `;
+
+  });
+
+}
+
+window.onload = function() {
+
+  const params =
+    new URLSearchParams(window.location.search);
+
+  const id =
+    params.get("id");
+
+  if (id) {
+
+    document.getElementById("certificateId").value = id;
+
+    verifyCertificate();
+
+  }
+
+};
+
+</script>
+
+</body>
+</html>
