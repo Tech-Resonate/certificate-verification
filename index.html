@@ -26,6 +26,8 @@
       --success-bg: #ecfbf3;
       --danger: #c73535;
       --danger-bg: #fff1f1;
+      --warning: #a66a00;
+      --warning-bg: #fff8e8;
     }
 
     * {
@@ -261,10 +263,6 @@
       box-shadow: 0 12px 25px rgba(22, 131, 255, 0.35);
     }
 
-    .verify-button:active {
-      transform: translateY(0);
-    }
-
     .loading {
       display: none;
       text-align: center;
@@ -385,8 +383,6 @@
       font-size: 14px;
     }
 
-    /* Student identity section */
-
     .student-profile {
       margin-top: 24px;
       background: white;
@@ -451,8 +447,6 @@
       line-height: 1.5;
     }
 
-    /* Certificate details */
-
     .certificate-details {
       margin-top: 18px;
       display: grid;
@@ -515,6 +509,183 @@
       font-size: 11px;
       line-height: 1.5;
       text-align: center;
+    }
+
+    /* Payment section */
+
+    .payment-section {
+      margin-top: 22px;
+      padding: 22px;
+      background: var(--warning-bg);
+      border: 1px solid #f0d89b;
+      border-radius: 18px;
+      text-align: left;
+    }
+
+    .payment-title {
+      color: var(--warning);
+      font-size: 20px;
+      font-weight: bold;
+      margin-bottom: 8px;
+    }
+
+    .payment-message {
+      color: #765d2c;
+      font-size: 14px;
+      line-height: 1.6;
+      margin-bottom: 18px;
+    }
+
+    .payment-fee {
+      background: white;
+      border: 1px solid #eadfbe;
+      border-radius: 14px;
+      padding: 15px;
+      margin-bottom: 15px;
+      text-align: center;
+    }
+
+    .payment-fee-label {
+      display: block;
+      color: var(--muted);
+      font-size: 11px;
+      text-transform: uppercase;
+      margin-bottom: 5px;
+    }
+
+    .payment-fee-value {
+      display: block;
+      color: var(--text);
+      font-size: 26px;
+      font-weight: bold;
+    }
+
+    .payment-details {
+      background: white;
+      border: 1px solid #eadfbe;
+      border-radius: 14px;
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+
+    .payment-details h3 {
+      color: var(--text);
+      font-size: 15px;
+      margin-bottom: 12px;
+    }
+
+    .payment-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 15px;
+      padding: 9px 0;
+      border-bottom: 1px solid #edf1f5;
+      font-size: 13px;
+    }
+
+    .payment-row:last-child {
+      border-bottom: none;
+    }
+
+    .payment-row span:first-child {
+      color: var(--muted);
+    }
+
+    .payment-row strong {
+      color: var(--text);
+      text-align: right;
+    }
+
+    .reference-label {
+      display: block;
+      font-size: 13px;
+      font-weight: bold;
+      color: var(--text);
+      margin-bottom: 7px;
+    }
+
+    .reference-input {
+      width: 100%;
+      height: 48px;
+      padding: 0 14px;
+      border: 1px solid #d8dfe7;
+      border-radius: 10px;
+      outline: none;
+      font-size: 14px;
+      margin-bottom: 10px;
+    }
+
+    .reference-input:focus {
+      border-color: var(--blue);
+      box-shadow: 0 0 0 4px rgba(22, 131, 255, 0.1);
+    }
+
+    .payment-button {
+      width: 100%;
+      min-height: 48px;
+      border: none;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #1683ff, #0b5fbd);
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      font-size: 14px;
+      padding: 12px 16px;
+      transition: 0.25s ease;
+    }
+
+    .payment-button:hover {
+      transform: translateY(-1px);
+    }
+
+    .payment-note {
+      margin-top: 12px;
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1.5;
+      text-align: center;
+    }
+
+    .paid-section {
+      margin-top: 22px;
+      padding: 20px;
+      background: var(--success-bg);
+      border: 1px solid #b9e8cb;
+      border-radius: 18px;
+      text-align: center;
+    }
+
+    .paid-title {
+      color: var(--success);
+      font-size: 19px;
+      font-weight: bold;
+      margin-bottom: 7px;
+    }
+
+    .paid-message {
+      color: #527663;
+      font-size: 14px;
+      line-height: 1.6;
+      margin-bottom: 15px;
+    }
+
+    .certificate-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 48px;
+      padding: 0 22px;
+      border-radius: 10px;
+      background: var(--success);
+      color: white;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: bold;
+      transition: 0.25s ease;
+    }
+
+    .certificate-button:hover {
+      transform: translateY(-1px);
     }
 
     .how-it-works {
@@ -648,6 +819,15 @@
         flex-shrink: 0;
         margin: 0;
       }
+
+      .payment-row {
+        flex-direction: column;
+        gap: 3px;
+      }
+
+      .payment-row strong {
+        text-align: left;
+      }
     }
   </style>
 </head>
@@ -703,7 +883,7 @@
           <input
             type="text"
             id="certificateId"
-            placeholder="e.g. TR-2026-FD-001"
+            placeholder="e.g. TR-2026-SEO-002"
             autocomplete="off"
           >
 
@@ -767,6 +947,10 @@ const API_URL =
 
 function formatDate(dateString) {
 
+  if (!dateString || dateString === "----------") {
+    return dateString || "Not provided";
+  }
+
   try {
 
     return new Intl.DateTimeFormat("en-GB", {
@@ -781,6 +965,22 @@ function formatDate(dateString) {
     return dateString;
 
   }
+
+}
+
+
+function escapeHtml(value) {
+
+  if (value === null || value === undefined) {
+    return "";
+  }
+
+  return String(value)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
 
 }
 
@@ -857,8 +1057,8 @@ function verifyCertificate() {
             <div class="passport-frame">
 
               <img
-                src="${data.photoUrl}"
-                alt="Passport photo of ${data.studentName}"
+                src="${escapeHtml(data.photoUrl)}"
+                alt="Passport photo of ${escapeHtml(data.studentName)}"
                 class="passport-photo"
                 onerror="this.parentElement.style.display='none';"
               >
@@ -872,11 +1072,11 @@ function verifyCertificate() {
               </div>
 
               <div class="student-name">
-                ${data.studentName}
+                ${escapeHtml(data.studentName)}
               </div>
 
               <div class="student-programme">
-                ${data.programme}
+                ${escapeHtml(data.programme)}
               </div>
 
             </div>
@@ -893,17 +1093,161 @@ function verifyCertificate() {
               </div>
 
               <div class="student-name">
-                ${data.studentName}
+                ${escapeHtml(data.studentName)}
               </div>
 
               <div class="student-programme">
-                ${data.programme}
+                ${escapeHtml(data.programme)}
               </div>
 
             </div>
 
           </div>
         `;
+
+
+      let paymentSection = "";
+
+      const paymentStatus =
+        String(data.paymentStatus || "").trim().toLowerCase();
+
+
+      if (paymentStatus === "paid") {
+
+        if (data.certificateUrl) {
+
+          paymentSection = `
+
+            <div class="paid-section">
+
+              <div class="paid-title">
+                ✓ Certificate Available
+              </div>
+
+              <p class="paid-message">
+                Your certificate payment has been confirmed.
+                You can now access your certificate.
+              </p>
+
+              <a
+                class="certificate-button"
+                href="${escapeHtml(data.certificateUrl)}"
+                target="_blank"
+                rel="noopener"
+              >
+                View Certificate
+              </a>
+
+            </div>
+
+          `;
+
+        } else {
+
+          paymentSection = `
+
+            <div class="paid-section">
+
+              <div class="paid-title">
+                ✓ Payment Confirmed
+              </div>
+
+              <p class="paid-message">
+                Your certificate payment has been confirmed.
+                Your certificate will be made available here.
+              </p>
+
+            </div>
+
+          `;
+
+        }
+
+      } else {
+
+        paymentSection = `
+
+          <div class="payment-section">
+
+            <div class="payment-title">
+               Certificate Locked
+            </div>
+
+            <p class="payment-message">
+              Your certificate fee has not been completed.
+              Please make the certificate payment to access
+              your certificate.
+            </p>
+
+            <div class="payment-fee">
+
+              <span class="payment-fee-label">
+                Certificate Fee
+              </span>
+
+              <span class="payment-fee-value">
+                ₦10,000
+              </span>
+
+            </div>
+
+            <div class="payment-details">
+
+              <h3>
+                Payment Details
+              </h3>
+
+              <div class="payment-row">
+                <span>Bank</span>
+                <strong>OPay</strong>
+              </div>
+
+              <div class="payment-row">
+                <span>Account Name</span>
+                <strong>Tech Resonate Limited</strong>
+              </div>
+
+              <div class="payment-row">
+                <span>Account Number</span>
+                <strong>6595180773</strong>
+              </div>
+
+            </div>
+
+            <label
+              class="reference-label"
+              for="paymentReference"
+            >
+              Transaction Reference
+            </label>
+
+            <input
+              type="text"
+              id="paymentReference"
+              class="reference-input"
+              placeholder="Enter your OPay transaction reference"
+              autocomplete="off"
+            >
+
+            <button
+              class="payment-button"
+              onclick="submitPaymentReference('${escapeHtml(data.certificateId)}', '${escapeHtml(data.studentName)}')"
+            >
+              Submit Payment Reference
+            </button>
+
+            <p class="payment-note">
+              After making the transfer, enter your transaction
+              reference above. Your payment will be manually
+              verified by Tech Resonate before the certificate
+              is unlocked.
+            </p>
+
+          </div>
+
+        `;
+
+      }
 
 
       result.innerHTML = `
@@ -936,7 +1280,7 @@ function verifyCertificate() {
             </span>
 
             <span class="detail-value">
-              ${data.certificateId}
+              ${escapeHtml(data.certificateId)}
             </span>
 
           </div>
@@ -945,7 +1289,7 @@ function verifyCertificate() {
           <div class="detail-box">
 
             <div class="detail-icon">
-              
+              ✓
             </div>
 
             <span class="detail-label">
@@ -953,7 +1297,7 @@ function verifyCertificate() {
             </span>
 
             <span class="detail-value">
-              ${data.programme}
+              ${escapeHtml(data.programme)}
             </span>
 
           </div>
@@ -962,7 +1306,7 @@ function verifyCertificate() {
           <div class="detail-box">
 
             <div class="detail-icon">
-              
+              📅
             </div>
 
             <span class="detail-label">
@@ -970,7 +1314,7 @@ function verifyCertificate() {
             </span>
 
             <span class="detail-value">
-              ${formatDate(data.issueDate)}
+              ${escapeHtml(formatDate(data.issueDate))}
             </span>
 
           </div>
@@ -987,12 +1331,14 @@ function verifyCertificate() {
             </span>
 
             <span class="detail-value status-valid">
-              ${data.status}
+              ${escapeHtml(data.status)}
             </span>
 
           </div>
 
         </div>
+
+        ${paymentSection}
 
         <p class="photo-note">
           Verification information is provided by Tech Resonate.
@@ -1027,6 +1373,8 @@ function verifyCertificate() {
 
   .catch(error => {
 
+    console.error(error);
+
     loading.style.display = "none";
 
     result.style.display = "block";
@@ -1051,6 +1399,73 @@ function verifyCertificate() {
     `;
 
   });
+
+}
+
+
+/*
+  Submit payment reference through WhatsApp.
+
+  The payment is NOT automatically marked as paid.
+  Tech Resonate must verify the bank transfer first.
+*/
+
+function submitPaymentReference(certificateId, studentName) {
+
+  const input =
+    document.getElementById("paymentReference");
+
+  const reference =
+    input.value.trim();
+
+
+  if (!reference) {
+
+    alert(
+      "Please enter your payment transaction reference."
+    );
+
+    input.focus();
+
+    return;
+
+  }
+
+
+  const message =
+    "Hello Tech Resonate,%0A%0A" +
+    "I have paid the certificate fee of ₦10,000.%0A%0A" +
+    "Certificate ID: " +
+    encodeURIComponent(certificateId) +
+    "%0A" +
+    "Student Name: " +
+    encodeURIComponent(studentName) +
+    "%0A" +
+    "Payment Reference: " +
+    encodeURIComponent(reference) +
+    "%0A%0A" +
+    "Please verify my payment and unlock my certificate.";
+
+
+  /*
+    Replace the number below with the official
+    Tech Resonate WhatsApp number before publishing.
+  */
+
+  const whatsappNumber = "2349039302155";
+
+
+  const whatsappUrl =
+    "https://wa.me/" +
+    whatsappNumber +
+    "?text=" +
+    message;
+
+
+  window.open(
+    whatsappUrl,
+    "_blank"
+  );
 
 }
 
