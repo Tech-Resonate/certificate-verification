@@ -1,0 +1,1053 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tech Resonate Certificate Builder</title>
+
+<script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+
+<style>
+:root{
+  --navy:#0B1A2E;
+  --navy2:#0F1F35;
+  --blue:#3B82F6;
+  --lightblue:#60A5FA;
+  --pale:#DCEEFF;
+  --white:#FFFFFF;
+  --border:#D9E2EC;
+  --bg:#F3F6FA;
+}
+
+*{
+  box-sizing:border-box;
+}
+
+body{
+  margin:0;
+  font-family:Arial,Helvetica,sans-serif;
+  background:var(--bg);
+  color:var(--navy);
+}
+
+header{
+  background:var(--navy);
+  color:white;
+  padding:18px 28px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+}
+
+header h1{
+  margin:0;
+  font-size:20px;
+}
+
+header span{
+  font-size:13px;
+  opacity:.8;
+}
+
+.app{
+  display:grid;
+  grid-template-columns:330px 1fr;
+  min-height:calc(100vh - 65px);
+}
+
+.sidebar{
+  background:white;
+  padding:22px;
+  border-right:1px solid var(--border);
+  overflow-y:auto;
+}
+
+.section{
+  margin-bottom:22px;
+}
+
+.section h2{
+  font-size:14px;
+  margin:0 0 12px;
+  color:var(--navy);
+}
+
+label{
+  display:block;
+  font-size:12px;
+  font-weight:bold;
+  margin-bottom:5px;
+}
+
+input,
+select{
+  width:100%;
+  padding:10px;
+  border:1px solid var(--border);
+  border-radius:7px;
+  margin-bottom:12px;
+  font-size:14px;
+}
+
+button{
+  border:0;
+  border-radius:7px;
+  padding:10px 13px;
+  cursor:pointer;
+  font-weight:bold;
+}
+
+.primary{
+  background:var(--blue);
+  color:white;
+}
+
+.dark{
+  background:var(--navy);
+  color:white;
+}
+
+.secondary{
+  background:#EAF2FB;
+  color:var(--navy);
+}
+
+.danger{
+  background:#FDECEC;
+  color:#B42318;
+}
+
+.full{
+  width:100%;
+  margin-bottom:8px;
+}
+
+.align-buttons{
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr;
+  gap:6px;
+}
+
+.align-buttons button{
+  background:#EAF2FB;
+  color:var(--navy);
+}
+
+.align-buttons button.active{
+  background:var(--blue);
+  color:white;
+}
+
+.signature-box{
+  border:1px dashed #AAB7C4;
+  border-radius:8px;
+  padding:12px;
+  text-align:center;
+  background:#FAFCFE;
+}
+
+.signature-preview{
+  max-width:100%;
+  max-height:80px;
+  display:none;
+  margin:10px auto;
+}
+
+.status{
+  font-size:12px;
+  color:#34704A;
+  margin-top:5px;
+}
+
+.workspace{
+  padding:25px;
+  overflow:auto;
+}
+
+.workspace-top{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:18px;
+}
+
+.workspace-top h2{
+  margin:0;
+  font-size:18px;
+}
+
+.actions{
+  display:flex;
+  gap:8px;
+}
+
+.certificate-wrap{
+  display:flex;
+  justify-content:center;
+  padding:20px;
+  min-width:1100px;
+}
+
+/* A4 LANDSCAPE */
+.certificate{
+  width:1123px;
+  height:794px;
+  background:white;
+  position:relative;
+  overflow:hidden;
+  box-shadow:0 12px 35px rgba(11,26,46,.18);
+  border:8px solid var(--navy);
+}
+
+.certificate::before{
+  content:"";
+  position:absolute;
+  inset:18px;
+  border:2px solid var(--blue);
+  pointer-events:none;
+}
+
+.inner{
+  position:absolute;
+  inset:25px;
+  border:1px solid #BFD4EA;
+  padding:45px 55px;
+  text-align:center;
+}
+
+.logo{
+  width:135px;
+  height:auto;
+  object-fit:contain;
+  margin-bottom:8px;
+}
+
+.official{
+  font-size:12px;
+  letter-spacing:3px;
+  text-transform:uppercase;
+  color:#536579;
+  margin-bottom:5px;
+}
+
+.academy{
+  font-size:17px;
+  font-weight:bold;
+  color:var(--navy);
+}
+
+.heading{
+  margin-top:22px;
+  font-size:34px;
+  font-weight:800;
+  letter-spacing:2px;
+  color:var(--navy);
+}
+
+.subheading{
+  margin-top:3px;
+  font-size:15px;
+  letter-spacing:4px;
+  text-transform:uppercase;
+  color:var(--blue);
+}
+
+.presented{
+  margin-top:35px;
+  font-size:14px;
+  color:#596979;
+}
+
+.student{
+  margin-top:9px;
+  font-family:Georgia,serif;
+  font-size:38px;
+  font-weight:bold;
+  color:var(--navy);
+  border-bottom:1px solid #C8D6E5;
+  display:inline-block;
+  min-width:560px;
+  padding:0 25px 7px;
+}
+
+.body-text{
+  max-width:760px;
+  margin:18px auto 0;
+  font-size:14px;
+  line-height:1.6;
+  color:#526170;
+}
+
+.programme{
+  font-size:20px;
+  font-weight:bold;
+  margin-top:7px;
+  color:var(--navy);
+}
+
+.bottom{
+  position:absolute;
+  left:55px;
+  right:55px;
+  bottom:42px;
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr;
+  align-items:end;
+  gap:25px;
+}
+
+.info{
+  text-align:left;
+  font-size:11px;
+  color:#596979;
+}
+
+.info strong{
+  display:block;
+  color:var(--navy);
+  font-size:13px;
+  margin-top:3px;
+}
+
+.signature-area{
+  text-align:center;
+}
+
+.signature{
+  max-width:150px;
+  max-height:65px;
+  object-fit:contain;
+  display:none;
+  margin:0 auto 2px;
+}
+
+.signature-line{
+  width:180px;
+  border-top:1px solid var(--navy);
+  margin:5px auto;
+}
+
+.signature-name{
+  font-size:13px;
+  font-weight:bold;
+}
+
+.signature-title{
+  font-size:11px;
+  color:#596979;
+}
+
+.qr-area{
+  text-align:center;
+}
+
+#qrcode{
+  width:82px;
+  height:82px;
+  margin:0 auto 5px;
+}
+
+.qr-label{
+  font-size:9px;
+  color:#596979;
+}
+
+.reference{
+  position:absolute;
+  top:34px;
+  right:45px;
+  background:var(--navy);
+  color:white;
+  padding:7px 12px;
+  font-size:10px;
+  letter-spacing:1px;
+}
+
+.lock-note{
+  font-size:11px;
+  color:#687789;
+  margin-top:5px;
+}
+
+@media(max-width:900px){
+  .app{
+    grid-template-columns:1fr;
+  }
+
+  .sidebar{
+    border-right:0;
+    border-bottom:1px solid var(--border);
+  }
+}
+
+@media print{
+  @page{
+    size:A4 landscape;
+    margin:0;
+  }
+
+  body{
+    background:white;
+  }
+
+  header,
+  .sidebar,
+  .workspace-top{
+    display:none !important;
+  }
+
+  .app{
+    display:block;
+  }
+
+  .workspace{
+    padding:0;
+    overflow:visible;
+  }
+
+  .certificate-wrap{
+    padding:0;
+    min-width:0;
+  }
+
+  .certificate{
+    box-shadow:none;
+    width:297mm;
+    height:210mm;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>Tech Resonate — Certificate Builder</h1>
+  <span>Private Certificate Creation Tool</span>
+</header>
+
+<div class="app">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+
+    <div class="section">
+      <h2>Student Information</h2>
+
+      <label>Student Name</label>
+      <input
+        id="studentName"
+        type="text"
+        value="NASIRUDEEN NAFIU"
+        oninput="updateCertificate()"
+      >
+
+      <label>Programme</label>
+      <input
+        id="programme"
+        type="text"
+        value="Diploma in Data Processing"
+        oninput="updateCertificate()"
+      >
+
+      <label>Certificate ID</label>
+      <input
+        id="certificateId"
+        type="text"
+        value="TR-2026-DDP-002"
+        oninput="updateCertificate()"
+      >
+
+      <label>Issue Date</label>
+      <input
+        id="issueDate"
+        type="date"
+        onchange="updateCertificate()"
+      >
+
+      <label>Certificate Status</label>
+      <select id="certificateStatus" onchange="updateCertificate()">
+        <option value="Valid">Valid</option>
+        <option value="Issued">Issued</option>
+        <option value="Completed">Completed</option>
+      </select>
+    </div>
+
+
+    <div class="section">
+      <h2>Text Alignment</h2>
+
+      <label>Select Text</label>
+
+      <select id="alignmentTarget">
+        <option value="student">Student Name</option>
+        <option value="programme">Programme</option>
+        <option value="body">Certificate Description</option>
+      </select>
+
+      <div class="align-buttons">
+        <button onclick="setAlignment('left')">← Left</button>
+        <button onclick="setAlignment('center')">Center</button>
+        <button onclick="setAlignment('right')">Right →</button>
+      </div>
+    </div>
+
+
+    <div class="section">
+      <h2>CEO Signature</h2>
+
+      <div class="signature-box">
+
+        <div>
+          Upload signature
+        </div>
+
+        <input
+          id="signatureUpload"
+          type="file"
+          accept="image/png,image/jpeg,image/webp"
+          onchange="saveSignature(event)"
+        >
+
+        <img
+          id="signaturePreview"
+          class="signature-preview"
+          alt="Saved signature"
+        >
+
+        <div id="signatureStatus" class="status">
+          No signature saved yet.
+        </div>
+
+        <button
+          class="danger full"
+          onclick="removeSignature()"
+        >
+          Remove Saved Signature
+        </button>
+
+      </div>
+
+      <div class="lock-note">
+        The signature is saved only in this browser for this builder.
+      </div>
+    </div>
+
+
+    <div class="section">
+      <h2>QR Code</h2>
+
+      <label>Verification URL</label>
+
+      <input
+        id="verificationUrl"
+        type="text"
+        value="https://verify.techresonate.com/?id=TR-2026-DDP-002"
+        oninput="updateQRCode()"
+      >
+
+      <button class="secondary full" onclick="updateQRCode()">
+        Generate / Refresh QR
+      </button>
+    </div>
+
+
+    <div class="section">
+      <button class="primary full" onclick="window.print()">
+        Download / Print Certificate
+      </button>
+
+      <button class="dark full" onclick="resetBuilder()">
+        Reset Builder
+      </button>
+    </div>
+
+  </aside>
+
+
+  <!-- WORKSPACE -->
+  <main class="workspace">
+
+    <div class="workspace-top">
+      <h2>Certificate Preview</h2>
+
+      <div class="actions">
+        <button class="secondary" onclick="window.print()">
+          Print / Save as PDF
+        </button>
+      </div>
+    </div>
+
+
+    <div class="certificate-wrap">
+
+      <div class="certificate" id="certificate">
+
+        <div class="reference">
+          CERTIFICATE
+        </div>
+
+        <div class="inner">
+
+          <img
+            class="logo"
+            src="https://techresonate.com/logo.png"
+            alt="Tech Resonate"
+          >
+
+          <div class="official">
+            Official Certificate
+          </div>
+
+          <div class="academy">
+            Tech Resonate Academy
+          </div>
+
+          <div class="heading">
+            Certificate
+          </div>
+
+          <div class="subheading">
+            of Completion
+          </div>
+
+          <div class="presented">
+            This certificate is proudly presented to
+          </div>
+
+          <div
+            id="previewStudent"
+            class="student"
+          >
+            NASIRUDEEN NAFIU
+          </div>
+
+          <div
+            id="previewBody"
+            class="body-text"
+          >
+            for successfully completing the prescribed training
+            and practical requirements of the programme
+          </div>
+
+          <div
+            id="previewProgramme"
+            class="programme"
+          >
+            Diploma in Data Processing
+          </div>
+
+
+          <div class="bottom">
+
+            <div class="info">
+              Certificate ID
+              <strong id="previewId">
+                TR-2026-DDP-002
+              </strong>
+
+              <br>
+
+              Issue Date
+              <strong id="previewDate">
+                —
+              </strong>
+
+              <br>
+
+              Status
+              <strong id="previewStatus">
+                Valid
+              </strong>
+            </div>
+
+
+            <div class="signature-area">
+
+              <img
+                id="certificateSignature"
+                class="signature"
+                alt="Authorized signature"
+              >
+
+              <div class="signature-line"></div>
+
+              <div class="signature-name">
+                Umar Umar
+              </div>
+
+              <div class="signature-title">
+                Chief Executive Officer
+              </div>
+
+            </div>
+
+
+            <div class="qr-area">
+
+              <div id="qrcode"></div>
+
+              <div class="qr-label">
+                Scan to Verify
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+
+  </main>
+
+</div>
+
+
+<script>
+
+/* =========================================================
+   DEFAULTS
+========================================================= */
+
+const STORAGE_KEY = "techResonateCEOSignature";
+
+const studentName =
+  document.getElementById("studentName");
+
+const programme =
+  document.getElementById("programme");
+
+const certificateId =
+  document.getElementById("certificateId");
+
+const issueDate =
+  document.getElementById("issueDate");
+
+const certificateStatus =
+  document.getElementById("certificateStatus");
+
+const verificationUrl =
+  document.getElementById("verificationUrl");
+
+
+/* =========================================================
+   LOAD SAVED SIGNATURE
+========================================================= */
+
+function loadSavedSignature(){
+
+  const saved =
+    localStorage.getItem(STORAGE_KEY);
+
+  if(saved){
+
+    document.getElementById(
+      "certificateSignature"
+    ).src = saved;
+
+    document.getElementById(
+      "certificateSignature"
+    ).style.display = "block";
+
+    document.getElementById(
+      "signaturePreview"
+    ).src = saved;
+
+    document.getElementById(
+      "signaturePreview"
+    ).style.display = "block";
+
+    document.getElementById(
+      "signatureStatus"
+    ).textContent =
+      "Signature saved and ready to use.";
+
+  }
+
+}
+
+
+/* =========================================================
+   SAVE SIGNATURE
+========================================================= */
+
+function saveSignature(event){
+
+  const file =
+    event.target.files[0];
+
+  if(!file){
+    return;
+  }
+
+  const reader =
+    new FileReader();
+
+  reader.onload = function(e){
+
+    const imageData =
+      e.target.result;
+
+    try{
+
+      localStorage.setItem(
+        STORAGE_KEY,
+        imageData
+      );
+
+      document.getElementById(
+        "certificateSignature"
+      ).src = imageData;
+
+      document.getElementById(
+        "certificateSignature"
+      ).style.display = "block";
+
+      document.getElementById(
+        "signaturePreview"
+      ).src = imageData;
+
+      document.getElementById(
+        "signaturePreview"
+      ).style.display = "block";
+
+      document.getElementById(
+        "signatureStatus"
+      ).textContent =
+        "Signature saved successfully.";
+
+    }catch(error){
+
+      alert(
+        "The signature could not be saved. Try a smaller image."
+      );
+
+    }
+
+  };
+
+  reader.readAsDataURL(file);
+}
+
+
+/* =========================================================
+   REMOVE SIGNATURE
+========================================================= */
+
+function removeSignature(){
+
+  localStorage.removeItem(
+    STORAGE_KEY
+  );
+
+  document.getElementById(
+    "certificateSignature"
+  ).style.display = "none";
+
+  document.getElementById(
+    "signaturePreview"
+  ).style.display = "none";
+
+  document.getElementById(
+    "signatureStatus"
+  ).textContent =
+    "No signature saved yet.";
+
+}
+
+
+/* =========================================================
+   UPDATE CERTIFICATE
+========================================================= */
+
+function updateCertificate(){
+
+  const name =
+    studentName.value.trim() ||
+    "STUDENT NAME";
+
+  const course =
+    programme.value.trim() ||
+    "Programme";
+
+  const id =
+    certificateId.value.trim() ||
+    "CERTIFICATE-ID";
+
+  const status =
+    certificateStatus.value;
+
+  document.getElementById(
+    "previewStudent"
+  ).textContent = name;
+
+  document.getElementById(
+    "previewProgramme"
+  ).textContent = course;
+
+  document.getElementById(
+    "previewId"
+  ).textContent = id;
+
+  document.getElementById(
+    "previewStatus"
+  ).textContent = status;
+
+
+  let dateText = "—";
+
+  if(issueDate.value){
+
+    const date =
+      new Date(
+        issueDate.value + "T00:00:00"
+      );
+
+    dateText =
+      date.toLocaleDateString(
+        "en-GB",
+        {
+          day:"2-digit",
+          month:"long",
+          year:"numeric"
+        }
+      );
+
+  }
+
+  document.getElementById(
+    "previewDate"
+  ).textContent = dateText;
+
+
+  /* Automatically update verification URL */
+
+  verificationUrl.value =
+    "https://verify.techresonate.com/?id=" +
+    encodeURIComponent(id);
+
+  updateQRCode();
+
+}
+
+
+/* =========================================================
+   ALIGNMENT
+========================================================= */
+
+function setAlignment(alignment){
+
+  const target =
+    document.getElementById(
+      "alignmentTarget"
+    ).value;
+
+  let element;
+
+  if(target === "student"){
+    element =
+      document.getElementById(
+        "previewStudent"
+      );
+  }
+
+  if(target === "programme"){
+    element =
+      document.getElementById(
+        "previewProgramme"
+      );
+  }
+
+  if(target === "body"){
+    element =
+      document.getElementById(
+        "previewBody"
+      );
+  }
+
+  if(!element){
+    return;
+  }
+
+  element.style.textAlign =
+    alignment;
+
+}
+
+
+/* =========================================================
+   QR CODE
+========================================================= */
+
+function updateQRCode(){
+
+  const container =
+    document.getElementById(
+      "qrcode"
+    );
+
+  container.innerHTML = "";
+
+  const url =
+    verificationUrl.value.trim();
+
+  if(!url){
+    return;
+  }
+
+  new QRCode(
+    container,
+    {
+      text:url,
+      width:82,
+      height:82,
+      correctLevel:
+        QRCode.CorrectLevel.H
+    }
+  );
+
+}
+
+
+/* =========================================================
+   RESET
+========================================================= */
+
+function resetBuilder(){
+
+  studentName.value =
+    "STUDENT NAME";
+
+  programme.value =
+    "Programme";
+
+  certificateId.value =
+    "TR-2026-XXX-000";
+
+  issueDate.value = "";
+
+  certificateStatus.value =
+    "Valid";
+
+  verificationUrl.value =
+    "https://verify.techresonate.com/?id=TR-2026-XXX-000";
+
+  updateCertificate();
+
+}
+
+
+/* =========================================================
+   START
+========================================================= */
+
+loadSavedSignature();
+
+updateCertificate();
+
+</script>
+
+</body>
+</html>
