@@ -1,1136 +1,610 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="robots" content="noindex,nofollow,noarchive">
-<title>Tech Resonate Certificate Builder</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tech Resonate Academy — Certificate Builder</title>
 
 <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.4/build/qrcode.min.js"></script>
 
 <style>
 :root{
-  --n:#0B1A2E;
-  --n2:#0F1F35;
-  --b:#3B82F6;
-  --lb:#60A5FA;
-  --p:#DCEEFF;
-  --w:#FFFFFF;
-  --side:69mm
+  --navy:#0B1A2E;
+  --blue:#2563EB;
+  --light-blue:#60A5FA;
+  --white:#FFFFFF;
+  --muted:#64748B;
+  --border:#D8E0EA;
+  --panel:#F8FAFC;
+  --danger:#DC2626;
 }
 
-*{box-sizing:border-box}
-
-html,body{
-  margin:0;
-  min-height:100%;
-  font-family:Arial,Helvetica,sans-serif;
-  -webkit-print-color-adjust:exact;
-  print-color-adjust:exact
+*{
+  box-sizing:border-box;
 }
 
 body{
-  background:#e9eef5;
-  color:var(--n)
+  margin:0;
+  font-family:Arial,Helvetica,sans-serif;
+  background:#EEF2F7;
+  color:var(--navy);
 }
 
-button,input,select,textarea{
-  font:inherit
+button,
+input,
+textarea,
+select{
+  font:inherit;
 }
 
 button{
-  cursor:pointer
+  cursor:pointer;
 }
 
-.builder-shell{
+.app{
   min-height:100vh;
-  display:grid;
-  grid-template-columns:390px minmax(0,1fr)
+  display:flex;
+  flex-direction:column;
 }
 
-.editor-panel{
+/* =========================
+   TOP BAR
+========================= */
+
+.topbar{
+  background:var(--navy);
+  color:#fff;
+  padding:14px 20px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:20px;
   position:sticky;
   top:0;
-  height:100vh;
-  overflow:auto;
-  background:#fff;
-  border-right:1px solid #d7e0eb;
-  padding:18px;
-  z-index:1000
+  z-index:1000;
 }
 
-.editor-head{
-  padding-bottom:14px;
-  border-bottom:1px solid #e6ebf2;
-  margin-bottom:14px
+.brand{
+  display:flex;
+  align-items:center;
+  gap:12px;
 }
 
-.editor-head h2{
-  margin:0;
-  color:var(--n);
-  font-size:20px
+.brand-logo{
+  width:42px;
+  height:42px;
+  border-radius:10px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:900;
+  font-size:18px;
+  color:#fff;
+  background:linear-gradient(135deg,var(--blue),var(--light-blue));
 }
 
-.editor-head p{
-  margin:7px 0 0;
-  color:#5d6b7d;
-  font-size:12px;
-  line-height:1.45
+.brand-text strong{
+  display:block;
+  font-size:16px;
 }
 
-.private-badge{
-  display:inline-flex;
-  margin-top:10px;
-  padding:5px 8px;
-  border-radius:999px;
-  background:#eef5ff;
-  color:#245db7;
+.brand-text span{
   font-size:11px;
-  font-weight:800;
-  letter-spacing:.06em;
-  text-transform:uppercase
+  opacity:.75;
 }
 
-.panel-section{
-  border:1px solid #dfe6ef;
+.top-actions{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+}
+
+.top-actions button{
+  border:1px solid rgba(255,255,255,.2);
+  background:rgba(255,255,255,.08);
+  color:#fff;
+  padding:9px 13px;
+  border-radius:7px;
+}
+
+.top-actions button:hover{
+  background:rgba(255,255,255,.16);
+}
+
+/* =========================
+   MAIN
+========================= */
+
+.main{
+  flex:1;
+  display:grid;
+  grid-template-columns:330px minmax(600px,1fr);
+  gap:18px;
+  padding:18px;
+}
+
+.sidebar{
+  background:#fff;
+  border:1px solid var(--border);
   border-radius:12px;
-  margin:0 0 12px;
-  overflow:hidden;
-  background:#fff
+  padding:16px;
+  height:calc(100vh - 100px);
+  overflow:auto;
 }
 
-.panel-section summary{
-  list-style:none;
-  padding:12px 13px;
-  background:#f7f9fc;
-  color:var(--n);
-  font-size:13px;
+.preview-area{
+  min-width:0;
+  display:flex;
+  align-items:flex-start;
+  justify-content:center;
+  overflow:auto;
+  padding:20px;
+}
+
+/* =========================
+   SIDEBAR
+========================= */
+
+.panel-title{
+  font-size:18px;
   font-weight:800;
-  cursor:pointer
+  margin-bottom:4px;
 }
 
-.panel-section[open] summary{
-  border-bottom:1px solid #e4e9f0
+.panel-subtitle{
+  font-size:12px;
+  color:var(--muted);
+  margin-bottom:18px;
 }
 
-.panel-section summary::-webkit-details-marker{
-  display:none
+.section{
+  border-top:1px solid #E5EAF0;
+  padding-top:15px;
+  margin-top:15px;
 }
 
-.section-body{
-  padding:12px
+.section h3{
+  margin:0 0 10px;
+  font-size:13px;
 }
 
 .field{
-  margin-bottom:10px
-}
-
-.field:last-child{
-  margin-bottom:0
+  margin-bottom:12px;
 }
 
 .field label{
   display:block;
-  margin-bottom:5px;
-  color:#455468;
   font-size:11px;
-  font-weight:800;
-  text-transform:uppercase;
-  letter-spacing:.06em
+  font-weight:700;
+  margin-bottom:5px;
+  color:#334155;
 }
 
-.field input[type=text],
-.field input[type=date],
-.field input[type=number],
-.field input[type=url],
-.field input[type=color],
-.field select,
-.field textarea{
-  width:100%;
-  border:1px solid #cdd6e2;
-  border-radius:8px;
-  background:#fff;
-  color:#162538;
-  outline:none
-}
-
-.field input[type=text],
-.field input[type=date],
-.field input[type=number],
-.field input[type=url],
+.field input,
+.field textarea,
 .field select{
-  height:36px;
-  padding:0 10px
+  width:100%;
+  border:1px solid #CBD5E1;
+  border-radius:7px;
+  padding:9px 10px;
+  background:#fff;
+  outline:none;
 }
 
 .field textarea{
   min-height:70px;
-  padding:9px 10px;
-  resize:vertical
-}
-
-.field input[type=color]{
-  height:42px;
-  padding:4px
+  resize:vertical;
 }
 
 .field input:focus,
-.field select:focus,
-.field textarea:focus{
-  border-color:#3B82F6;
-  box-shadow:0 0 0 3px rgba(59,130,246,.12)
+.field textarea:focus,
+.field select:focus{
+  border-color:var(--blue);
+  box-shadow:0 0 0 2px rgba(37,99,235,.1);
 }
 
-.field-row{
+.grid-2{
   display:grid;
   grid-template-columns:1fr 1fr;
-  gap:8px
-}
-
-.check-row{
-  display:flex;
-  align-items:center;
   gap:8px;
-  color:#455468;
-  font-size:12px;
-  margin:7px 0 8px
 }
 
-.check-row input{
-  width:16px;
-  height:16px
+.grid-3{
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr;
+  gap:7px;
 }
 
 .help{
-  margin-top:5px;
-  color:#7a8798;
-  font-size:10.5px;
-  line-height:1.35
+  color:var(--muted);
+  font-size:10px;
+  line-height:1.4;
+  margin-top:4px;
 }
 
-.small-action{
-  min-height:34px;
-  border:1px solid #cbd5e1;
-  border-radius:8px;
+.btn{
+  width:100%;
+  border:0;
+  border-radius:7px;
+  padding:10px 12px;
+  font-weight:700;
+  background:var(--blue);
+  color:#fff;
+}
+
+.btn:hover{
+  filter:brightness(.95);
+}
+
+.btn.secondary{
+  background:#E8EEF7;
+  color:var(--navy);
+}
+
+.btn.danger{
+  background:var(--danger);
+  color:#fff;
+}
+
+.btn.outline{
   background:#fff;
-  color:#243447;
-  font-weight:700
+  color:var(--navy);
+  border:1px solid #CBD5E1;
 }
 
 .action-grid{
   display:grid;
   grid-template-columns:1fr 1fr;
-  gap:7px
-}
-
-.action-grid button{
-  min-height:34px;
-  border:1px solid #cbd5e1;
-  border-radius:8px;
-  background:#fff;
-  color:#243447;
-  font-weight:700
-}
-
-.action-grid button.primary{
-  background:var(--b);
-  border-color:var(--b);
-  color:#fff
-}
-
-.action-grid button.danger{
-  color:#a61b1b
-}
-
-.action-grid button.print{
-  grid-column:1/-1;
-  background:var(--n);
-  border-color:var(--n);
-  color:#fff
-}
-
-.asset-preview{
-  height:82px;
-  border:1px dashed #bbc7d6;
-  border-radius:10px;
-  background:#f8fafc;
-  display:grid;
-  place-items:center;
-  overflow:hidden;
-  margin:8px 0 10px
-}
-
-.asset-preview img{
-  max-width:95%;
-  max-height:72px;
-  object-fit:contain
-}
-
-.asset-preview.qr-preview img{
-  max-width:70px;
-  max-height:70px
-}
-
-.element-select{
-  width:100%;
-  height:38px;
-  border:1px solid #cdd6e2;
-  border-radius:8px;
-  background:#fff;
-  padding:0 10px;
-  color:#15253a;
-  font-weight:700
-}
-
-.selected-element-title{
-  margin:11px 0 8px;
-  font-size:13px;
-  font-weight:800;
-  color:var(--b)
-}
-
-.nudge-wrap{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:6px;
-  margin-bottom:8px
-}
-
-.nudge-wrap button,
-.center-row button,
-.segmented button{
-  min-height:34px;
-  border:1px solid #cbd5e1;
-  border-radius:8px;
-  background:#fff;
-  color:#243447;
-  font-weight:700
-}
-
-.nudge-wrap button:hover,
-.center-row button:hover,
-.segmented button:hover,
-.small-action:hover,
-.action-grid button:hover{
-  border-color:var(--b);
-  background:#f5f9ff
-}
-
-.nudge-wrap .empty{
-  visibility:hidden
-}
-
-.center-row{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:6px;
-  margin-bottom:10px
-}
-
-.increment-row{
-  display:flex;
-  align-items:center;
-  gap:6px;
-  margin:0 0 10px
-}
-
-.increment-row span{
-  color:#66758a;
-  font-size:11px;
-  font-weight:800;
-  margin-right:3px
-}
-
-.increment-row button{
-  min-width:42px;
-  height:30px;
-  border:1px solid #cbd5e1;
-  border-radius:7px;
-  background:#fff;
-  font-size:11px;
-  font-weight:800;
-  color:#334155
-}
-
-.increment-row button.active{
-  background:var(--n);
-  border-color:var(--n);
-  color:#fff
-}
-
-.control-grid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:8px
-}
-
-.control-grid .field{
-  margin:0
-}
-
-.control-grid input{
-  height:34px!important
-}
-
-.segment-label{
-  display:block;
-  margin:11px 0 5px;
-  color:#455468;
-  font-size:11px;
-  font-weight:800;
-  text-transform:uppercase;
-  letter-spacing:.06em
-}
-
-.segmented{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:5px
-}
-
-.segmented.two{
-  grid-template-columns:repeat(2,1fr)
-}
-
-.segmented button.active{
-  background:var(--n);
-  border-color:var(--n);
-  color:#fff
-}
-
-.signature-preview{
-  height:72px;
-  border:1px dashed #bbc7d6;
-  border-radius:10px;
-  background:#f8fafc;
-  display:grid;
-  place-items:center;
-  overflow:hidden;
-  margin:8px 0 10px
-}
-
-.signature-preview img{
-  max-width:95%;
-  max-height:64px;
-  object-fit:contain
-}
-
-.file-input{
-  width:100%;
-  font-size:11px
-}
-
-.editor-status{
-  min-height:18px;
-  margin-top:10px;
-  font-size:11px;
-  color:#58708d;
-  line-height:1.4
+  gap:7px;
 }
 
 .color-row{
   display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:8px
-}
-
-.color-preview{
-  display:flex;
+  grid-template-columns:46px 1fr auto;
+  gap:6px;
   align-items:center;
-  gap:8px;
-  height:36px;
-  border:1px solid #cdd6e2;
-  border-radius:8px;
-  padding:4px 8px;
-  background:#fff
 }
 
-.color-preview input{
-  width:28px!important;
-  height:28px!important;
-  padding:0!important;
-  border:0!important;
-  box-shadow:none!important;
-  cursor:pointer
+.color-row input[type="color"]{
+  width:46px;
+  height:38px;
+  padding:3px;
 }
 
-.color-code{
-  font-family:monospace;
-  font-size:11px;
-  color:#455468
-}
-
-.preview-pane{
-  min-width:0;
-  min-height:100vh;
-  padding:18px;
-  overflow:auto
-}
-
-.preview-toolbar{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:12px;
-  margin-bottom:12px;
-  padding:10px 12px;
+.small-btn{
+  border:1px solid #CBD5E1;
   background:#fff;
-  border:1px solid #dfe6ef;
-  border-radius:10px;
-  box-shadow:0 4px 16px rgba(11,26,46,.05)
-}
-
-.preview-toolbar strong{
-  font-size:13px
-}
-
-.zoom-control{
-  display:flex;
-  align-items:center;
-  gap:7px;
-  color:#5a687b;
+  border-radius:6px;
+  padding:8px;
   font-size:11px;
-  font-weight:700
 }
 
-.zoom-control select{
-  height:32px;
-  border:1px solid #cbd5e1;
-  border-radius:7px;
-  background:#fff;
-  padding:0 8px
-}
-
-.preview-scroll{
-  min-width:100%;
-  overflow:auto;
-  padding:4px
-}
-
-.preview-stage{
-  position:relative;
-  transform-origin:top left;
-  width:297mm;
-  height:210mm
-}
-
-.stage-space{
-  position:relative;
-  margin:0 auto
-}
-
-/* =========================================================
+/* =========================
    CERTIFICATE
-========================================================= */
+========================= */
 
-.certificate{
-  position:relative;
+.certificate-wrap{
   width:297mm;
   height:210mm;
-  background:var(--w);
-  overflow:hidden;
-  box-shadow:0 22px 60px rgba(11,26,46,.18)
+  flex:none;
+  transform-origin:top left;
 }
 
-.certificate:before{
+.certificate{
+  width:297mm;
+  height:210mm;
+  position:relative;
+  overflow:hidden;
+  background:#fff;
+  color:var(--navy);
+  border:2mm solid var(--navy);
+  box-shadow:0 15px 40px rgba(15,31,53,.2);
+}
+
+/* Decorative border */
+
+.certificate::before{
   content:"";
   position:absolute;
   inset:5mm;
-  border:.65mm solid var(--n);
-  z-index:20;
-  pointer-events:none
+  border:0.7mm solid var(--blue);
+  pointer-events:none;
 }
 
-.main{
-  position:absolute;
-  inset:0 var(--side) 0 0;
-  padding:15mm 16mm 13mm 19mm;
-  display:flex;
-  flex-direction:column;
-  z-index:3
-}
-
-.main:before{
+.certificate::after{
   content:"";
   position:absolute;
-  inset:7mm 6mm 7mm 7mm;
-  border:.25mm solid var(--lb);
-  z-index:-1
+  inset:8mm;
+  border:0.25mm solid #BFD3F5;
+  pointer-events:none;
 }
 
-.main:after{
-  content:"";
+/* Decorative corners */
+
+.corner{
   position:absolute;
-  width:112mm;
-  height:112mm;
-  border:12mm solid var(--p);
-  border-radius:50%;
-  left:-67mm;
-  top:-60mm;
-  z-index:-2
-}
-
-.top-stripes{
-  position:absolute;
-  left:-10mm;
-  top:2mm;
-  width:84mm;
-  height:12mm;
-  transform:rotate(-8deg);
-  background:linear-gradient(
-    to bottom,
-    var(--n) 0 52%,
-    transparent 52% 68%,
-    var(--b) 68% 88%,
-    transparent 88%
-  );
-  z-index:1
-}
-
-.header{
-  display:flex;
-  justify-content:space-between;
-  align-items:flex-start;
-  gap:10mm;
-  min-height:27mm
-}
-
-.logo{
-  width:56mm;
+  width:18mm;
   height:18mm;
-  object-fit:contain;
-  object-position:left center
+  z-index:1;
 }
 
-.logo.logo-empty{
-  visibility:hidden
-}
-
-.issuer{
-  text-align:right;
-  text-transform:uppercase;
-  color:var(--b);
-  font-weight:700;
-  font-size:2.45mm;
-  letter-spacing:.16em
-}
-
-.issuer>span{
-  display:inline-block
-}
-
-.issuer strong{
-  display:block;
-  color:var(--n);
-  font-size:3.15mm;
-  letter-spacing:.08em;
-  margin-top:1.4mm
-}
-
-.title{
-  margin-top:5mm
-}
-
-.eyebrow{
-  display:flex;
-  align-items:center;
-  gap:3mm;
-  color:var(--b);
-  font-size:2.5mm;
-  font-weight:700;
-  letter-spacing:.22em;
-  text-transform:uppercase
-}
-
-.eyebrow:before{
+.corner::before,
+.corner::after{
   content:"";
-  width:11mm;
-  height:.65mm;
-  background:var(--b)
+  position:absolute;
+  background:var(--blue);
 }
 
-/*
-  IMPORTANT:
-  Certificate + of Completion are now INLINE,
-  not block elements.
-*/
-
-h1{
-  margin:2.2mm 0 0;
-  font:700 13mm/.96 Georgia,"Times New Roman",serif;
-  letter-spacing:.02em;
-  color:var(--n);
-  white-space:nowrap
+.corner::before{
+  width:100%;
+  height:1.2mm;
 }
 
-h1 .heading-main{
-  display:inline;
-  color:inherit;
-  font:inherit;
-  letter-spacing:inherit;
-  text-transform:none
+.corner::after{
+  width:1.2mm;
+  height:100%;
 }
 
-h1 .of-completion{
-  display:inline;
-  margin-left:5mm;
-  color:var(--b);
-  font:700 7.1mm/1 Arial,Helvetica,sans-serif;
+.corner.tl{top:10mm;left:10mm;}
+.corner.tr{top:10mm;right:10mm;transform:rotate(90deg);}
+.corner.bl{bottom:10mm;left:10mm;transform:rotate(-90deg);}
+.corner.br{bottom:10mm;right:10mm;transform:rotate(180deg);}
+
+/* =========================
+   EDITABLE ELEMENTS
+========================= */
+
+.editable{
+  position:absolute;
+  z-index:10;
+  user-select:none;
+  cursor:move;
+}
+
+.editable.selected{
+  outline:0.6mm dashed var(--blue);
+  outline-offset:1mm;
+}
+
+.academy{
+  top:17mm;
+  left:50%;
+  transform:translateX(-50%);
+  text-align:center;
+  white-space:nowrap;
+  font-size:7mm;
+  font-weight:900;
   letter-spacing:.12em;
-  text-transform:uppercase;
-  vertical-align:baseline
+  color:var(--navy);
+}
+
+.tagline{
+  top:27mm;
+  left:50%;
+  transform:translateX(-50%);
+  text-align:center;
+  font-size:3.2mm;
+  letter-spacing:.3em;
+  color:var(--blue);
+  font-weight:700;
+  white-space:nowrap;
+}
+
+.heading{
+  top:39mm;
+  left:50%;
+  transform:translateX(-50%);
+  text-align:center;
+  white-space:nowrap;
+  font-family:Georgia,"Times New Roman",serif;
+  font-size:12mm;
+  line-height:1;
+  font-weight:700;
+  letter-spacing:.025em;
+  color:var(--navy);
+}
+
+.heading-line{
+  position:absolute;
+  top:55mm;
+  left:50%;
+  transform:translateX(-50%);
+  width:65mm;
+  height:.8mm;
+  background:var(--blue);
+  border-radius:5px;
 }
 
 .presented{
-  margin-top:9mm;
-  font:italic 3.7mm/1.3 Georgia,"Times New Roman",serif;
-  color:var(--n2)
+  top:61mm;
+  left:50%;
+  transform:translateX(-50%);
+  font-size:4mm;
+  color:#475569;
+  white-space:nowrap;
+}
+
+.student-name{
+  top:71mm;
+  left:50%;
+  transform:translateX(-50%);
+  font-family:Georgia,"Times New Roman",serif;
+  font-size:11mm;
+  line-height:1;
+  font-weight:700;
+  letter-spacing:.04em;
+  color:var(--blue);
+  text-align:center;
+  white-space:nowrap;
 }
 
 .name-line{
-  position:relative;
-  width:168mm;
-  margin-top:2.2mm;
-  padding-bottom:2.4mm
-}
-
-.name-underline{
   position:absolute;
-  left:0;
-  right:0;
-  bottom:0;
-  height:0;
-  border-bottom:.7mm solid var(--b)
+  top:85mm;
+  left:50%;
+  transform:translateX(-50%);
+  width:100mm;
+  height:.35mm;
+  background:#CBD5E1;
 }
 
-#studentName{
-  display:inline-block;
-  max-width:100%;
-  white-space:nowrap;
-  text-transform:uppercase;
-  color:var(--n);
-  font:700 10.7mm/1 Georgia,"Times New Roman",serif;
-  letter-spacing:.035em
-}
-
-.copy{
-  max-width:164mm;
-  margin-top:4.5mm;
-  color:var(--n2);
-  font:3.6mm/1.55 Georgia,"Times New Roman",serif
-}
-
-.programme-description{
-  display:inline-block;
-  max-width:100%
+.completion{
+  top:91mm;
+  left:50%;
+  transform:translateX(-50%);
+  width:185mm;
+  text-align:center;
+  font-size:4mm;
+  line-height:1.6;
+  color:#475569;
 }
 
 .programme{
-  display:block;
-  margin-top:1.3mm;
-  color:var(--b);
-  font:700 6mm/1.2 Arial,Helvetica,sans-serif;
-  letter-spacing:.02em
-}
-
-.bottom{
-  margin-top:auto;
-  padding:0 1mm 2.5mm 0;
-  display:grid;
-  grid-template-columns:1.15fr .9fr;
-  gap:13mm;
-  align-items:end
-}
-
-.details{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:4.3mm 8mm
-}
-
-.detail{
-  padding-top:2.1mm;
-  border-top:.25mm solid var(--p)
-}
-
-.label{
-  display:block;
-  margin-bottom:1.1mm;
-  color:var(--b);
-  font-size:2.1mm;
+  top:108mm;
+  left:50%;
+  transform:translateX(-50%);
+  font-family:Georgia,"Times New Roman",serif;
+  font-size:7.5mm;
+  line-height:1.1;
   font-weight:700;
-  letter-spacing:.16em;
-  text-transform:uppercase
+  color:var(--navy);
+  text-align:center;
+  white-space:nowrap;
 }
 
-.value{
-  display:block;
-  color:var(--n);
+.programme-line{
+  position:absolute;
+  top:119mm;
+  left:50%;
+  transform:translateX(-50%);
+  width:80mm;
+  height:.6mm;
+  background:var(--light-blue);
+}
+
+.award-label{
+  top:128mm;
+  left:50%;
+  transform:translateX(-50%);
   font-size:3.2mm;
-  font-weight:700;
-  line-height:1.2;
-  overflow-wrap:anywhere
-}
-
-.status{
-  display:inline-flex;
-  align-items:center;
-  gap:1.5mm;
+  color:#64748B;
+  letter-spacing:.12em;
   text-transform:uppercase;
-  letter-spacing:.08em
+  white-space:nowrap;
 }
 
-.status:before{
-  content:"";
-  width:2.1mm;
-  height:2.1mm;
-  background:var(--b);
-  border-radius:50%;
-  box-shadow:0 0 0 .8mm var(--p)
+.award-date{
+  top:134mm;
+  left:50%;
+  transform:translateX(-50%);
+  font-size:4.2mm;
+  font-weight:700;
+  color:var(--navy);
+  white-space:nowrap;
 }
 
 .signature{
+  left:28mm;
+  bottom:23mm;
+  width:55mm;
   text-align:center;
-  align-self:end
 }
 
-.sig-img-box{
-  width:46mm;
-  height:16mm;
-  display:flex;
-  align-items:flex-end;
-  justify-content:center;
-  overflow:hidden;
-  margin:0 auto -1.4mm
+.signature-line{
+  width:55mm;
+  height:.4mm;
+  background:var(--navy);
+  margin-bottom:2mm;
 }
 
-.sig-img{
-  width:45mm;
-  height:19mm;
-  object-fit:contain;
-  object-position:center bottom;
-  mix-blend-mode:multiply;
-  filter:contrast(1.14) saturate(.7)
-}
-
-.sig-line{
-  width:49mm;
-  margin:auto;
-  border-top:.45mm solid var(--n);
-  padding-top:1.8mm
-}
-
-.sig-name{
-  font:700 3.7mm/1.1 Georgia,"Times New Roman",serif
-}
-
-.sig-title{
-  margin-top:.7mm;
-  color:var(--b);
-  font-size:2.2mm;
+.signature-name{
+  font-size:3.3mm;
   font-weight:700;
-  letter-spacing:.12em;
-  text-transform:uppercase
 }
 
-.micro{
-  position:absolute;
-  left:20mm;
-  bottom:8mm;
-  color:var(--n2);
-  font-size:1.75mm;
-  letter-spacing:.1em;
-  text-transform:uppercase;
-  opacity:.7
-}
-
-.side{
-  position:absolute;
-  right:0;
-  top:0;
-  width:var(--side);
-  height:100%;
-  padding:13mm 9mm 10mm;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  overflow:hidden;
-  background:var(--n);
-  color:var(--w);
-  z-index:10
-}
-
-.side:before{
-  content:"";
-  position:absolute;
-  width:76mm;
-  height:92mm;
-  left:-22mm;
-  top:-22mm;
-  background:var(--b);
-  transform:rotate(24deg);
-  z-index:-3
-}
-
-.side:after{
-  content:"";
-  position:absolute;
-  width:85mm;
-  height:85mm;
-  border:10mm solid var(--lb);
-  border-radius:50%;
-  left:-18mm;
-  bottom:-32mm;
-  opacity:.2;
-  z-index:-2
-}
-
-.geo{
-  position:absolute;
-  inset:0;
-  z-index:-1;
-  background:linear-gradient(
-    45deg,
-    transparent 0 44%,
-    rgba(255,255,255,.12) 44% 45%,
-    transparent 45% 100%
-  )
-}
-
-.geo:before,
-.geo:after{
-  content:"";
-  position:absolute;
-  border:.6mm solid rgba(255,255,255,.24);
-  transform:rotate(45deg)
-}
-
-.geo:before{
-  width:34mm;
-  height:34mm;
-  right:-23mm;
-  top:33mm
-}
-
-.geo:after{
-  width:21mm;
-  height:21mm;
-  left:-13mm;
-  top:80mm
-}
-
-.kicker{
-  font-size:2.15mm;
-  font-weight:700;
-  letter-spacing:.22em;
-  text-transform:uppercase;
-  color:var(--p)
-}
-
-.verify-title{
-  margin-top:1.5mm;
-  text-align:center;
-  font:700 5.3mm/1.08 Georgia,"Times New Roman",serif
-}
-
-.seal{
-  position:relative;
-  width:44mm;
-  height:44mm;
-  margin-top:8.5mm;
-  display:grid;
-  place-items:center
-}
-
-.seal-star{
-  position:absolute;
-  inset:0;
-  background:var(--p);
-  clip-path:polygon(50% 0)
-}
-
-.seal-core{
-  position:relative;
-  width:31mm;
-  height:31mm;
-  border-radius:50%;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-  background:var(--n);
-  border:.7mm solid var(--w);
-  box-shadow:0 0 0 1.2mm var(--b)
-}
-
-.seal-label{
-  color:var(--p);
-  font-size:1.9mm;
-  font-weight:700;
-  letter-spacing:.17em;
-  text-transform:uppercase
-}
-
-.seal-year{
-  margin-top:.9mm;
-  color:var(--w);
-  font:700 7.3mm/1 Georgia,"Times New Roman",serif
-}
-
-.seal-rule{
-  width:11mm;
-  height:.45mm;
+.signature-title{
+  font-size:2.8mm;
+  color:#64748B;
   margin-top:1mm;
-  background:var(--lb)
 }
 
-.qr{
-  width:35mm;
-  height:35mm;
-  margin-top:8.4mm;
-  padding:2.3mm;
-  background:var(--w);
-  border:.55mm solid var(--p);
-  box-shadow:0 1.5mm 4mm rgba(11,26,46,.25);
-  display:grid;
-  place-items:center
-}
-
-.qr canvas,
-.qr img{
-  width:100%!important;
-  height:100%!important;
-  display:block;
-  object-fit:contain
-}
-
-.qr img{
-  background:#fff
-}
-
-.scan{
-  margin-top:4.1mm;
-  font-size:2.75mm;
-  font-weight:800;
-  letter-spacing:.18em;
-  text-transform:uppercase
-}
-
-.domain{
-  margin-top:1.6mm;
-  color:var(--p);
-  font-size:2.3mm;
-  text-align:center
-}
-
-.side-id{
-  width:100%;
-  margin-top:auto;
-  padding-top:4mm;
-  border-top:.25mm solid rgba(255,255,255,.28);
+.qr-box{
+  right:28mm;
+  bottom:20mm;
+  width:31mm;
   text-align:center;
-  color:var(--p);
-  font-size:1.95mm;
-  line-height:1.5;
-  letter-spacing:.12em;
-  text-transform:uppercase
 }
 
-.side-id>span{
-  display:inline-block
-}
-
-.side-id strong{
+.qr-box canvas{
   display:block;
-  margin-top:.7mm;
-  color:var(--w);
-  font-size:2.35mm;
-  letter-spacing:.08em
+  width:25mm !important;
+  height:25mm !important;
+  margin:0 auto 2mm;
 }
 
-@media screen{
-  .certificate [data-editor-id]{
-    cursor:move
+.qr-label{
+  font-size:2.6mm;
+  color:#64748B;
+  line-height:1.3;
+}
+
+/* =========================
+   RESPONSIVE BUILDER
+========================= */
+
+@media(max-width:1000px){
+  .main{
+    grid-template-columns:1fr;
   }
 
-  .certificate [data-editor-id]:hover{
-    outline:1px dotted rgba(59,130,246,.72);
-    outline-offset:2px
+  .sidebar{
+    height:auto;
   }
 
-  .certificate [data-editor-id].editor-selected{
-    outline:2px dashed #f59e0b;
-    outline-offset:2px
+  .preview-area{
+    justify-content:flex-start;
   }
 }
 
-@page{
-  size:A4 landscape;
-  margin:0
-}
+/* =========================
+   PRINT
+========================= */
 
 @media print{
-  html,body{
-    width:297mm;
-    height:210mm;
+  body{
     background:#fff;
-    margin:0;
+  }
+
+  .topbar,
+  .sidebar{
+    display:none !important;
+  }
+
+  .main{
+    display:block;
     padding:0;
-    overflow:hidden
   }
 
-  .editor-panel,
-  .preview-toolbar{
-    display:none!important
+  .preview-area{
+    padding:0;
+    overflow:visible;
   }
 
-  .builder-shell,
-  .preview-pane,
-  .preview-scroll,
-  .stage-space{
-    display:block!important;
-    width:297mm!important;
-    height:210mm!important;
-    margin:0!important;
-    padding:0!important;
-    overflow:visible!important;
-    background:#fff!important
-  }
-
-  .preview-stage{
-    width:297mm!important;
-    height:210mm!important;
-    transform:none!important
+  .certificate-wrap{
+    transform:none !important;
   }
 
   .certificate{
-    width:297mm!important;
-    height:210mm!important;
-    box-shadow:none!important;
-    margin:0!important
+    box-shadow:none;
   }
 
-  .certificate [data-editor-id],
-  .certificate [data-editor-id]:hover,
-  .certificate [data-editor-id].editor-selected{
-    outline:none!important
-  }
-}
-
-@media(max-width:980px){
-  .builder-shell{
-    grid-template-columns:1fr
+  .editable.selected{
+    outline:none !important;
   }
 
-  .editor-panel{
-    position:relative;
-    height:auto;
-    border-right:0;
-    border-bottom:1px solid #d7e0eb
-  }
-
-  .preview-pane{
-    min-height:auto
+  @page{
+    size:A4 landscape;
+    margin:0;
   }
 }
 </style>
@@ -1138,1206 +612,744 @@ h1 .of-completion{
 
 <body>
 
-<div class="builder-shell">
+<div class="app">
+
+  <!-- =========================
+       TOP BAR
+  ========================== -->
 
-<!-- =====================================================
-     EDITOR
-===================================================== -->
+  <div class="topbar">
 
-<aside class="editor-panel">
+    <div class="brand">
+      <div class="brand-logo">TR</div>
+
+      <div class="brand-text">
+        <strong>Tech Resonate Academy</strong>
+        <span>Certificate Builder</span>
+      </div>
+    </div>
+
+    <div class="top-actions">
+      <button onclick="saveDesign()">Save</button>
+      <button onclick="loadDesign()">Load</button>
+      <button onclick="resetDesign()">Reset</button>
+      <button onclick="window.print()">Print / PDF</button>
+    </div>
+
+  </div>
+
+  <!-- =========================
+       MAIN
+  ========================== -->
+
+  <div class="main">
+
+    <!-- =========================
+         SIDEBAR
+    ========================== -->
+
+    <aside class="sidebar">
+
+      <div class="panel-title">Certificate Designer</div>
+
+      <div class="panel-subtitle">
+        Select an element, edit its text, color, size and position.
+      </div>
+
+
+      <!-- =========================
+           CERTIFICATE CONTENT
+      ========================== -->
+
+      <div class="section">
+
+        <h3>Certificate Information</h3>
+
+        <div class="field">
+          <label>Academy Name</label>
+          <input
+            id="academyInput"
+            type="text"
+            value="Tech Resonate Academy"
+          >
+        </div>
 
-<div class="editor-head">
-  <h2>Tech Resonate Certificate Builder</h2>
-  <p>
-    Create, edit, replace and print certificates.
-    Edit text, colors, positions, sizes, logo, QR code and signature.
-  </p>
-  <span class="private-badge">Private Builder</span>
-</div>
+        <div class="field">
+          <label>Tagline</label>
+          <input
+            id="taglineInput"
+            type="text"
+            value="INNOVATION THAT RESONATES"
+          >
+        </div>
 
+        <div class="field">
+          <label>Recipient Name</label>
+          <input
+            id="nameInput"
+            type="text"
+            value="LOVELYN JOSEPH"
+          >
+        </div>
 
-<!-- CERTIFICATE CONTENT -->
+        <div class="field">
+          <label>Programme</label>
+          <input
+            id="programmeInput"
+            type="text"
+            value="Diploma in Data Processing"
+          >
+        </div>
 
-<details class="panel-section" open>
-<summary>Certificate Content</summary>
+        <div class="field">
+          <label>Completion Text</label>
+          <textarea id="completionInput">for successfully completing the prescribed training and practical requirements of the programme</textarea>
+        </div>
 
-<div class="section-body">
+      </div>
 
-<div class="field">
-<label>Student Name</label>
-<input id="inputStudentName" type="text">
-</div>
 
-<div class="field">
-<label>Programme</label>
-<input id="inputProgramme" type="text">
-</div>
+      <!-- =========================
+           AWARD DATE
+      ========================== -->
 
-<div class="field">
-<label>Certificate ID</label>
-<input id="inputCertificateId" type="text">
-</div>
+      <div class="section">
 
-<div class="field">
-<label>Issue Date</label>
-<input id="inputIssueDate" type="text">
-</div>
+        <h3>Award Date</h3>
 
-<div class="field">
-<label>Certificate Status</label>
-<input id="inputStatus" type="text">
-</div>
+        <div class="field">
+          <label>Day</label>
+          <input
+            id="awardDay"
+            type="text"
+            value="Monday"
+            placeholder="e.g. Monday"
+          >
+        </div>
 
-<div class="field">
-<label>Authorized Person / CEO Name</label>
-<input id="inputCeoName" type="text">
-</div>
+        <div class="grid-2">
 
-<div class="field">
-<label>Authorized Person / CEO Title</label>
-<input id="inputCeoTitle" type="text">
-</div>
+          <div class="field">
+            <label>Date</label>
+            <input
+              id="awardDate"
+              type="text"
+              value="27"
+              placeholder="e.g. 27"
+            >
+          </div>
 
-<div class="field">
-<label>QR Verification URL</label>
+          <div class="field">
+            <label>Year</label>
+            <input
+              id="awardYear"
+              type="text"
+              value="2026"
+              placeholder="e.g. 2026"
+            >
+          </div>
 
-<div class="check-row">
-<input id="autoQrUrl" type="checkbox" checked>
-<span>Build automatically from Certificate ID</span>
-</div>
+        </div>
 
-<input id="inputQrUrl" type="url">
+        <div class="help">
+          The certificate will display the day, date and year of award together.
+        </div>
 
-</div>
+      </div>
 
-</div>
-</details>
 
+      <!-- =========================
+           SELECT ELEMENT
+      ========================== -->
 
-<!-- LOGO -->
+      <div class="section">
 
-<details class="panel-section" open>
-<summary>Logo Manager</summary>
+        <h3>Element Designer</h3>
 
-<div class="section-body">
+        <div class="field">
 
-<div class="field">
-<label>Upload / Replace Logo</label>
-<input id="logoUpload" class="file-input" type="file" accept="image/*">
-</div>
+          <label>Select Element</label>
 
-<div class="asset-preview">
-<img id="logoPreview" alt="Logo preview">
-</div>
+          <select id="elementSelect">
 
-<div class="action-grid">
-<button type="button" id="saveLogo">Save Logo</button>
-<button type="button" id="removeLogo" class="danger">Remove Logo</button>
-<button type="button" id="restoreLogo">Restore Default Logo</button>
-</div>
+            <option value="academy">Tech Resonate Academy</option>
 
-</div>
-</details>
+            <option value="tagline">Tagline</option>
 
+            <option value="heading">Certificate of Completion</option>
 
-<!-- QR -->
+            <option value="presented">Presented Text</option>
 
-<details class="panel-section" open>
-<summary>QR Code Manager</summary>
+            <option value="studentName">Recipient Name</option>
 
-<div class="section-body">
+            <option value="completion">Completion Text</option>
 
-<div class="check-row">
-<input id="showQr" type="checkbox" checked>
-<span>Show QR code on certificate</span>
-</div>
+            <option value="programme">Programme</option>
 
-<div class="check-row">
-<input id="useUploadedQr" type="checkbox">
-<span>Use uploaded QR image instead of generated QR</span>
-</div>
+            <option value="awardLabel">Award Label</option>
 
-<div class="field">
-<label>Upload QR Image</label>
-<input id="qrUpload" class="file-input" type="file" accept="image/*">
-</div>
+            <option value="awardDate">Award Date</option>
 
-<div class="asset-preview qr-preview">
-<img id="qrPreview" alt="QR preview">
-</div>
+            <option value="signature">Signature</option>
 
-<div class="action-grid">
-<button type="button" id="saveQr">Save QR Image</button>
-<button type="button" id="removeQr" class="danger">Remove QR Image</button>
-<button type="button" id="restoreQr">Regenerate QR</button>
-</div>
+            <option value="qr">QR Verification</option>
 
-</div>
-</details>
+          </select>
 
+        </div>
 
-<!-- SIGNATURE -->
 
-<details class="panel-section" open>
-<summary>Signature</summary>
+        <!-- TEXT CONTENT -->
 
-<div class="section-body">
+        <div class="field">
 
-<div class="field">
-<label>Upload Signature</label>
-<input id="signatureUpload" class="file-input" type="file" accept="image/*">
-</div>
+          <label>Text Content</label>
 
-<div class="signature-preview">
-<img id="signaturePreview" alt="Signature preview">
-</div>
+          <input
+            id="controlText"
+            type="text"
+            placeholder="Type or replace text"
+          >
 
-<div class="action-grid">
-<button type="button" id="saveSignature">Save Signature</button>
-<button type="button" id="removeSavedSignature" class="danger">
-Remove Saved Signature
-</button>
-</div>
+          <div class="help">
+            Change the selected text directly here.
+          </div>
 
-</div>
-</details>
+        </div>
 
 
-<!-- =====================================================
-     ELEMENT DESIGNER
-===================================================== -->
+        <!-- COLOR -->
 
-<details class="panel-section" open>
-<summary>Element Designer</summary>
+        <div class="field">
 
-<div class="section-body">
+          <label>Text Color</label>
 
-<label class="segment-label" style="margin-top:0">
-Editable Element
-</label>
+          <div class="color-row">
 
-<select id="elementSelect" class="element-select"></select>
+            <input
+              id="controlColor"
+              type="color"
+              value="#0B1A2E"
+            >
 
-<div id="selectedElementTitle" class="selected-element-title"></div>
+            <input
+              id="controlColorHex"
+              type="text"
+              value="#0B1A2E"
+              maxlength="7"
+            >
 
+            <button
+              class="small-btn"
+              type="button"
+              onclick="resetColor()"
+            >
+              Reset
+            </button>
 
-<!-- TEXT EDITOR -->
+          </div>
 
-<div id="textEditorArea">
+        </div>
 
-<div class="field">
-<label>Text Content</label>
 
-<textarea
-id="controlText"
-placeholder="Type your text here..."
-></textarea>
+        <!-- FONT -->
 
-<div class="help">
-Change the selected text directly here.
-</div>
+        <div class="grid-2">
 
-</div>
+          <div class="field">
+            <label>Font Size (mm)</label>
 
+            <input
+              id="fontSize"
+              type="number"
+              step="0.1"
+              value="6"
+            >
+          </div>
 
-<div class="field">
-<label>Text Color</label>
+          <div class="field">
+            <label>Font Weight</label>
 
-<div class="color-preview">
+            <select id="fontWeight">
 
-<input
-id="controlColor"
-type="color"
-value="#0B1A2E"
->
+              <option value="400">Normal</option>
+              <option value="500">Medium</option>
+              <option value="600">Semi Bold</option>
+              <option value="700">Bold</option>
+              <option value="800">Extra Bold</option>
+              <option value="900">Black</option>
 
-<span
-id="colorCode"
-class="color-code"
->#0B1A2E</span>
+            </select>
 
-</div>
+          </div>
 
-</div>
+        </div>
 
-</div>
 
+        <!-- POSITION -->
 
-<!-- NUDGE -->
+        <div class="grid-2">
 
-<div class="increment-row">
-<span>Nudge</span>
+          <div class="field">
+            <label>Horizontal Position (%)</label>
 
-<button
-type="button"
-data-step="1"
-class="active"
->1 px</button>
+            <input
+              id="posX"
+              type="number"
+              step="0.1"
+              value="50"
+            >
+          </div>
 
-<button
-type="button"
-data-step="5"
->5 px</button>
+          <div class="field">
+            <label>Vertical Position (mm)</label>
 
-<button
-type="button"
-data-step="10"
->10 px</button>
-</div>
+            <input
+              id="posY"
+              type="number"
+              step="0.1"
+              value="50"
+            >
+          </div>
 
+        </div>
 
-<div class="nudge-wrap">
 
-<span class="empty"></span>
+        <!-- WIDTH -->
 
-<button
-type="button"
-data-nudge="up"
->↑ Up</button>
+        <div class="field">
 
-<span class="empty"></span>
+          <label>Width (mm)</label>
 
-<button
-type="button"
-data-nudge="left"
->← Left</button>
+          <input
+            id="elementWidth"
+            type="number"
+            step="0.5"
+            value="100"
+          >
 
-<button
-type="button"
-data-nudge="down"
->↓ Down</button>
+        </div>
 
-<button
-type="button"
-data-nudge="right"
->Right →</button>
 
-</div>
+        <!-- ALIGNMENT -->
 
+        <div class="field">
 
-<div class="center-row">
+          <label>Text Alignment</label>
 
-<button
-type="button"
-id="centerH"
->Center Horizontally</button>
+          <select id="textAlign">
 
-<button
-type="button"
-id="centerV"
->Center Vertically</button>
+            <option value="left">Left</option>
+            <option value="center">Center</option>
+            <option value="right">Right</option>
 
-</div>
+          </select>
 
+        </div>
 
-<!-- NUMERIC CONTROLS -->
 
-<div class="control-grid">
+        <!-- LETTER SPACING -->
 
-<div class="field">
-<label>X Offset (px)</label>
-<input id="controlX" type="number" step="1">
-</div>
+        <div class="field">
 
-<div class="field">
-<label>Y Offset (px)</label>
-<input id="controlY" type="number" step="1">
-</div>
+          <label>Letter Spacing (em)</label>
 
-<div class="field">
-<label>Width (mm)</label>
-<input id="controlWidth" type="number" step=".1" min="0">
-</div>
+          <input
+            id="letterSpacing"
+            type="number"
+            step="0.01"
+            value="0"
+          >
 
-<div class="field">
-<label>Height (mm)</label>
-<input id="controlHeight" type="number" step=".1" min="0">
-</div>
+        </div>
 
-<div class="field">
-<label>Font Size (mm)</label>
-<input id="controlFontSize" type="number" step=".05" min="0">
-</div>
 
-<div class="field">
-<label>Letter Spacing (em)</label>
-<input id="controlLetterSpacing" type="number" step=".005">
-</div>
+        <!-- ROTATION -->
 
-<div class="field">
-<label>Line Height</label>
-<input id="controlLineHeight" type="number" step=".05" min=".1">
-</div>
+        <div class="field">
 
-<div class="field">
-<label>Rotation (deg)</label>
-<input id="controlRotation" type="number" step="1">
-</div>
+          <label>Rotation (degrees)</label>
 
-</div>
+          <input
+            id="rotation"
+            type="number"
+            step="1"
+            value="0"
+          >
 
+        </div>
 
-<span class="segment-label">
-Text Alignment
-</span>
 
-<div class="segmented" id="alignButtons">
+        <!-- VISIBILITY -->
 
-<button type="button" data-align="left">
-Left
-</button>
+        <div class="action-grid">
 
-<button type="button" data-align="center">
-Center
-</button>
+          <button
+            class="btn secondary"
+            type="button"
+            onclick="toggleSelectedVisibility()"
+          >
+            Show / Hide
+          </button>
 
-<button type="button" data-align="right">
-Right
-</button>
+          <button
+            class="btn danger"
+            type="button"
+            onclick="clearSelectedText()"
+          >
+            Clear Text
+          </button>
 
-</div>
+        </div>
 
 
-<span class="segment-label">
-Font Weight
-</span>
+        <div class="action-grid" style="margin-top:7px">
 
-<div class="segmented two" id="weightButtons">
+          <button
+            class="btn secondary"
+            type="button"
+            onclick="centerSelected()"
+          >
+            Center
+          </button>
 
-<button type="button" data-weight="400">
-Normal
-</button>
+          <button
+            class="btn outline"
+            type="button"
+            onclick="resetSelected()"
+          >
+            Reset Element
+          </button>
 
-<button type="button" data-weight="700">
-Bold
-</button>
+        </div>
 
-</div>
+      </div>
 
 
-<span class="segment-label">
-Visibility
-</span>
+      <!-- =========================
+           QR VERIFICATION
+      ========================== -->
 
-<div class="segmented two" id="visibilityButtons">
+      <div class="section">
 
-<button type="button" data-visible="true">
-Show
-</button>
+        <h3>QR Verification</h3>
 
-<button type="button" data-visible="false">
-Hide / Delete
-</button>
+        <div class="field">
 
-</div>
+          <label>Verification URL</label>
 
+          <input
+            id="qrUrl"
+            type="text"
+            value="https://techresonate.com/verify"
+            placeholder="https://..."
+          >
 
-<button
-type="button"
-class="small-action"
-id="resetSelectedElement"
-style="width:100%;margin-top:10px"
->
-Reset Selected Element
-</button>
+        </div>
 
+        <button
+          class="btn"
+          type="button"
+          onclick="generateQR()"
+        >
+          Generate QR Code
+        </button>
 
-<div class="help">
-Click any editable element on the certificate to select it.
-You can then change its text, color, size, position and visibility.
-</div>
+      </div>
 
-</div>
-</details>
 
+      <!-- =========================
+           SIGNATURE
+      ========================== -->
 
-<!-- ACTIONS -->
+      <div class="section">
 
-<details class="panel-section" open>
-<summary>Actions</summary>
+        <h3>Signature</h3>
 
-<div class="section-body">
+        <div class="field">
 
-<div class="action-grid">
+          <label>Signer Name</label>
 
-<button
-type="button"
-id="saveDesign"
-class="primary"
->
-Save Design
-</button>
+          <input
+            id="signatureName"
+            type="text"
+            value="Authorized Signatory"
+          >
 
-<button
-type="button"
-id="resetDesign"
->
-Reset Design
-</button>
+        </div>
 
-<button
-type="button"
-id="resetCertificate"
->
-Reset Certificate
-</button>
+        <div class="field">
 
-<button
-type="button"
-id="printCertificate"
-class="print"
->
-Print / Save PDF
-</button>
+          <label>Signer Title</label>
 
-</div>
+          <input
+            id="signatureTitle"
+            type="text"
+            value="Tech Resonate Academy"
+          >
 
-<div
-id="editorStatus"
-class="editor-status"
-aria-live="polite"
-></div>
+        </div>
 
-</div>
-</details>
+      </div>
 
-</aside>
 
+      <div class="section">
 
-<!-- =====================================================
-     PREVIEW
-===================================================== -->
+        <button
+          class="btn"
+          type="button"
+          onclick="window.print()"
+        >
+          Print Certificate
+        </button>
 
-<main class="preview-pane">
+      </div>
 
-<div class="preview-toolbar">
+    </aside>
 
-<strong>
-Live Certificate Preview
-</strong>
 
-<div class="zoom-control">
+    <!-- =========================
+         PREVIEW
+    ========================== -->
 
-<span>
-Preview zoom
-</span>
+    <main class="preview-area">
 
-<select id="previewZoom">
+      <div class="certificate-wrap">
 
-<option value="auto">Auto</option>
-<option value="1">100%</option>
-<option value=".9">90%</option>
-<option value=".8">80%</option>
-<option value=".7">70%</option>
-<option value=".6">60%</option>
-<option value=".5">50%</option>
+        <div
+          id="certificate"
+          class="certificate"
+        >
 
-</select>
+          <div class="corner tl"></div>
+          <div class="corner tr"></div>
+          <div class="corner bl"></div>
+          <div class="corner br"></div>
 
-</div>
 
-</div>
+          <!-- ACADEMY -->
 
+          <div
+            id="academy"
+            class="editable academy"
+            data-key="academy"
+          >
+            Tech Resonate Academy
+          </div>
 
-<div
-class="preview-scroll"
-id="previewScroll"
->
 
-<div
-class="stage-space"
-id="stageSpace"
->
+          <!-- TAGLINE -->
 
-<div
-class="preview-stage"
-id="previewStage"
->
+          <div
+            id="tagline"
+            class="editable tagline"
+            data-key="tagline"
+          >
+            INNOVATION THAT RESONATES
+          </div>
 
-<article
-class="certificate"
-id="certificate"
->
 
+          <!-- SINGLE HEADING ELEMENT -->
 
-<div class="top-stripes"></div>
+          <div
+            id="heading"
+            class="editable heading"
+            data-key="heading"
+          >
+            Certificate of Completion
+          </div>
 
 
-<section class="main">
+          <div class="heading-line"></div>
 
 
-<header class="header">
+          <!-- PRESENTED -->
 
-<img
-class="logo"
-id="logo"
-data-editor-id="logo"
-src="https://techresonate.com/logo.png"
-alt="Tech Resonate"
->
+          <div
+            id="presented"
+            class="editable presented"
+            data-key="presented"
+          >
+            This certificate is proudly presented to
+          </div>
 
-<div class="issuer">
 
-<span
-id="officialCertificate"
-data-editor-id="officialCertificate"
->
-Official Certificate
-</span>
+          <!-- NAME -->
 
-<strong
-id="academyText"
-data-editor-id="academyText"
->
-Tech Resonate Academy
-</strong>
+          <div
+            id="studentName"
+            class="editable student-name"
+            data-key="studentName"
+          >
+            LOVELYN JOSEPH
+          </div>
 
-</div>
 
-</header>
+          <div class="name-line"></div>
 
 
-<div class="title">
+          <!-- COMPLETION -->
 
-<div
-class="eyebrow"
-id="achievementCompletion"
-data-editor-id="achievementCompletion"
->
-Achievement &amp; Completion
-</div>
+          <div
+            id="completion"
+            class="editable completion"
+            data-key="completion"
+          >
+            for successfully completing the prescribed training and practical requirements of the programme
+          </div>
 
 
-<!-- SAME LINE -->
-<h1>
+          <!-- PROGRAMME -->
 
-<span
-class="heading-main"
-id="certificateHeading"
-data-editor-id="certificateHeading"
->
-Certificate
-</span>
+          <div
+            id="programme"
+            class="editable programme"
+            data-key="programme"
+          >
+            Diploma in Data Processing
+          </div>
 
-<span
-class="of-completion"
-id="ofCompletion"
-data-editor-id="ofCompletion"
->
-of Completion
-</span>
 
-</h1>
+          <div class="programme-line"></div>
 
-</div>
 
+          <!-- AWARD LABEL -->
 
-<div
-class="presented"
-id="presentedTo"
-data-editor-id="presentedTo"
->
-This certificate is proudly presented to
-</div>
+          <div
+            id="awardLabel"
+            class="editable award-label"
+            data-key="awardLabel"
+          >
+            Awarded On
+          </div>
 
 
-<div class="name-line">
+          <!-- AWARD DATE -->
 
-<div
-id="studentName"
-data-editor-id="studentName"
->
-LOVELYN JOSEPH
-</div>
+          <div
+            id="awardDateDisplay"
+            class="editable award-date"
+            data-key="awardDate"
+          >
+            Monday, 27 — 2026
+          </div>
 
-<div
-class="name-underline"
-id="studentUnderline"
-data-editor-id="studentUnderline"
-></div>
 
-</div>
+          <!-- SIGNATURE -->
 
+          <div
+            id="signature"
+            class="editable signature"
+            data-key="signature"
+          >
 
-<div class="copy">
+            <div class="signature-line"></div>
 
-<span
-class="programme-description"
-id="programmeDescription"
-data-editor-id="programmeDescription"
->
-for successfully completing the prescribed training and practical requirements of the programme
-</span>
+            <div
+              id="signatureNameDisplay"
+              class="signature-name"
+            >
+              Authorized Signatory
+            </div>
 
-<span
-class="programme"
-id="programme"
-data-editor-id="programmeName"
->
-Diploma in Data Processing
-</span>
+            <div
+              id="signatureTitleDisplay"
+              class="signature-title"
+            >
+              Tech Resonate Academy
+            </div>
 
-</div>
+          </div>
 
 
-<div class="bottom">
+          <!-- QR -->
 
-<div class="details">
+          <div
+            id="qr"
+            class="editable qr-box"
+            data-key="qr"
+          >
 
-<div class="detail">
+            <canvas id="qrCanvas"></canvas>
 
-<span class="label">
-Certificate ID
-</span>
+            <div class="qr-label">
+              Scan to verify certificate
+            </div>
 
-<span
-class="value"
-id="certificateId"
-data-editor-id="certificateIdBlock"
->
-TR-2026-DDP-001
-</span>
+          </div>
 
-</div>
+        </div>
 
+      </div>
 
-<div class="detail">
+    </main>
 
-<span class="label">
-Issue Date
-</span>
-
-<span
-class="value"
-id="issueDate"
-data-editor-id="issueDateBlock"
->
-27 September 2026
-</span>
-
-</div>
-
-
-<div class="detail">
-
-<span class="label">
-Certificate Status
-</span>
-
-<span
-class="value status"
-id="status"
-data-editor-id="statusBlock"
->
-Valid
-</span>
-
-</div>
-
-
-<div class="detail">
-
-<span class="label">
-Issued By
-</span>
-
-<span
-class="value"
-id="issuedByValue"
-data-editor-id="issuedByBlock"
->
-Tech Resonate Academy
-</span>
-
-</div>
-
-</div>
-
-
-<div class="signature">
-
-<div class="sig-img-box">
-
-<img
-class="sig-img"
-id="signature"
-data-editor-id="signatureImage"
-alt="Authorized signature"
->
-
-</div>
-
-<div class="sig-line">
-
-<div
-class="sig-name"
-id="ceoName"
-data-editor-id="ceoName"
->
-Umar Umar
-</div>
-
-<div
-class="sig-title"
-id="ceoTitle"
-data-editor-id="ceoTitle"
->
-Chief Executive Officer
-</div>
-
-</div>
-
-</div>
-
-</div>
-
-
-<div
-class="micro"
-id="microText"
-data-editor-id="microText"
->
-Technology • Practical Skills • Career Readiness
-</div>
-
-
-</section>
-
-
-<!-- SIDE -->
-
-<aside class="side">
-
-<div class="geo"></div>
-
-
-<div
-class="kicker"
-id="authenticCredential"
-data-editor-id="authenticCredential"
->
-Authentic Credential
-</div>
-
-
-<div
-class="verify-title"
-id="verifyCertificate"
-data-editor-id="verifyCertificate"
->
-Verify this<br>certificate
-</div>
-
-
-<div
-class="seal"
-id="seal"
-data-editor-id="seal"
->
-
-<div
-class="seal-star"
-id="sealStar"
-></div>
-
-<div class="seal-core">
-
-<div class="seal-label">
-Certified
-</div>
-
-<div
-class="seal-year"
-id="sealYear"
->
-2026
-</div>
-
-<div class="seal-rule"></div>
-
-</div>
-
-</div>
-
-
-<div
-class="qr"
-id="qrCode"
-data-editor-id="qrCode"
->
-
-<canvas
-id="qrCanvas"
-width="320"
-height="320"
-></canvas>
-
-</div>
-
-
-<div
-class="scan"
-id="scanToVerify"
-data-editor-id="scanToVerify"
->
-Scan to Verify
-</div>
-
-
-<div
-class="domain"
-id="verificationDomain"
-data-editor-id="verificationDomain"
->
-verify.techresonate.com
-</div>
-
-
-<div class="side-id">
-
-<span
-id="certificateReference"
-data-editor-id="certificateReference"
->
-Certificate Reference
-</span>
-
-<strong
-id="sideCertificateId"
-data-editor-id="referenceId"
->
-TR-2026-DDP-001
-</strong>
-
-</div>
-
-</aside>
-
-</article>
-
-</div>
-</div>
-</div>
-
-</main>
+  </div>
 
 </div>
 
 
 <script>
-
 /* =========================================================
-   DEFAULT DATA
-========================================================= */
-
-const DEFAULT_CERTIFICATE = {
-
-studentName:"LOVELYN JOSEPH",
-
-programme:"Diploma in Data Processing",
-
-certificateId:"TR-2026-DDP-001",
-
-issueDate:"27 September 2026",
-
-status:"Valid",
-
-ceo:"Umar Umar",
-
-ceoTitle:"Chief Executive Officer",
-
-signature:
-"https://drive.google.com/uc?export=view&id=19jB_ypH8aTv-QPilB3z7xDKMufb98cNn",
-
-logo:
-"https://techresonate.com/logo.png",
-
-verificationBaseUrl:
-"https://verify.techresonate.com/"
-
-};
-
-
-/* =========================================================
-   STORAGE
-========================================================= */
-
-const STORAGE = {
-
-design:
-"techResonateCertificateBuilder.design.v3",
-
-signature:
-"techResonateCertificateBuilder.signature.v3",
-
-logo:
-"techResonateCertificateBuilder.logo.v3",
-
-qr:
-"techResonateCertificateBuilder.qr.v3",
-
-qrMode:
-"techResonateCertificateBuilder.qrMode.v3"
-
-};
-
-
-/* =========================================================
-   EDITABLE ELEMENTS
+   ELEMENT DEFINITIONS
 ========================================================= */
 
 const ELEMENTS = {
 
-logo:{
-label:"1. Logo",
-selector:"#logo",
-text:false,
-zone:"main"
-},
+  academy:{
+    text:true,
+    el:"academy"
+  },
 
-officialCertificate:{
-label:"2. Official Certificate text",
-selector:"#officialCertificate",
-text:true,
-zone:"parent"
-},
+  tagline:{
+    text:true,
+    el:"tagline"
+  },
 
-academyText:{
-label:"3. Tech Resonate Academy text",
-selector:"#academyText",
-text:true,
-zone:"parent"
-},
+  heading:{
+    text:true,
+    el:"heading"
+  },
 
-achievementCompletion:{
-label:"4. Achievement & Completion",
-selector:"#achievementCompletion",
-text:true,
-zone:"main"
-},
+  presented:{
+    text:true,
+    el:"presented"
+  },
 
-certificateHeading:{
-label:"5. Certificate heading",
-selector:"#certificateHeading",
-text:true,
-zone:"main"
-},
+  studentName:{
+    text:true,
+    el:"studentName"
+  },
 
-ofCompletion:{
-label:"6. Of Completion text",
-selector:"#ofCompletion",
-text:true,
-zone:"main"
-},
+  completion:{
+    text:true,
+    el:"completion"
+  },
 
-presentedTo:{
-label:"7. Presented-to text",
-selector:"#presentedTo",
-text:true,
-zone:"main"
-},
+  programme:{
+    text:true,
+    el:"programme"
+  },
 
-studentName:{
-label:"8. Student name",
-selector:"#studentName",
-text:true,
-zone:"parent"
-},
+  awardLabel:{
+    text:true,
+    el:"awardLabel"
+  },
 
-studentUnderline:{
-label:"9. Student name underline",
-selector:"#studentUnderline",
-text:false,
-zone:"parent"
-},
+  awardDate:{
+    text:true,
+    el:"awardDateDisplay"
+  },
 
-programmeDescription:{
-label:"10. Programme description",
-selector:"#programmeDescription",
-text:true,
-zone:"parent"
-},
+  signature:{
+    text:false,
+    el:"signature"
+  },
 
-programmeName:{
-label:"11. Programme name",
-selector:"#programme",
-text:true,
-zone:"parent"
-},
-
-certificateIdBlock:{
-label:"12. Certificate ID",
-selector:"#certificateId",
-text:true,
-zone:"parent"
-},
-
-issueDateBlock:{
-label:"13. Issue Date",
-selector:"#issueDate",
-text:true,
-zone:"parent"
-},
-
-statusBlock:{
-label:"14. Certificate Status",
-selector:"#status",
-text:true,
-zone:"parent"
-},
-
-issuedByBlock:{
-label:"15. Issued By",
-selector:"#issuedByValue",
-text:true,
-zone:"parent"
-},
-
-signatureImage:{
-label:"16. Signature image",
-selector:"#signature",
-text:false,
-zone:"signature"
-},
-
-ceoName:{
-label:"17. CEO / authorized name",
-selector:"#ceoName",
-text:true,
-zone:"sigline"
-},
-
-ceoTitle:{
-label:"18. CEO / authorized title",
-selector:"#ceoTitle",
-text:true,
-zone:"sigline"
-},
-
-microText:{
-label:"19. Micro text",
-selector:"#microText",
-text:true,
-zone:"main"
-},
-
-authenticCredential:{
-label:"20. Authentic Credential",
-selector:"#authenticCredential",
-text:true,
-zone:"side"
-},
-
-verifyCertificate:{
-label:"21. Verify this certificate",
-selector:"#verifyCertificate",
-text:true,
-zone:"side"
-},
-
-seal:{
-label:"22. Seal",
-selector:"#seal",
-text:false,
-zone:"side"
-},
-
-qrCode:{
-label:"23. QR code",
-selector:"#qrCode",
-text:false,
-zone:"side"
-},
-
-scanToVerify:{
-label:"24. Scan to Verify",
-selector:"#scanToVerify",
-text:true,
-zone:"side"
-},
-
-verificationDomain:{
-label:"25. Verification domain",
-selector:"#verificationDomain",
-text:true,
-zone:"side"
-},
-
-certificateReference:{
-label:"26. Certificate Reference",
-selector:"#certificateReference",
-text:true,
-zone:"parent"
-},
-
-referenceId:{
-label:"27. Certificate reference ID",
-selector:"#sideCertificateId",
-text:true,
-zone:"parent"
-}
-
-};
-
-
-/* =========================================================
-   DOM
-========================================================= */
-
-const certificate =
-document.getElementById("certificate");
-
-const elementSelect =
-document.getElementById("elementSelect");
-
-const statusEl =
-document.getElementById("editorStatus");
-
-const previewStage =
-document.getElementById("previewStage");
-
-const stageSpace =
-document.getElementById("stageSpace");
-
-const previewScroll =
-document.getElementById("previewScroll");
-
-const previewZoom =
-document.getElementById("previewZoom");
-
-const controlText =
-document.getElementById("controlText");
-
-const controlColor =
-document.getElementById("controlColor");
-
-const colorCode =
-document.getElementById("colorCode");
-
-const textEditorArea =
-document.getElementById("textEditorArea");
-
-
-const controls = {
-
-x:document.getElementById("controlX"),
-
-y:document.getElementById("controlY"),
-
-width:document.getElementById("controlWidth"),
-
-height:document.getElementById("controlHeight"),
-
-fontSize:document.getElementById("controlFontSize"),
-
-letterSpacing:
-document.getElementById("controlLetterSpacing"),
-
-lineHeight:
-document.getElementById("controlLineHeight"),
-
-rotation:
-document.getElementById("controlRotation")
+  qr:{
+    text:false,
+    el:"qr"
+  }
 
 };
 
@@ -2346,1102 +1358,266 @@ document.getElementById("controlRotation")
    STATE
 ========================================================= */
 
-let selectedKey="studentName";
+let selectedKey = "heading";
 
-let nudgeStep=1;
+let designState = {};
 
-let currentScale=1;
-
-let designState={};
-
-let workingSignature="";
-
-let workingLogo=
-DEFAULT_CERTIFICATE.logo;
-
-let workingQr="";
-
-let qrTimer=null;
+let defaultHTML = {};
 
 
 /* =========================================================
-   HELPERS
+   ELEMENT HELPER
 ========================================================= */
-
-function notify(message){
-
-statusEl.textContent=message;
-
-clearTimeout(notify.timer);
-
-notify.timer=setTimeout(
-()=>{
-statusEl.textContent="";
-},
-3200
-);
-
-}
-
-
-function extractYear(id){
-
-const match=
-String(id||"").match(
-/(?:^|[-_])(20\d{2})(?:[-_]|$)/
-);
-
-return match
-?match[1]
-:String(new Date().getFullYear());
-
-}
-
-
-function generatedVerificationUrl(){
-
-return `https://verify.techresonate.com/?id=${
-encodeURIComponent(
-document.getElementById("inputCertificateId").value.trim()
-)
-}`;
-
-}
-
-
-function activeVerificationUrl(){
-
-return document.getElementById("autoQrUrl").checked
-
-?generatedVerificationUrl()
-
-:(
-document.getElementById("inputQrUrl").value.trim()
-||
-generatedVerificationUrl()
-);
-
-}
-
-
-function makeSeal(){
-
-const points=[];
-
-const n=64;
-
-for(let i=0;i<n;i++){
-
-const r=i%2?42:49;
-
-const angle=
-(-90+360*i/n)*Math.PI/180;
-
-points.push(
-`${(
-50+r*Math.cos(angle)
-).toFixed(3)}% ${(
-50+r*Math.sin(angle)
-).toFixed(3)}%`
-);
-
-}
-
-document.getElementById("sealStar").style.clipPath=
-`polygon(${points.join(",")})`;
-
-}
-
-
-function updateQrUrlField(){
-
-const auto=
-document.getElementById("autoQrUrl").checked;
-
-const input=
-document.getElementById("inputQrUrl");
-
-if(auto){
-
-input.value=
-generatedVerificationUrl();
-
-input.readOnly=true;
-
-}else{
-
-input.readOnly=false;
-
-if(!input.value.trim())
-input.value=generatedVerificationUrl();
-
-}
-
-}
-
-
-function updateVerificationDomain(url){
-
-try{
-
-document.getElementById(
-"verificationDomain"
-).textContent=
-new URL(url,location.href).host
-||
-"verify.techresonate.com";
-
-}catch{
-
-document.getElementById(
-"verificationDomain"
-).textContent=
-"verify.techresonate.com";
-
-}
-
-}
-
-
-/* =========================================================
-   QR
-========================================================= */
-
-function renderGeneratedQr(url){
-
-clearTimeout(qrTimer);
-
-qrTimer=setTimeout(async()=>{
-
-if(!window.QRCode?.toCanvas){
-
-notify("QR library could not load.");
-
-return;
-
-}
-
-try{
-
-const canvas=
-document.getElementById("qrCanvas");
-
-canvas.style.display="block";
-
-const old=
-document.querySelector("#qrCode img");
-
-if(old)
-old.remove();
-
-await QRCode.toCanvas(
-canvas,
-url,
-{
-width:320,
-margin:1,
-errorCorrectionLevel:"H",
-color:{
-dark:"#0B1A2E",
-light:"#FFFFFF"
-}
-}
-);
-
-document.getElementById(
-"qrPreview"
-).src=
-canvas.toDataURL("image/png");
-
-}catch(error){
-
-console.error(error);
-
-notify(
-"Could not generate QR code."
-);
-
-}
-
-},40);
-
-}
-
-
-function renderUploadedQr(src){
-
-const box=
-document.getElementById("qrCode");
-
-const canvas=
-document.getElementById("qrCanvas");
-
-canvas.style.display="none";
-
-let img=
-box.querySelector("img");
-
-if(!img){
-
-img=document.createElement("img");
-
-img.alt=
-"Uploaded verification QR code";
-
-box.appendChild(img);
-
-}
-
-img.src=src;
-
-document.getElementById(
-"qrPreview"
-).src=src;
-
-}
-
-
-function updateQr(){
-
-const visible=
-document.getElementById("showQr").checked;
-
-document.getElementById(
-"qrCode"
-).style.display=
-visible?"grid":"none";
-
-if(!visible)
-return;
-
-const uploaded=
-document.getElementById("useUploadedQr").checked
-&&
-workingQr;
-
-if(uploaded){
-
-renderUploadedQr(workingQr);
-
-}else{
-
-renderGeneratedQr(
-activeVerificationUrl()
-);
-
-}
-
-}
-
-
-/* =========================================================
-   CERTIFICATE CONTENT
-========================================================= */
-
-function renderContentFromInputs(){
-
-const student=
-document.getElementById(
-"inputStudentName"
-).value;
-
-const programme=
-document.getElementById(
-"inputProgramme"
-).value;
-
-const id=
-document.getElementById(
-"inputCertificateId"
-).value;
-
-const date=
-document.getElementById(
-"inputIssueDate"
-).value;
-
-const status=
-document.getElementById(
-"inputStatus"
-).value;
-
-const ceo=
-document.getElementById(
-"inputCeoName"
-).value;
-
-const title=
-document.getElementById(
-"inputCeoTitle"
-).value;
-
-
-document.getElementById(
-"studentName"
-).textContent=student;
-
-document.getElementById(
-"programme"
-).textContent=programme;
-
-document.getElementById(
-"certificateId"
-).textContent=id;
-
-document.getElementById(
-"sideCertificateId"
-).textContent=id;
-
-document.getElementById(
-"issueDate"
-).textContent=date;
-
-document.getElementById(
-"status"
-).textContent=status;
-
-document.getElementById(
-"ceoName"
-).textContent=ceo;
-
-document.getElementById(
-"ceoTitle"
-).textContent=title;
-
-document.getElementById(
-"sealYear"
-).textContent=extractYear(id);
-
-updateQrUrlField();
-
-updateVerificationDomain(
-activeVerificationUrl()
-);
-
-updateQr();
-
-requestAnimationFrame(
-fitName
-);
-
-}
-
-
-/* =========================================================
-   INPUT DATA
-========================================================= */
-
-function setInputsFromData(data){
-
-document.getElementById(
-"inputStudentName"
-).value=
-data.studentName||"";
-
-document.getElementById(
-"inputProgramme"
-).value=
-data.programme||"";
-
-document.getElementById(
-"inputCertificateId"
-).value=
-data.certificateId||"";
-
-document.getElementById(
-"inputIssueDate"
-).value=
-data.issueDate||"";
-
-document.getElementById(
-"inputStatus"
-).value=
-data.status||"";
-
-document.getElementById(
-"inputCeoName"
-).value=
-data.ceo||"";
-
-document.getElementById(
-"inputCeoTitle"
-).value=
-data.ceoTitle||"";
-
-document.getElementById(
-"autoQrUrl"
-).checked=true;
-
-document.getElementById(
-"inputQrUrl"
-).value="";
-
-renderContentFromInputs();
-
-}
-
-
-/* =========================================================
-   DESIGN STATE
-========================================================= */
-
-function pxToMm(px){
-
-return Number(px)*25.4/96;
-
-}
-
-
-function round(value,d=3){
-
-const p=10**d;
-
-return Math.round(
-(Number(value)+Number.EPSILON)*p
-)/p;
-
-}
-
 
 function elementFor(key){
 
-return certificate.querySelector(
-ELEMENTS[key].selector
-);
-
-}
-
-
-function getState(key){
-
-return designState[key]||
-(
-designState[key]={
-x:0,
-y:0,
-rotation:0,
-visible:true
-}
-);
+  return document.getElementById(
+    ELEMENTS[key].el
+  );
 
 }
 
 
 /* =========================================================
-   APPLY ELEMENT STATE
+   DEFAULT CONTENT
 ========================================================= */
 
-function applyElementState(key){
+Object.keys(ELEMENTS).forEach(key => {
 
-const el=
-elementFor(key);
+  const el = elementFor(key);
 
-const state=
-getState(key);
+  if(
+    el &&
+    ELEMENTS[key].text
+  ){
 
-if(!el)
-return;
+    defaultHTML[key] = el.innerHTML;
 
-
-const x=
-Number(state.x)||0;
-
-const y=
-Number(state.y)||0;
-
-const rotation=
-Number(state.rotation)||0;
-
-
-el.style.transform=
-`translate(${x}px,${y}px) rotate(${rotation}deg)`;
-
-
-el.style.width=
-state.width==null
-?""
-:`${state.width}mm`;
-
-
-el.style.height=
-state.height==null
-?""
-:`${state.height}mm`;
-
-
-el.style.fontSize=
-state.fontSize==null
-?""
-:`${state.fontSize}mm`;
-
-
-el.style.letterSpacing=
-state.letterSpacing==null
-?""
-:`${state.letterSpacing}em`;
-
-
-el.style.lineHeight=
-state.lineHeight==null
-?""
-:String(state.lineHeight);
-
-
-el.style.textAlign=
-state.textAlign||"";
-
-
-el.style.fontWeight=
-state.fontWeight==null
-?""
-:String(state.fontWeight);
-
-
-/*
-   NEW:
-   Text color is stored per element.
-*/
-
-if(ELEMENTS[key].text){
-
-el.style.color=
-state.color||"";
-
-}
-
-
-/*
-   Visibility
-*/
-
-el.style.visibility=
-state.visible===false
-?"hidden"
-:"visible";
-
-
-if(
-key==="signatureImage"
-&&
-el.parentElement
-){
-
-el.parentElement.style.overflow=
-(
-x||
-y||
-state.width!=null||
-state.height!=null||
-rotation
-)
-?"visible"
-:"";
-
-}
-
-}
-
-
-/* =========================================================
-   APPLY ALL
-========================================================= */
-
-function applyAllDesign(){
-
-Object.keys(ELEMENTS)
-.forEach(applyElementState);
-
-requestAnimationFrame(()=>{
-
-fitName();
-
-refreshControls();
+  }
 
 });
 
-}
-
 
 /* =========================================================
-   RESET ELEMENT
+   STATE
 ========================================================= */
 
-function resetElementInlineStyles(key){
+function getState(key){
 
-const el=
-elementFor(key);
+  if(!designState[key]){
 
-if(!el)
-return;
+    designState[key] = {
 
-[
-"transform",
-"transformOrigin",
-"width",
-"height",
-"fontSize",
-"letterSpacing",
-"lineHeight",
-"textAlign",
-"fontWeight",
-"color",
-"visibility"
-].forEach(
-property=>{
-el.style[property]="";
-}
-);
+      text:null,
 
-if(
-key==="signatureImage"
-&&
-el.parentElement
-){
+      color:null,
 
-el.parentElement.style.overflow="";
+      fontSize:null,
 
-}
+      fontWeight:null,
+
+      x:null,
+
+      y:null,
+
+      width:null,
+
+      align:null,
+
+      letterSpacing:null,
+
+      rotation:null,
+
+      visible:true
+
+    };
+
+  }
+
+  return designState[key];
 
 }
 
 
 /* =========================================================
-   RESET SELECTED
-========================================================= */
-
-function resetSelectedElement(){
-
-resetElementInlineStyles(
-selectedKey
-);
-
-delete designState[selectedKey];
-
-getState(selectedKey);
-
-applyElementState(
-selectedKey
-);
-
-refreshControls();
-
-notify(
-"Selected element reset."
-);
-
-}
-
-
-/* =========================================================
-   ZONE
-========================================================= */
-
-function getZoneElement(key){
-
-const el=
-elementFor(key);
-
-const zone=
-ELEMENTS[key].zone;
-
-if(!el)
-return certificate;
-
-if(zone==="parent")
-return el.parentElement||certificate;
-
-if(zone==="main")
-return certificate.querySelector(".main");
-
-if(zone==="side")
-return certificate.querySelector(".side");
-
-if(zone==="signature")
-return certificate.querySelector(".signature");
-
-if(zone==="sigline")
-return certificate.querySelector(".sig-line");
-
-return certificate;
-
-}
-
-
-/* =========================================================
-   CENTER
-========================================================= */
-
-function centerSelected(axis){
-
-const el=
-elementFor(selectedKey);
-
-const zone=
-getZoneElement(selectedKey);
-
-const state=
-getState(selectedKey);
-
-if(!el||!zone)
-return;
-
-const old=
-el.style.transform;
-
-el.style.transform="none";
-
-const er=
-el.getBoundingClientRect();
-
-const zr=
-zone.getBoundingClientRect();
-
-el.style.transform=old;
-
-if(axis==="x"){
-
-state.x=
-round(
-(
-(zr.left+zr.width/2)
--
-(er.left+er.width/2)
-)
-/currentScale,
-1
-);
-
-}else{
-
-state.y=
-round(
-(
-(zr.top+zr.height/2)
--
-(er.top+er.height/2)
-)
-/currentScale,
-1
-);
-
-}
-
-applyElementState(selectedKey);
-
-refreshControls();
-
-}
-
-
-/* =========================================================
-   NUDGE
-========================================================= */
-
-function nudge(direction){
-
-const state=
-getState(selectedKey);
-
-if(direction==="left")
-state.x=
-(Number(state.x)||0)-nudgeStep;
-
-if(direction==="right")
-state.x=
-(Number(state.x)||0)+nudgeStep;
-
-if(direction==="up")
-state.y=
-(Number(state.y)||0)-nudgeStep;
-
-if(direction==="down")
-state.y=
-(Number(state.y)||0)+nudgeStep;
-
-applyElementState(
-selectedKey
-);
-
-refreshControls();
-
-}
-
-
-/* =========================================================
-   DEFAULT VALUES
-========================================================= */
-
-function defaults(key){
-
-const el=
-elementFor(key);
-
-const computed=
-getComputedStyle(el);
-
-const fontSize=
-parseFloat(computed.fontSize)||0;
-
-const letterSpacing=
-computed.letterSpacing==="normal"
-?0
-:(parseFloat(computed.letterSpacing)||0);
-
-const lineHeight=
-computed.lineHeight==="normal"
-?null
-:(parseFloat(computed.lineHeight)||null);
-
-return{
-
-width:
-round(
-pxToMm(
-parseFloat(computed.width)||0
-),
-2
-),
-
-height:
-round(
-pxToMm(
-parseFloat(computed.height)||0
-),
-2
-),
-
-fontSize:
-round(
-pxToMm(fontSize),
-2
-),
-
-letterSpacing:
-fontSize
-?round(letterSpacing/fontSize,3)
-:0,
-
-lineHeight:
-fontSize&&lineHeight
-?round(lineHeight/fontSize,2)
-:"",
-
-textAlign:
-computed.textAlign||"",
-
-fontWeight:
-parseInt(computed.fontWeight,10)||400,
-
-color:
-computed.color||"#0B1A2E"
-
-};
-
-}
-
-
-/* =========================================================
-   COLOR CONVERSION
+   RGB TO HEX
 ========================================================= */
 
 function rgbToHex(rgb){
 
-if(!rgb)
-return "#0B1A2E";
+  if(!rgb){
+    return "#0B1A2E";
+  }
 
-if(rgb.startsWith("#"))
-return rgb;
+  const values = rgb.match(/\d+/g);
 
-const match=
-rgb.match(
-/rgba?\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)/
-);
+  if(
+    !values ||
+    values.length < 3
+  ){
 
-if(!match)
-return "#0B1A2E";
+    return "#0B1A2E";
 
-return "#"+
-[1,2,3]
-.map(
-i=>
-parseInt(match[i],10)
-.toString(16)
-.padStart(2,"0")
-)
-.join("");
+  }
+
+  return "#" +
+    values
+      .slice(0,3)
+      .map(v =>
+        Number(v)
+          .toString(16)
+          .padStart(2,"0")
+      )
+      .join("")
+      .toUpperCase();
 
 }
 
 
 /* =========================================================
-   REFRESH CONTROLS
+   NORMALIZE HEX
 ========================================================= */
 
-function refreshControls(){
+function normalizeHex(value){
 
-const metadata=
-ELEMENTS[selectedKey];
+  if(!value){
+    return null;
+  }
 
-const state=
-getState(selectedKey);
+  let v = value.trim();
 
-const defaultsData=
-defaults(selectedKey);
+  if(!v.startsWith("#")){
+    v = "#" + v;
+  }
 
-document.getElementById(
-"selectedElementTitle"
-).textContent=
-metadata.label;
+  if(/^#[0-9a-fA-F]{6}$/.test(v)){
+    return v.toUpperCase();
+  }
 
-
-controls.x.value=
-round(state.x||0,1);
-
-controls.y.value=
-round(state.y||0,1);
-
-controls.rotation.value=
-round(state.rotation||0,1);
-
-controls.width.value=
-state.width==null
-?defaultsData.width
-:state.width;
-
-controls.height.value=
-state.height==null
-?defaultsData.height
-:state.height;
-
-
-/* TEXT */
-
-if(metadata.text){
-
-textEditorArea.style.display="block";
-
-controlText.value=
-elementFor(selectedKey).textContent;
-
-let currentColor=
-state.color||
-rgbToHex(
-getComputedStyle(
-elementFor(selectedKey)
-).color
-);
-
-controlColor.value=
-currentColor;
-
-colorCode.textContent=
-currentColor.toUpperCase();
-
-}else{
-
-textEditorArea.style.display="none";
+  return null;
 
 }
 
 
-controls.fontSize.value=
-metadata.text
-?(
-state.fontSize==null
-?defaultsData.fontSize
-:state.fontSize
-)
-:"";
+/* =========================================================
+   APPLY STATE
+========================================================= */
+
+function applyElementState(key){
+
+  const el = elementFor(key);
+
+  const s = getState(key);
+
+  if(!el){
+    return;
+  }
 
 
-controls.letterSpacing.value=
-metadata.text
-?(
-state.letterSpacing==null
-?defaultsData.letterSpacing
-:state.letterSpacing
-)
-:"";
+  if(
+    ELEMENTS[key].text &&
+    s.text !== null
+  ){
+
+    el.textContent = s.text;
+
+  }
 
 
-controls.lineHeight.value=
-metadata.text
-?(
-state.lineHeight==null
-?defaultsData.lineHeight
-:state.lineHeight
-)
-:"";
+  if(
+    ELEMENTS[key].text &&
+    s.color
+  ){
+
+    el.style.color = s.color;
+
+  }
 
 
-controls.fontSize.disabled=
-!metadata.text;
+  if(s.fontSize !== null){
 
-controls.letterSpacing.disabled=
-!metadata.text;
+    el.style.fontSize =
+      s.fontSize + "mm";
 
-controls.lineHeight.disabled=
-!metadata.text;
+  }
 
 
-document.querySelectorAll(
-"#alignButtons button,#weightButtons button"
-).forEach(
-button=>{
-button.disabled=
-!metadata.text;
-}
-);
+  if(s.fontWeight !== null){
+
+    el.style.fontWeight =
+      s.fontWeight;
+
+  }
 
 
-document.querySelectorAll(
-"#alignButtons button"
-).forEach(
-button=>{
-button.classList.toggle(
-"active",
-button.dataset.align===
-(
-state.textAlign||
-defaultsData.textAlign
-)
-);
-}
-);
+  if(s.x !== null){
+
+    el.style.left =
+      s.x + "%";
+
+  }
 
 
-document.querySelectorAll(
-"#weightButtons button"
-).forEach(
-button=>{
-button.classList.toggle(
-"active",
-Number(button.dataset.weight)===
-(
-state.fontWeight==null
-?defaultsData.fontWeight
-:state.fontWeight
-)
-);
-}
-);
+  if(s.y !== null){
+
+    el.style.top =
+      s.y + "mm";
+
+  }
 
 
-document.querySelectorAll(
-"#visibilityButtons button"
-).forEach(
-button=>{
-button.classList.toggle(
-"active",
-(
-state.visible!==false
-)===
-(
-button.dataset.visible==="true"
-)
-);
-}
-);
+  if(s.width !== null){
+
+    el.style.width =
+      s.width + "mm";
+
+  }
+
+
+  if(s.align !== null){
+
+    el.style.textAlign =
+      s.align;
+
+  }
+
+
+  if(s.letterSpacing !== null){
+
+    el.style.letterSpacing =
+      s.letterSpacing + "em";
+
+  }
+
+
+  const baseTransform =
+    key === "academy" ||
+    key === "tagline" ||
+    key === "heading" ||
+    key === "presented" ||
+    key === "studentName" ||
+    key === "completion" ||
+    key === "programme" ||
+    key === "awardLabel" ||
+    key === "awardDate"
+
+      ? "translateX(-50%)"
+
+      : "";
+
+  const rotation =
+    s.rotation !== null
+      ? ` rotate(${s.rotation}deg)`
+      : "";
+
+  el.style.transform =
+    baseTransform + rotation;
+
+
+  el.style.visibility =
+    s.visible === false
+      ? "hidden"
+      : "visible";
 
 }
 
@@ -3452,316 +1628,377 @@ button.dataset.visible==="true"
 
 function selectElement(key){
 
-if(!ELEMENTS[key])
-return;
+  selectedKey = key;
 
-selectedKey=key;
+  document
+    .querySelectorAll(".editable")
+    .forEach(el => {
 
-elementSelect.value=key;
+      el.classList.remove("selected");
 
-certificate
-.querySelectorAll(".editor-selected")
-.forEach(
-element=>
-element.classList.remove(
-"editor-selected"
-)
-);
+    });
 
-const el=
-elementFor(key);
+  const el = elementFor(key);
 
-if(el)
-el.classList.add(
-"editor-selected"
-);
+  if(el){
 
-refreshControls();
+    el.classList.add("selected");
+
+  }
+
+  document.getElementById(
+    "elementSelect"
+  ).value = key;
+
+  refreshControls();
 
 }
 
 
 /* =========================================================
-   NUMERIC CONTROL
+   REFRESH CONTROLS
 ========================================================= */
 
-function setNum(
-property,
-input,
-textOnly=false
-){
+function refreshControls(){
 
-if(
-textOnly&&
-!ELEMENTS[selectedKey].text
-)
-return;
+  const key = selectedKey;
 
-const value=
-parseFloat(input.value);
+  const el = elementFor(key);
 
-if(!Number.isFinite(value))
-return;
+  const s = getState(key);
 
-getState(selectedKey)[property]=value;
+  if(!el){
+    return;
+  }
 
-applyElementState(
-selectedKey
-);
 
-if(selectedKey==="studentName")
-fitName();
+  /* TEXT */
 
-refreshControls();
+  const textInput =
+    document.getElementById(
+      "controlText"
+    );
+
+  if(ELEMENTS[key].text){
+
+    textInput.disabled = false;
+
+    textInput.value =
+      el.textContent;
+
+  }else{
+
+    textInput.disabled = true;
+
+    textInput.value = "";
+
+  }
+
+
+  /* COLOR */
+
+  const color =
+    s.color ||
+    rgbToHex(
+      getComputedStyle(el).color
+    );
+
+  document.getElementById(
+    "controlColor"
+  ).value = color;
+
+  document.getElementById(
+    "controlColorHex"
+  ).value = color;
+
+
+  /* FONT SIZE */
+
+  const computedSize =
+    parseFloat(
+      getComputedStyle(el).fontSize
+    ) / 3.7795;
+
+  document.getElementById(
+    "fontSize"
+  ).value =
+    s.fontSize !== null
+      ? s.fontSize
+      : Number(computedSize.toFixed(2));
+
+
+  /* WEIGHT */
+
+  document.getElementById(
+    "fontWeight"
+  ).value =
+    s.fontWeight !== null
+      ? s.fontWeight
+      : getComputedStyle(el).fontWeight;
+
+
+  /* X */
+
+  if(s.x !== null){
+
+    document.getElementById(
+      "posX"
+    ).value = s.x;
+
+  }
+
+
+  /* Y */
+
+  if(s.y !== null){
+
+    document.getElementById(
+      "posY"
+    ).value = s.y;
+
+  }
+
+
+  /* WIDTH */
+
+  document.getElementById(
+    "elementWidth"
+  ).value =
+    s.width !== null
+      ? s.width
+      : parseFloat(
+          getComputedStyle(el).width
+        ) / 3.7795;
+
+
+  /* ALIGN */
+
+  document.getElementById(
+    "textAlign"
+  ).value =
+    s.align ||
+    getComputedStyle(el).textAlign;
+
+
+  /* LETTER SPACING */
+
+  let spacing =
+    parseFloat(
+      getComputedStyle(el).letterSpacing
+    );
+
+  if(isNaN(spacing)){
+    spacing = 0;
+  }
+
+  document.getElementById(
+    "letterSpacing"
+  ).value =
+    s.letterSpacing !== null
+      ? s.letterSpacing
+      : Number((spacing / parseFloat(getComputedStyle(el).fontSize)).toFixed(3));
+
+
+  /* ROTATION */
+
+  document.getElementById(
+    "rotation"
+  ).value =
+    s.rotation !== null
+      ? s.rotation
+      : 0;
 
 }
 
 
 /* =========================================================
-   TEXT CONTENT
+   UPDATE TEXT
 ========================================================= */
 
-function updateSelectedText(){
+function setText(value){
 
-if(!ELEMENTS[selectedKey].text)
-return;
+  const key = selectedKey;
 
-const el=
-elementFor(selectedKey);
+  if(!ELEMENTS[key].text){
+    return;
+  }
 
-el.textContent=
-controlText.value;
+  const el = elementFor(key);
 
-getState(selectedKey).text=
-controlText.value;
+  const s = getState(key);
 
-if(selectedKey==="studentName")
-fitName();
+  el.textContent = value;
+
+  s.text = value;
+
+  if(key === "studentName"){
+
+    fitStudentName();
+
+  }
+
+  refreshControls();
 
 }
 
 
 /* =========================================================
-   TEXT COLOR
+   SET COLOR
 ========================================================= */
 
-function updateSelectedColor(){
+function setColor(value){
 
-if(!ELEMENTS[selectedKey].text)
-return;
+  const key = selectedKey;
 
-const color=
-controlColor.value;
+  if(!ELEMENTS[key].text){
+    return;
+  }
 
-const el=
-elementFor(selectedKey);
+  const hex =
+    normalizeHex(value);
 
-el.style.color=
-color;
+  if(!hex){
+    return;
+  }
 
-getState(selectedKey).color=
-color;
+  const s = getState(key);
 
-colorCode.textContent=
-color.toUpperCase();
+  s.color = hex;
+
+  elementFor(key).style.color = hex;
+
+  document.getElementById(
+    "controlColor"
+  ).value = hex;
+
+  document.getElementById(
+    "controlColorHex"
+  ).value = hex;
 
 }
 
 
 /* =========================================================
-   FIT STUDENT NAME
+   RESET COLOR
 ========================================================= */
 
-function fitName(){
+function resetColor(){
 
-const el=
-document.getElementById(
-"studentName"
-);
+  const key = selectedKey;
 
-const box=
-el.parentElement;
+  const el = elementFor(key);
 
-if(
-designState.studentName?.fontSize!=null
-)
-return;
+  const s = getState(key);
 
-let size=10.7;
+  delete s.color;
 
-el.style.fontSize=
-size+"mm";
+  el.style.color = "";
 
-while(
-el.scrollWidth>
-box.clientWidth&&
-size>7
-){
-
-size-=.2;
-
-el.style.fontSize=
-size+"mm";
-
-}
+  refreshControls();
 
 }
 
 
 /* =========================================================
-   POPULATE ELEMENT LIST
+   CLEAR TEXT
 ========================================================= */
 
-function populate(){
+function clearSelectedText(){
 
-elementSelect.innerHTML="";
+  const key = selectedKey;
 
-Object.entries(ELEMENTS)
-.forEach(
-([key,metadata])=>{
+  if(!ELEMENTS[key].text){
+    return;
+  }
 
-const option=
-document.createElement("option");
-
-option.value=key;
-
-option.textContent=
-metadata.label;
-
-elementSelect.appendChild(
-option
-);
-
-}
-);
+  setText("");
 
 }
 
 
 /* =========================================================
-   SAVE DESIGN
+   TOGGLE VISIBILITY
 ========================================================= */
 
-function saveDesign(){
+function toggleSelectedVisibility(){
 
-try{
+  const key = selectedKey;
 
-/*
-  Store the complete design including:
-  - positions
-  - sizes
-  - colors
-  - text
-  - visibility
-  - font settings
-*/
+  const s = getState(key);
 
-Object.entries(ELEMENTS)
-.forEach(
-([key,metadata])=>{
+  s.visible =
+    s.visible === false
+      ? true
+      : false;
 
-if(metadata.text){
-
-const el=
-elementFor(key);
-
-if(el){
-
-designState[key].text=
-el.textContent;
-
-designState[key].color=
-getState(key).color||
-rgbToHex(
-getComputedStyle(el).color
-);
-
-}
-
-}
-
-});
-
-localStorage.setItem(
-STORAGE.design,
-JSON.stringify(designState)
-);
-
-notify(
-"Design, text and colors saved in this browser."
-);
-
-}catch(error){
-
-console.error(error);
-
-notify(
-"Could not save design."
-);
-
-}
+  applyElementState(key);
 
 }
 
 
 /* =========================================================
-   LOAD DESIGN
+   CENTER
 ========================================================= */
 
-function loadDesign(){
+function centerSelected(){
 
-try{
+  const key = selectedKey;
 
-const saved=
-JSON.parse(
-localStorage.getItem(
-STORAGE.design
-)||"{}"
-);
+  const s = getState(key);
 
-if(
-saved&&
-typeof saved==="object"
-){
+  s.x = 50;
 
-designState=saved;
+  const el = elementFor(key);
 
-}
+  el.style.left = "50%";
 
-}catch{
+  if(
+    key === "academy" ||
+    key === "tagline" ||
+    key === "heading" ||
+    key === "presented" ||
+    key === "studentName" ||
+    key === "completion" ||
+    key === "programme" ||
+    key === "awardLabel" ||
+    key === "awardDate"
+  ){
 
-designState={};
+    el.style.transform =
+      `translateX(-50%)${s.rotation ? ` rotate(${s.rotation}deg)` : ""}`;
 
-}
+  }
 
-
-Object.keys(ELEMENTS)
-.forEach(getState);
-
-
-/*
-  Restore saved text.
-*/
-
-Object.entries(ELEMENTS)
-.forEach(
-([key,metadata])=>{
-
-if(
-metadata.text&&
-designState[key]?.text!=null
-){
-
-elementFor(key).textContent=
-designState[key].text;
+  refreshControls();
 
 }
 
-}
-);
 
+/* =========================================================
+   RESET SELECTED
+========================================================= */
 
-applyAllDesign();
+function resetSelected(){
+
+  const key = selectedKey;
+
+  const el = elementFor(key);
+
+  if(
+    ELEMENTS[key].text &&
+    defaultHTML[key] !== undefined
+  ){
+
+    el.innerHTML =
+      defaultHTML[key];
+
+  }
+
+  delete designState[key];
+
+  applyElementState(key);
+
+  refreshControls();
 
 }
 
@@ -3772,1360 +2009,1203 @@ applyAllDesign();
 
 function resetDesign(){
 
-Object.keys(ELEMENTS)
-.forEach(
-resetElementInlineStyles
-);
+  if(
+    !confirm(
+      "Reset the entire certificate design?"
+    )
+  ){
 
-designState={};
+    return;
 
-Object.keys(ELEMENTS)
-.forEach(getState);
+  }
 
-try{
+  designState = {};
 
-localStorage.removeItem(
-STORAGE.design
-);
+  Object.keys(ELEMENTS)
+    .forEach(key => {
 
-}catch{}
+      const el =
+        elementFor(key);
 
-applyAllDesign();
+      if(
+        ELEMENTS[key].text &&
+        defaultHTML[key] !== undefined
+      ){
 
-notify(
-"Design reset to original certificate."
-);
+        el.innerHTML =
+          defaultHTML[key];
 
-}
+      }
+
+      el.removeAttribute("style");
+
+    });
 
 
-/* =========================================================
-   FILE READER
-========================================================= */
+  /* restore QR */
 
-function readFile(file){
+  generateQR();
 
-return new Promise(
-(resolve,reject)=>{
+  updateCertificateText();
 
-const reader=
-new FileReader();
-
-reader.onload=
-()=>{
-resolve(reader.result);
-};
-
-reader.onerror=
-reject;
-
-reader.readAsDataURL(file);
-
-}
-);
+  selectElement("heading");
 
 }
 
 
 /* =========================================================
-   RESIZE IMAGE
+   INPUT HELPERS
 ========================================================= */
 
-async function resizeImage(
-source,
-maxW=1400,
-maxH=700
+function bindInput(
+  id,
+  callback
 ){
 
-return new Promise(
-(resolve,reject)=>{
-
-const image=
-new Image();
-
-image.onload=()=>{
-
-let width=
-image.naturalWidth;
-
-let height=
-image.naturalHeight;
-
-const scale=
-Math.min(
-1,
-maxW/width,
-maxH/height
-);
-
-width=
-Math.max(
-1,
-Math.round(width*scale)
-);
-
-height=
-Math.max(
-1,
-Math.round(height*scale)
-);
-
-const canvas=
-document.createElement("canvas");
-
-canvas.width=width;
-
-canvas.height=height;
-
-canvas
-.getContext("2d")
-.drawImage(
-image,
-0,
-0,
-width,
-height
-);
-
-resolve(
-canvas.toDataURL("image/png")
-);
-
-};
-
-image.onerror=
-reject;
-
-image.src=source;
-
-}
-);
+  document
+    .getElementById(id)
+    .addEventListener(
+      "input",
+      callback
+    );
 
 }
 
 
 /* =========================================================
-   LOGO
+   TEXT CONTROL
 ========================================================= */
 
-async function handleLogo(file){
+bindInput(
+  "controlText",
+  function(){
 
-if(!file)
-return;
+    setText(this.value);
 
-try{
-
-workingLogo=
-await resizeImage(
-await readFile(file)
+  }
 );
-
-document.getElementById(
-"logo"
-).src=
-workingLogo;
-
-document.getElementById(
-"logo"
-).classList.remove(
-"logo-empty"
-);
-
-document.getElementById(
-"logoPreview"
-).src=
-workingLogo;
-
-notify(
-"Logo loaded. Click Save Logo to keep it."
-);
-
-}catch{
-
-notify(
-"Could not read logo image."
-);
-
-}
-
-}
-
-
-function loadLogo(){
-
-let saved="";
-
-try{
-
-saved=
-localStorage.getItem(
-STORAGE.logo
-)||"";
-
-}catch{}
-
-workingLogo=
-saved||
-DEFAULT_CERTIFICATE.logo;
-
-document.getElementById(
-"logo"
-).src=
-workingLogo;
-
-document.getElementById(
-"logo"
-).classList.remove(
-"logo-empty"
-);
-
-document.getElementById(
-"logoPreview"
-).src=
-workingLogo;
-
-}
-
-
-function saveLogo(){
-
-if(!workingLogo){
-
-notify(
-"Upload a logo first."
-);
-
-return;
-
-}
-
-try{
-
-localStorage.setItem(
-STORAGE.logo,
-workingLogo
-);
-
-notify(
-"Logo saved in this browser."
-);
-
-}catch{
-
-notify(
-"Could not save logo. Try a smaller image."
-);
-
-}
-
-}
-
-
-function removeLogo(){
-
-workingLogo="";
-
-document.getElementById(
-"logo"
-).src="";
-
-document.getElementById(
-"logo"
-).classList.add(
-"logo-empty"
-);
-
-document.getElementById(
-"logoPreview"
-).removeAttribute(
-"src"
-);
-
-notify(
-"Logo removed from the certificate."
-);
-
-}
-
-
-function restoreLogo(){
-
-workingLogo=
-DEFAULT_CERTIFICATE.logo;
-
-document.getElementById(
-"logo"
-).src=
-workingLogo;
-
-document.getElementById(
-"logo"
-).classList.remove(
-"logo-empty"
-);
-
-document.getElementById(
-"logoPreview"
-).src=
-workingLogo;
-
-notify(
-"Default Tech Resonate logo restored."
-);
-
-}
 
 
 /* =========================================================
-   QR STORAGE
+   COLOR CONTROL
 ========================================================= */
 
-function loadQr(){
+bindInput(
+  "controlColor",
+  function(){
 
-let qr="";
+    setColor(this.value);
 
-let mode="generated";
+  }
+);
 
-try{
 
-qr=
-localStorage.getItem(
-STORAGE.qr
-)||"";
+bindInput(
+  "controlColorHex",
+  function(){
 
-mode=
-localStorage.getItem(
-STORAGE.qrMode
-)||"generated";
+    const hex =
+      normalizeHex(this.value);
 
-}catch{}
+    if(hex){
 
-workingQr=qr;
+      setColor(hex);
 
-document.getElementById(
-"useUploadedQr"
-).checked=
-mode==="uploaded"&&!!qr;
+    }
 
-document.getElementById(
-"showQr"
-).checked=true;
+  }
+);
 
-document.getElementById(
-"qrPreview"
-).src=
-qr||"";
 
-updateQr();
+/* =========================================================
+   FONT SIZE
+========================================================= */
+
+bindInput(
+  "fontSize",
+  function(){
+
+    const value =
+      parseFloat(this.value);
+
+    if(isNaN(value)){
+      return;
+    }
+
+    const s =
+      getState(selectedKey);
+
+    s.fontSize = value;
+
+    elementFor(
+      selectedKey
+    ).style.fontSize =
+      value + "mm";
+
+  }
+);
+
+
+/* =========================================================
+   FONT WEIGHT
+========================================================= */
+
+document
+  .getElementById("fontWeight")
+  .addEventListener(
+    "change",
+    function(){
+
+      const s =
+        getState(selectedKey);
+
+      s.fontWeight =
+        this.value;
+
+      elementFor(
+        selectedKey
+      ).style.fontWeight =
+        this.value;
+
+    }
+  );
+
+
+/* =========================================================
+   POSITION X
+========================================================= */
+
+bindInput(
+  "posX",
+  function(){
+
+    const value =
+      parseFloat(this.value);
+
+    if(isNaN(value)){
+      return;
+    }
+
+    const s =
+      getState(selectedKey);
+
+    s.x = value;
+
+    const el =
+      elementFor(selectedKey);
+
+    el.style.left =
+      value + "%";
+
+  }
+);
+
+
+/* =========================================================
+   POSITION Y
+========================================================= */
+
+bindInput(
+  "posY",
+  function(){
+
+    const value =
+      parseFloat(this.value);
+
+    if(isNaN(value)){
+      return;
+    }
+
+    const s =
+      getState(selectedKey);
+
+    s.y = value;
+
+    elementFor(
+      selectedKey
+    ).style.top =
+      value + "mm";
+
+  }
+);
+
+
+/* =========================================================
+   WIDTH
+========================================================= */
+
+bindInput(
+  "elementWidth",
+  function(){
+
+    const value =
+      parseFloat(this.value);
+
+    if(isNaN(value)){
+      return;
+    }
+
+    const s =
+      getState(selectedKey);
+
+    s.width = value;
+
+    elementFor(
+      selectedKey
+    ).style.width =
+      value + "mm";
+
+  }
+);
+
+
+/* =========================================================
+   ALIGNMENT
+========================================================= */
+
+document
+  .getElementById("textAlign")
+  .addEventListener(
+    "change",
+    function(){
+
+      const s =
+        getState(selectedKey);
+
+      s.align =
+        this.value;
+
+      elementFor(
+        selectedKey
+      ).style.textAlign =
+        this.value;
+
+    }
+  );
+
+
+/* =========================================================
+   LETTER SPACING
+========================================================= */
+
+bindInput(
+  "letterSpacing",
+  function(){
+
+    const value =
+      parseFloat(this.value);
+
+    if(isNaN(value)){
+      return;
+    }
+
+    const s =
+      getState(selectedKey);
+
+    s.letterSpacing =
+      value;
+
+    elementFor(
+      selectedKey
+    ).style.letterSpacing =
+      value + "em";
+
+  }
+);
+
+
+/* =========================================================
+   ROTATION
+========================================================= */
+
+bindInput(
+  "rotation",
+  function(){
+
+    const value =
+      parseFloat(this.value);
+
+    if(isNaN(value)){
+      return;
+    }
+
+    const s =
+      getState(selectedKey);
+
+    s.rotation =
+      value;
+
+    const el =
+      elementFor(selectedKey);
+
+    const centered =
+      [
+        "academy",
+        "tagline",
+        "heading",
+        "presented",
+        "studentName",
+        "completion",
+        "programme",
+        "awardLabel",
+        "awardDate"
+      ].includes(selectedKey);
+
+    el.style.transform =
+      (centered
+        ? "translateX(-50%)"
+        : "") +
+      ` rotate(${value}deg)`;
+
+  }
+);
+
+
+/* =========================================================
+   ELEMENT SELECT
+========================================================= */
+
+document
+  .getElementById("elementSelect")
+  .addEventListener(
+    "change",
+    function(){
+
+      selectElement(
+        this.value
+      );
+
+    }
+  );
+
+
+/* =========================================================
+   CERTIFICATE INPUTS
+========================================================= */
+
+bindInput(
+  "academyInput",
+  function(){
+
+    document.getElementById(
+      "academy"
+    ).textContent =
+      this.value;
+
+    const s =
+      getState("academy");
+
+    s.text =
+      this.value;
+
+  }
+);
+
+
+bindInput(
+  "taglineInput",
+  function(){
+
+    document.getElementById(
+      "tagline"
+    ).textContent =
+      this.value;
+
+    getState("tagline").text =
+      this.value;
+
+  }
+);
+
+
+bindInput(
+  "nameInput",
+  function(){
+
+    document.getElementById(
+      "studentName"
+    ).textContent =
+      this.value;
+
+    getState("studentName").text =
+      this.value;
+
+    fitStudentName();
+
+  }
+);
+
+
+bindInput(
+  "programmeInput",
+  function(){
+
+    document.getElementById(
+      "programme"
+    ).textContent =
+      this.value;
+
+    getState("programme").text =
+      this.value;
+
+  }
+);
+
+
+bindInput(
+  "completionInput",
+  function(){
+
+    document.getElementById(
+      "completion"
+    ).textContent =
+      this.value;
+
+    getState("completion").text =
+      this.value;
+
+  }
+);
+
+
+/* =========================================================
+   AWARD DATE
+========================================================= */
+
+function updateAwardDate(){
+
+  const day =
+    document.getElementById(
+      "awardDay"
+    ).value.trim();
+
+  const date =
+    document.getElementById(
+      "awardDate"
+    ).value.trim();
+
+  const year =
+    document.getElementById(
+      "awardYear"
+    ).value.trim();
+
+  const result =
+    [day,date,year]
+      .filter(Boolean)
+      .join(", ");
+
+  document.getElementById(
+    "awardDateDisplay"
+  ).textContent =
+    result;
+
+  getState("awardDate").text =
+    result;
 
 }
 
 
-function saveQr(){
-
-if(!workingQr){
-
-notify(
-"Upload a QR image first."
+bindInput(
+  "awardDay",
+  updateAwardDate
 );
 
-return;
-
-}
-
-try{
-
-localStorage.setItem(
-STORAGE.qr,
-workingQr
+bindInput(
+  "awardDate",
+  updateAwardDate
 );
 
-localStorage.setItem(
-STORAGE.qrMode,
-"uploaded"
+bindInput(
+  "awardYear",
+  updateAwardDate
 );
-
-document.getElementById(
-"useUploadedQr"
-).checked=true;
-
-updateQr();
-
-notify(
-"QR image saved in this browser."
-);
-
-}catch{
-
-notify(
-"Could not save QR image."
-);
-
-}
-
-}
-
-
-function removeQr(){
-
-workingQr="";
-
-try{
-
-localStorage.removeItem(
-STORAGE.qr
-);
-
-localStorage.setItem(
-STORAGE.qrMode,
-"generated"
-);
-
-}catch{}
-
-document.getElementById(
-"useUploadedQr"
-).checked=false;
-
-document.getElementById(
-"qrPreview"
-).removeAttribute(
-"src"
-);
-
-updateQr();
-
-notify(
-"Uploaded QR removed. Automatic QR restored."
-);
-
-}
-
-
-function regenerateQr(){
-
-workingQr="";
-
-try{
-
-localStorage.removeItem(
-STORAGE.qr
-);
-
-localStorage.setItem(
-STORAGE.qrMode,
-"generated"
-);
-
-}catch{}
-
-document.getElementById(
-"useUploadedQr"
-).checked=false;
-
-updateQr();
-
-notify(
-"QR regenerated from the verification URL."
-);
-
-}
-
-
-async function handleQr(file){
-
-if(!file)
-return;
-
-try{
-
-workingQr=
-await resizeImage(
-await readFile(file),
-800,
-800
-);
-
-document.getElementById(
-"qrPreview"
-).src=
-workingQr;
-
-document.getElementById(
-"useUploadedQr"
-).checked=true;
-
-updateQr();
-
-notify(
-"QR image loaded. Click Save QR Image to keep it."
-);
-
-}catch{
-
-notify(
-"Could not read QR image."
-);
-
-}
-
-}
 
 
 /* =========================================================
    SIGNATURE
 ========================================================= */
 
-async function handleSignature(file){
+bindInput(
+  "signatureName",
+  function(){
 
-if(!file)
-return;
+    document.getElementById(
+      "signatureNameDisplay"
+    ).textContent =
+      this.value;
 
-try{
-
-workingSignature=
-await resizeImage(
-await readFile(file),
-1200,
-500
+  }
 );
 
-document.getElementById(
-"signature"
-).src=
-workingSignature;
 
-document.getElementById(
-"signaturePreview"
-).src=
-workingSignature;
+bindInput(
+  "signatureTitle",
+  function(){
 
-notify(
-"Signature loaded."
+    document.getElementById(
+      "signatureTitleDisplay"
+    ).textContent =
+      this.value;
+
+  }
 );
 
-}catch{
 
-notify(
-"Could not read signature image."
-);
+/* =========================================================
+   QR CODE
+========================================================= */
 
-}
+function generateQR(){
 
-}
+  const canvas =
+    document.getElementById(
+      "qrCanvas"
+    );
 
+  const url =
+    document.getElementById(
+      "qrUrl"
+    ).value.trim();
 
-function loadSignature(){
+  if(!url){
+    return;
+  }
 
-let saved="";
+  QRCode.toCanvas(
+    canvas,
+    url,
+    {
+      width:120,
+      margin:1,
+      errorCorrectionLevel:"H"
+    },
+    function(error){
 
-try{
+      if(error){
 
-saved=
-localStorage.getItem(
-STORAGE.signature
-)||"";
+        console.error(error);
 
-}catch{}
+      }
 
-workingSignature=
-saved||
-DEFAULT_CERTIFICATE.signature;
-
-document.getElementById(
-"signature"
-).src=
-workingSignature;
-
-document.getElementById(
-"signaturePreview"
-).src=
-workingSignature;
-
-}
-
-
-function saveSignature(){
-
-if(!workingSignature){
-
-notify(
-"Upload a signature first."
-);
-
-return;
-
-}
-
-try{
-
-localStorage.setItem(
-STORAGE.signature,
-workingSignature
-);
-
-notify(
-"Signature saved in this browser."
-);
-
-}catch{
-
-notify(
-"Could not save signature."
-);
-
-}
-
-}
-
-
-function removeSavedSignature(){
-
-try{
-
-localStorage.removeItem(
-STORAGE.signature
-);
-
-}catch{}
-
-workingSignature=
-DEFAULT_CERTIFICATE.signature;
-
-document.getElementById(
-"signature"
-).src=
-workingSignature;
-
-document.getElementById(
-"signaturePreview"
-).src=
-workingSignature;
-
-notify(
-"Saved signature removed. Default restored."
-);
+    }
+  );
 
 }
 
 
 /* =========================================================
-   RESET CERTIFICATE CONTENT
+   STUDENT NAME FIT
 ========================================================= */
 
-function resetCertificate(){
+function fitStudentName(){
 
-setInputsFromData(
-DEFAULT_CERTIFICATE
-);
+  const el =
+    document.getElementById(
+      "studentName"
+    );
 
-loadLogo();
+  if(!el){
+    return;
+  }
 
-loadSignature();
+  let size =
+    parseFloat(
+      getComputedStyle(el).fontSize
+    );
 
-regenerateQr();
+  const maxWidth =
+    120 * 3.7795;
 
-notify(
-"Certificate content reset. Design remains unchanged."
-);
+  while(
+    el.scrollWidth > maxWidth &&
+    size > 5
+  ){
+
+    size -= .2;
+
+    el.style.fontSize =
+      size + "px";
+
+  }
 
 }
 
 
 /* =========================================================
-   PREVIEW SCALE
+   SAVE
 ========================================================= */
 
-function updatePreviewScale(){
+function saveDesign(){
 
-const value=
-previewZoom.value;
+  const data = {
 
-currentScale=
-value==="auto"
+    designState,
 
-?Math.min(
-1,
-Math.max(
-280,
-previewScroll.clientWidth-12
-)/
-previewStage.offsetWidth
-)
+    academy:
+      document.getElementById(
+        "academyInput"
+      ).value,
 
-:Number(value)||1;
+    tagline:
+      document.getElementById(
+        "taglineInput"
+      ).value,
 
-previewStage.style.transform=
-`scale(${currentScale})`;
+    name:
+      document.getElementById(
+        "nameInput"
+      ).value,
 
-stageSpace.style.width=
-`${previewStage.offsetWidth*currentScale}px`;
+    programme:
+      document.getElementById(
+        "programmeInput"
+      ).value,
 
-stageSpace.style.height=
-`${previewStage.offsetHeight*currentScale}px`;
+    completion:
+      document.getElementById(
+        "completionInput"
+      ).value,
+
+    awardDay:
+      document.getElementById(
+        "awardDay"
+      ).value,
+
+    awardDate:
+      document.getElementById(
+        "awardDate"
+      ).value,
+
+    awardYear:
+      document.getElementById(
+        "awardYear"
+      ).value,
+
+    qrUrl:
+      document.getElementById(
+        "qrUrl"
+      ).value,
+
+    signatureName:
+      document.getElementById(
+        "signatureName"
+      ).value,
+
+    signatureTitle:
+      document.getElementById(
+        "signatureTitle"
+      ).value
+
+  };
+
+  localStorage.setItem(
+    "techResonateCertificate",
+    JSON.stringify(data)
+  );
+
+  alert(
+    "Certificate design saved."
+  );
 
 }
 
 
 /* =========================================================
-   ATTACH EVENTS
+   LOAD
 ========================================================= */
 
-function attach(){
+function loadDesign(){
 
-/* CONTENT */
+  const raw =
+    localStorage.getItem(
+      "techResonateCertificate"
+    );
 
-[
-"inputStudentName",
-"inputProgramme",
-"inputCertificateId",
-"inputIssueDate",
-"inputStatus",
-"inputCeoName",
-"inputCeoTitle"
-].forEach(
-id=>{
+  if(!raw){
 
-document
-.getElementById(id)
-.addEventListener(
-"input",
-renderContentFromInputs
-);
+    alert(
+      "No saved certificate found."
+    );
 
-}
-);
+    return;
 
+  }
 
-/* QR URL */
+  try{
 
-document
-.getElementById("autoQrUrl")
-.addEventListener(
-"change",
-()=>{
+    const data =
+      JSON.parse(raw);
 
-updateQrUrlField();
-
-updateVerificationDomain(
-activeVerificationUrl()
-);
-
-updateQr();
-
-}
-);
+    designState =
+      data.designState || {};
 
 
-document
-.getElementById("inputQrUrl")
-.addEventListener(
-"input",
-()=>{
+    if(data.academy !== undefined){
 
-updateVerificationDomain(
-activeVerificationUrl()
-);
+      document.getElementById(
+        "academyInput"
+      ).value =
+        data.academy;
 
-updateQr();
+      document.getElementById(
+        "academy"
+      ).textContent =
+        data.academy;
 
-}
-);
-
-
-/* LOGO */
-
-document
-.getElementById("logoUpload")
-.addEventListener(
-"change",
-event=>
-handleLogo(
-event.target.files?.[0]
-)
-);
-
-document
-.getElementById("saveLogo")
-.addEventListener(
-"click",
-saveLogo
-);
-
-document
-.getElementById("removeLogo")
-.addEventListener(
-"click",
-removeLogo
-);
-
-document
-.getElementById("restoreLogo")
-.addEventListener(
-"click",
-restoreLogo
-);
+    }
 
 
-/* QR */
+    if(data.tagline !== undefined){
 
-document
-.getElementById("qrUpload")
-.addEventListener(
-"change",
-event=>
-handleQr(
-event.target.files?.[0]
-)
-);
+      document.getElementById(
+        "taglineInput"
+      ).value =
+        data.tagline;
 
-document
-.getElementById("saveQr")
-.addEventListener(
-"click",
-saveQr
-);
+      document.getElementById(
+        "tagline"
+      ).textContent =
+        data.tagline;
 
-document
-.getElementById("removeQr")
-.addEventListener(
-"click",
-removeQr
-);
-
-document
-.getElementById("restoreQr")
-.addEventListener(
-"click",
-regenerateQr
-);
-
-document
-.getElementById("showQr")
-.addEventListener(
-"change",
-updateQr
-);
-
-document
-.getElementById("useUploadedQr")
-.addEventListener(
-"change",
-updateQr
-);
+    }
 
 
-/* SIGNATURE */
+    if(data.name !== undefined){
 
-document
-.getElementById("signatureUpload")
-.addEventListener(
-"change",
-event=>
-handleSignature(
-event.target.files?.[0]
-)
-);
+      document.getElementById(
+        "nameInput"
+      ).value =
+        data.name;
 
-document
-.getElementById("saveSignature")
-.addEventListener(
-"click",
-saveSignature
-);
+      document.getElementById(
+        "studentName"
+      ).textContent =
+        data.name;
 
-document
-.getElementById("removeSavedSignature")
-.addEventListener(
-"click",
-removeSavedSignature
-);
+    }
 
 
-/* ELEMENT SELECT */
+    if(data.programme !== undefined){
 
-elementSelect.addEventListener(
-"change",
-()=>{
-selectElement(
-elementSelect.value
-);
-}
-);
+      document.getElementById(
+        "programmeInput"
+      ).value =
+        data.programme;
 
+      document.getElementById(
+        "programme"
+      ).textContent =
+        data.programme;
 
-/* TEXT EDITOR */
-
-controlText.addEventListener(
-"input",
-()=>{
-
-updateSelectedText();
-
-}
-);
+    }
 
 
-controlColor.addEventListener(
-"input",
-()=>{
+    if(data.completion !== undefined){
 
-updateSelectedColor();
+      document.getElementById(
+        "completionInput"
+      ).value =
+        data.completion;
 
-}
-);
+      document.getElementById(
+        "completion"
+      ).textContent =
+        data.completion;
+
+    }
 
 
-/* NUDGE STEP */
+    if(data.awardDay !== undefined){
 
-document
-.querySelectorAll("[data-step]")
-.forEach(
-button=>
-button.addEventListener(
-"click",
-()=>{
+      document.getElementById(
+        "awardDay"
+      ).value =
+        data.awardDay;
 
-nudgeStep=
-Number(button.dataset.step);
+    }
 
-document
-.querySelectorAll("[data-step]")
-.forEach(
-item=>
-item.classList.toggle(
-"active",
-item===button
-)
-);
+
+    if(data.awardDate !== undefined){
+
+      document.getElementById(
+        "awardDate"
+      ).value =
+        data.awardDate;
+
+    }
+
+
+    if(data.awardYear !== undefined){
+
+      document.getElementById(
+        "awardYear"
+      ).value =
+        data.awardYear;
+
+    }
+
+
+    if(data.qrUrl !== undefined){
+
+      document.getElementById(
+        "qrUrl"
+      ).value =
+        data.qrUrl;
+
+    }
+
+
+    if(data.signatureName !== undefined){
+
+      document.getElementById(
+        "signatureName"
+      ).value =
+        data.signatureName;
+
+      document.getElementById(
+        "signatureNameDisplay"
+      ).textContent =
+        data.signatureName;
+
+    }
+
+
+    if(data.signatureTitle !== undefined){
+
+      document.getElementById(
+        "signatureTitle"
+      ).value =
+        data.signatureTitle;
+
+      document.getElementById(
+        "signatureTitleDisplay"
+      ).textContent =
+        data.signatureTitle;
+
+    }
+
+
+    Object.keys(ELEMENTS)
+      .forEach(key => {
+
+        applyElementState(key);
+
+      });
+
+
+    updateAwardDate();
+
+    generateQR();
+
+    fitStudentName();
+
+    refreshControls();
+
+    alert(
+      "Certificate design loaded."
+    );
+
+  }catch(error){
+
+    console.error(error);
+
+    alert(
+      "Unable to load saved certificate."
+    );
+
+  }
 
 }
-)
-);
 
 
-/* NUDGE */
-
-document
-.querySelectorAll("[data-nudge]")
-.forEach(
-button=>
-button.addEventListener(
-"click",
-()=>nudge(
-button.dataset.nudge
-)
-)
-);
-
-
-/* CENTER */
+/* =========================================================
+   CLICK TO SELECT
+========================================================= */
 
 document
-.getElementById("centerH")
-.addEventListener(
-"click",
-()=>centerSelected("x")
-);
+  .querySelectorAll(".editable")
+  .forEach(el => {
+
+    el.addEventListener(
+      "click",
+      function(event){
+
+        event.stopPropagation();
+
+        selectElement(
+          this.dataset.key
+        );
+
+      }
+    );
+
+  });
+
+
+/* =========================================================
+   DRAGGING
+========================================================= */
+
+let dragging = false;
+
+let dragKey = null;
+
+let startX = 0;
+
+let startY = 0;
+
+let originalLeft = 0;
+
+let originalTop = 0;
+
 
 document
-.getElementById("centerV")
-.addEventListener(
-"click",
-()=>centerSelected("y")
+  .querySelectorAll(".editable")
+  .forEach(el => {
+
+    el.addEventListener(
+      "mousedown",
+      function(event){
+
+        if(event.button !== 0){
+          return;
+        }
+
+        const key =
+          this.dataset.key;
+
+        selectElement(key);
+
+        dragging = true;
+
+        dragKey = key;
+
+        startX =
+          event.clientX;
+
+        startY =
+          event.clientY;
+
+        const rect =
+          this.getBoundingClientRect();
+
+        const certRect =
+          document
+            .getElementById(
+              "certificate"
+            )
+            .getBoundingClientRect();
+
+        originalLeft =
+          rect.left -
+          certRect.left;
+
+        originalTop =
+          rect.top -
+          certRect.top;
+
+        event.preventDefault();
+
+      }
+    );
+
+  });
+
+
+document.addEventListener(
+  "mousemove",
+  function(event){
+
+    if(
+      !dragging ||
+      !dragKey
+    ){
+
+      return;
+
+    }
+
+    const cert =
+      document.getElementById(
+        "certificate"
+      );
+
+    const rect =
+      cert.getBoundingClientRect();
+
+    const scale =
+      rect.width /
+      (297 * 3.779527559);
+
+    const dx =
+      (event.clientX - startX) /
+      scale;
+
+    const dy =
+      (event.clientY - startY) /
+      scale;
+
+    const newLeft =
+      originalLeft + dx;
+
+    const newTop =
+      originalTop + dy;
+
+    const xPercent =
+      (
+        newLeft /
+        (297 * 3.779527559)
+      ) * 100;
+
+    const yMm =
+      newTop /
+      3.779527559;
+
+    const s =
+      getState(dragKey);
+
+    s.x =
+      xPercent;
+
+    s.y =
+      yMm;
+
+    const el =
+      elementFor(dragKey);
+
+    el.style.left =
+      xPercent + "%";
+
+    el.style.top =
+      yMm + "mm";
+
+  }
 );
 
 
-/* NUMERIC */
+document.addEventListener(
+  "mouseup",
+  function(){
 
-controls.x.addEventListener(
-"input",
-()=>setNum("x",controls.x)
-);
+    dragging = false;
 
-controls.y.addEventListener(
-"input",
-()=>setNum("y",controls.y)
-);
+    dragKey = null;
 
-controls.width.addEventListener(
-"input",
-()=>setNum("width",controls.width)
-);
-
-controls.height.addEventListener(
-"input",
-()=>setNum("height",controls.height)
-);
-
-controls.fontSize.addEventListener(
-"input",
-()=>setNum(
-"fontSize",
-controls.fontSize,
-true
-)
-);
-
-controls.letterSpacing.addEventListener(
-"input",
-()=>setNum(
-"letterSpacing",
-controls.letterSpacing,
-true
-)
-);
-
-controls.lineHeight.addEventListener(
-"input",
-()=>setNum(
-"lineHeight",
-controls.lineHeight,
-true
-)
-);
-
-controls.rotation.addEventListener(
-"input",
-()=>setNum(
-"rotation",
-controls.rotation
-)
+  }
 );
 
 
-/* ALIGNMENT */
+/* =========================================================
+   KEYBOARD NUDGE
+========================================================= */
 
-document
-.querySelectorAll(
-"#alignButtons button"
-)
-.forEach(
-button=>
-button.addEventListener(
-"click",
-()=>{
+document.addEventListener(
+  "keydown",
+  function(event){
 
-getState(
-selectedKey
-).textAlign=
-button.dataset.align;
+    if(
+      event.target.tagName === "INPUT" ||
+      event.target.tagName === "TEXTAREA" ||
+      event.target.tagName === "SELECT"
+    ){
 
-applyElementState(
-selectedKey
+      return;
+
+    }
+
+    const key =
+      selectedKey;
+
+    const el =
+      elementFor(key);
+
+    if(!el){
+      return;
+    }
+
+    const s =
+      getState(key);
+
+    let x =
+      s.x !== null
+        ? s.x
+        : parseFloat(
+            getComputedStyle(el).left
+          ) /
+          document
+            .getElementById("certificate")
+            .clientWidth *
+          100;
+
+    let y =
+      s.y !== null
+        ? s.y
+        : parseFloat(
+            getComputedStyle(el).top
+          ) /
+          3.7795;
+
+
+    if(event.key === "ArrowLeft"){
+
+      x -= .2;
+
+    }else if(event.key === "ArrowRight"){
+
+      x += .2;
+
+    }else if(event.key === "ArrowUp"){
+
+      y -= .5;
+
+    }else if(event.key === "ArrowDown"){
+
+      y += .5;
+
+    }else{
+
+      return;
+
+    }
+
+    event.preventDefault();
+
+    s.x = x;
+
+    s.y = y;
+
+    el.style.left =
+      x + "%";
+
+    el.style.top =
+      y + "mm";
+
+    refreshControls();
+
+  }
 );
-
-refreshControls();
-
-}
-)
-);
-
-
-/* WEIGHT */
-
-document
-.querySelectorAll(
-"#weightButtons button"
-)
-.forEach(
-button=>
-button.addEventListener(
-"click",
-()=>{
-
-getState(
-selectedKey
-).fontWeight=
-Number(button.dataset.weight);
-
-applyElementState(
-selectedKey
-);
-
-refreshControls();
-
-}
-)
-);
-
-
-/* VISIBILITY */
-
-document
-.querySelectorAll(
-"#visibilityButtons button"
-)
-.forEach(
-button=>
-button.addEventListener(
-"click",
-()=>{
-
-getState(
-selectedKey
-).visible=
-button.dataset.visible==="true";
-
-applyElementState(
-selectedKey
-);
-
-refreshControls();
-
-}
-)
-);
-
-
-/* RESET */
-
-document
-.getElementById(
-"resetSelectedElement"
-)
-.addEventListener(
-"click",
-resetSelectedElement
-);
-
-
-/* =====================================================
-   DRAG ELEMENTS
-===================================================== */
-
-let drag=null;
-
-
-certificate.addEventListener(
-"pointerdown",
-event=>{
-
-const target=
-event.target.closest(
-"[data-editor-id]"
-);
-
-if(
-!target||
-event.button!==0
-)
-return;
-
-selectElement(
-target.dataset.editorId
-);
-
-const state=
-getState(selectedKey);
-
-drag={
-
-pointerId:event.pointerId,
-
-key:selectedKey,
-
-startX:event.clientX,
-
-startY:event.clientY,
-
-x:Number(state.x)||0,
-
-y:Number(state.y)||0
-
-};
-
-target.setPointerCapture?.(
-event.pointerId
-);
-
-event.preventDefault();
-
-}
-);
-
-
-certificate.addEventListener(
-"pointermove",
-event=>{
-
-if(
-!drag||
-event.pointerId!==drag.pointerId
-)
-return;
-
-const state=
-getState(drag.key);
-
-state.x=
-round(
-drag.x+
-(
-event.clientX-drag.startX
-)/currentScale,
-1
-);
-
-state.y=
-round(
-drag.y+
-(
-event.clientY-drag.startY
-)/currentScale,
-1
-);
-
-applyElementState(
-drag.key
-);
-
-refreshControls();
-
-}
-);
-
-
-certificate.addEventListener(
-"pointerup",
-()=>{
-drag=null;
-}
-);
-
-certificate.addEventListener(
-"pointercancel",
-()=>{
-drag=null;
-}
-);
-
-
-/* SAVE */
-
-document
-.getElementById("saveDesign")
-.addEventListener(
-"click",
-saveDesign
-);
-
-
-/* RESET DESIGN */
-
-document
-.getElementById("resetDesign")
-.addEventListener(
-"click",
-resetDesign
-);
-
-
-/* RESET CERTIFICATE */
-
-document
-.getElementById("resetCertificate")
-.addEventListener(
-"click",
-resetCertificate
-);
-
-
-/* PRINT */
-
-document
-.getElementById("printCertificate")
-.addEventListener(
-"click",
-()=>window.print()
-);
-
-
-/* ZOOM */
-
-previewZoom.addEventListener(
-"change",
-updatePreviewScale
-);
-
-
-/* WINDOW RESIZE */
-
-addEventListener(
-"resize",
-()=>{
-
-fitName();
-
-updatePreviewScale();
-
-}
-);
-
-}
 
 
 /* =========================================================
    INITIALIZE
 ========================================================= */
 
-function init(){
+function initialize(){
 
-makeSeal();
+  updateAwardDate();
 
-populate();
+  generateQR();
 
-setInputsFromData(
-DEFAULT_CERTIFICATE
-);
+  selectElement(
+    "heading"
+  );
 
-loadLogo();
-
-loadSignature();
-
-loadQr();
-
-loadDesign();
-
-attach();
-
-selectElement(
-selectedKey
-);
-
-requestAnimationFrame(
-updatePreviewScale
-);
+  fitStudentName();
 
 }
 
 
-init();
-
-
-/* =========================================================
-   PUBLIC API
-========================================================= */
-
-window.TechResonateCertificateBuilder={
-
-resetDesign,
-
-resetCertificate,
-
-saveDesign,
-
-selectElement,
-
-get design(){
-
-return JSON.parse(
-JSON.stringify(designState)
-);
-
-}
-
-};
+initialize();
 
 </script>
 
