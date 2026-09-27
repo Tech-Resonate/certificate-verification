@@ -1,0 +1,1263 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Tech Resonate Certificate</title>
+
+<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.4/build/qrcode.min.js"></script>
+
+<style>
+:root{
+  --n:#0B1A2E;
+  --n2:#0F1F35;
+  --b:#3B82F6;
+  --lb:#60A5FA;
+  --p:#DCEEFF;
+  --w:#FFFFFF;
+  --side:69mm;
+}
+
+*{box-sizing:border-box}
+
+html,body{
+  margin:0;
+  background:var(--p);
+  color:var(--n);
+  font-family:Arial,Helvetica,sans-serif;
+  -webkit-print-color-adjust:exact;
+  print-color-adjust:exact;
+}
+
+body{
+  min-height:100vh;
+  display:grid;
+  place-items:center;
+  padding:18px;
+}
+
+.certificate{
+  position:relative;
+  width:297mm;
+  height:210mm;
+  background:var(--w);
+  overflow:hidden;
+  box-shadow:0 22px 60px rgba(11,26,46,.18);
+}
+
+.certificate:before{
+  content:"";
+  position:absolute;
+  inset:5mm;
+  border:.65mm solid var(--n);
+  z-index:20;
+  pointer-events:none;
+}
+
+.main{
+  position:absolute;
+  inset:0 var(--side) 0 0;
+  padding:15mm 16mm 13mm 19mm;
+  display:flex;
+  flex-direction:column;
+  z-index:3;
+}
+
+.main:before{
+  content:"";
+  position:absolute;
+  inset:7mm 6mm 7mm 7mm;
+  border:.25mm solid var(--lb);
+  z-index:-1;
+}
+
+.main:after{
+  content:"";
+  position:absolute;
+  width:112mm;
+  height:112mm;
+  border:12mm solid var(--p);
+  border-radius:50%;
+  left:-67mm;
+  top:-60mm;
+  z-index:-2;
+}
+
+.top-stripes{
+  position:absolute;
+  left:-10mm;
+  top:2mm;
+  width:84mm;
+  height:12mm;
+  transform:rotate(-8deg);
+  background:
+    linear-gradient(
+      to bottom,
+      var(--n) 0 52%,
+      transparent 52% 68%,
+      var(--b) 68% 88%,
+      transparent 88%
+    );
+  z-index:1;
+}
+
+.header{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:10mm;
+  min-height:27mm;
+}
+
+.logo{
+  width:56mm;
+  height:18mm;
+  object-fit:contain;
+  object-position:left center;
+}
+
+.issuer{
+  text-align:right;
+  text-transform:uppercase;
+  color:var(--b);
+  font-weight:700;
+  font-size:2.45mm;
+  letter-spacing:.16em;
+}
+
+.issuer strong{
+  display:block;
+  color:var(--n);
+  font-size:3.15mm;
+  letter-spacing:.08em;
+  margin-top:1.4mm;
+}
+
+.title{
+  margin-top:5mm;
+}
+
+.eyebrow{
+  display:flex;
+  align-items:center;
+  gap:3mm;
+  color:var(--b);
+  font-size:2.5mm;
+  font-weight:700;
+  letter-spacing:.22em;
+  text-transform:uppercase;
+}
+
+.eyebrow:before{
+  content:"";
+  width:11mm;
+  height:.65mm;
+  background:var(--b);
+}
+
+h1{
+  margin:2.2mm 0 0;
+  font:700 13mm/.96 Georgia,"Times New Roman",serif;
+  letter-spacing:.035em;
+  color:var(--n);
+}
+
+h1 span{
+  display:block;
+  margin-top:2.6mm;
+  color:var(--b);
+  font:700 7.1mm/1 Arial,Helvetica,sans-serif;
+  letter-spacing:.29em;
+  text-transform:uppercase;
+}
+
+.presented{
+  margin-top:9mm;
+  font:italic 3.7mm/1.3 Georgia,"Times New Roman",serif;
+  color:var(--n2);
+}
+
+.name-line{
+  width:168mm;
+  margin-top:2.2mm;
+  padding-bottom:2.4mm;
+  border-bottom:.7mm solid var(--b);
+}
+
+#studentName{
+  display:inline-block;
+  max-width:100%;
+  white-space:nowrap;
+  text-transform:uppercase;
+  color:var(--n);
+  font:700 10.7mm/1 Georgia,"Times New Roman",serif;
+  letter-spacing:.035em;
+}
+
+.copy{
+  max-width:164mm;
+  margin-top:4.5mm;
+  color:var(--n2);
+  font:3.6mm/1.55 Georgia,"Times New Roman",serif;
+}
+
+.programme{
+  display:block;
+  margin-top:1.3mm;
+  color:var(--b);
+  font:700 6mm/1.2 Arial,Helvetica,sans-serif;
+  letter-spacing:.02em;
+}
+
+.bottom{
+  margin-top:auto;
+  padding:0 1mm 2.5mm 0;
+  display:grid;
+  grid-template-columns:1.15fr .9fr;
+  gap:13mm;
+  align-items:end;
+}
+
+.details{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:4.3mm 8mm;
+}
+
+.detail{
+  padding-top:2.1mm;
+  border-top:.25mm solid var(--p);
+}
+
+.label{
+  display:block;
+  margin-bottom:1.1mm;
+  color:var(--b);
+  font-size:2.1mm;
+  font-weight:700;
+  letter-spacing:.16em;
+  text-transform:uppercase;
+}
+
+.value{
+  display:block;
+  color:var(--n);
+  font-size:3.2mm;
+  font-weight:700;
+  line-height:1.2;
+  overflow-wrap:anywhere;
+}
+
+.status{
+  display:inline-flex;
+  align-items:center;
+  gap:1.5mm;
+  text-transform:uppercase;
+  letter-spacing:.08em;
+}
+
+.status:before{
+  content:"";
+  width:2.1mm;
+  height:2.1mm;
+  background:var(--b);
+  border-radius:50%;
+  box-shadow:0 0 0 .8mm var(--p);
+}
+
+.signature{
+  text-align:center;
+  align-self:end;
+}
+
+.sig-img-box{
+  width:46mm;
+  height:16mm;
+  display:flex;
+  align-items:flex-end;
+  justify-content:center;
+  overflow:hidden;
+  margin:0 auto -1.4mm;
+}
+
+.sig-img{
+  width:45mm;
+  height:19mm;
+  object-fit:contain;
+  object-position:center bottom;
+  mix-blend-mode:multiply;
+  filter:contrast(1.14) saturate(.7);
+}
+
+.sig-line{
+  width:49mm;
+  margin:auto;
+  border-top:.45mm solid var(--n);
+  padding-top:1.8mm;
+}
+
+.sig-name{
+  font:700 3.7mm/1.1 Georgia,"Times New Roman",serif;
+}
+
+.sig-title{
+  margin-top:.7mm;
+  color:var(--b);
+  font-size:2.2mm;
+  font-weight:700;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+}
+
+.micro{
+  position:absolute;
+  left:20mm;
+  bottom:8mm;
+  color:var(--n2);
+  font-size:1.75mm;
+  letter-spacing:.1em;
+  text-transform:uppercase;
+  opacity:.7;
+}
+
+/* Full-height verification section */
+
+.side{
+  position:absolute;
+  right:0;
+  top:0;
+  width:var(--side);
+  height:100%;
+  padding:13mm 9mm 10mm;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  overflow:hidden;
+  background:var(--n);
+  color:var(--w);
+  z-index:10;
+}
+
+.side:before{
+  content:"";
+  position:absolute;
+  width:76mm;
+  height:92mm;
+  left:-22mm;
+  top:-22mm;
+  background:var(--b);
+  transform:rotate(24deg);
+  z-index:-3;
+}
+
+.side:after{
+  content:"";
+  position:absolute;
+  width:85mm;
+  height:85mm;
+  border:10mm solid var(--lb);
+  border-radius:50%;
+  left:-18mm;
+  bottom:-32mm;
+  opacity:.2;
+  z-index:-2;
+}
+
+.geo{
+  position:absolute;
+  inset:0;
+  z-index:-1;
+  background:
+    linear-gradient(
+      45deg,
+      transparent 0 44%,
+      rgba(255,255,255,.12) 44% 45%,
+      transparent 45% 100%
+    );
+}
+
+.geo:before,
+.geo:after{
+  content:"";
+  position:absolute;
+  border:.6mm solid rgba(255,255,255,.24);
+  transform:rotate(45deg);
+}
+
+.geo:before{
+  width:34mm;
+  height:34mm;
+  right:-23mm;
+  top:33mm;
+}
+
+.geo:after{
+  width:21mm;
+  height:21mm;
+  left:-13mm;
+  top:80mm;
+}
+
+.kicker{
+  font-size:2.15mm;
+  font-weight:700;
+  letter-spacing:.22em;
+  text-transform:uppercase;
+  color:var(--p);
+}
+
+.verify-title{
+  margin-top:1.5mm;
+  text-align:center;
+  font:700 5.3mm/1.08 Georgia,"Times New Roman",serif;
+}
+
+.seal{
+  position:relative;
+  width:44mm;
+  height:44mm;
+  margin-top:8.5mm;
+  display:grid;
+  place-items:center;
+}
+
+.seal-star{
+  position:absolute;
+  inset:0;
+  background:var(--p);
+}
+
+.seal-core{
+  position:relative;
+  width:31mm;
+  height:31mm;
+  border-radius:50%;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  background:var(--n);
+  border:.7mm solid var(--w);
+  box-shadow:0 0 0 1.2mm var(--b);
+}
+
+.seal-label{
+  color:var(--p);
+  font-size:1.9mm;
+  font-weight:700;
+  letter-spacing:.17em;
+  text-transform:uppercase;
+}
+
+.seal-year{
+  margin-top:.9mm;
+  color:var(--w);
+  font:700 7.3mm/1 Georgia,"Times New Roman",serif;
+}
+
+.seal-rule{
+  width:11mm;
+  height:.45mm;
+  margin-top:1mm;
+  background:var(--lb);
+}
+
+.qr{
+  width:35mm;
+  height:35mm;
+  margin-top:8.4mm;
+  padding:2.3mm;
+  background:var(--w);
+  border:.55mm solid var(--p);
+  box-shadow:0 1.5mm 4mm rgba(11,26,46,.25);
+  display:grid;
+  place-items:center;
+}
+
+.qr canvas{
+  width:100%!important;
+  height:100%!important;
+  display:block;
+}
+
+.scan{
+  margin-top:4.1mm;
+  font-size:2.75mm;
+  font-weight:800;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+}
+
+.domain{
+  margin-top:1.6mm;
+  color:var(--p);
+  font-size:2.3mm;
+  text-align:center;
+}
+
+.side-id{
+  width:100%;
+  margin-top:auto;
+  padding-top:4mm;
+  border-top:.25mm solid rgba(255,255,255,.28);
+  text-align:center;
+  color:var(--p);
+  font-size:1.95mm;
+  line-height:1.5;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+}
+
+.side-id strong{
+  display:block;
+  margin-top:.7mm;
+  color:var(--w);
+  font-size:2.35mm;
+  letter-spacing:.08em;
+}
+
+.print-note{
+  margin-top:12px;
+  color:var(--n2);
+  font-size:13px;
+  text-align:center;
+}
+
+@page{
+  size:A4 landscape;
+  margin:0;
+}
+
+@media print{
+
+  html,body{
+    width:297mm;
+    height:210mm;
+    background:var(--w);
+  }
+
+  body{
+    display:block;
+    padding:0;
+  }
+
+  .certificate{
+    box-shadow:none;
+  }
+
+  .print-note{
+    display:none;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<article class="certificate">
+
+  <div class="top-stripes" aria-hidden="true"></div>
+
+  <section class="main">
+
+    <header class="header">
+
+      <img
+        class="logo"
+        src="https://techresonate.com/logo.png"
+        alt="Tech Resonate"
+      >
+
+      <div class="issuer">
+        Official Certificate
+        <strong>Tech Resonate Academy</strong>
+      </div>
+
+    </header>
+
+    <div class="title">
+
+      <div class="eyebrow">
+        Achievement &amp; Completion
+      </div>
+
+      <h1>
+        Certificate
+        <span>of Completion</span>
+      </h1>
+
+    </div>
+
+    <div class="presented">
+      This certificate is proudly presented to
+    </div>
+
+    <div class="name-line">
+
+      <div id="studentName">
+        LOVELYN JOSEPH
+      </div>
+
+    </div>
+
+    <div class="copy">
+
+      for successfully completing the prescribed training and practical
+      requirements of the programme
+
+      <span class="programme" id="programme">
+        Diploma in Data Processing
+      </span>
+
+    </div>
+
+    <div class="bottom">
+
+      <div class="details">
+
+        <div class="detail">
+
+          <span class="label">
+            Certificate ID
+          </span>
+
+          <span class="value" id="certificateId">
+            TR-2026-DDP-001
+          </span>
+
+        </div>
+
+        <div class="detail">
+
+          <span class="label">
+            Issue Date
+          </span>
+
+          <span class="value" id="issueDate">
+            27 September 2026
+          </span>
+
+        </div>
+
+        <div class="detail">
+
+          <span class="label">
+            Certificate Status
+          </span>
+
+          <span class="value status" id="status">
+            Valid
+          </span>
+
+        </div>
+
+        <div class="detail">
+
+          <span class="label">
+            Issued By
+          </span>
+
+          <span class="value">
+            Tech Resonate Academy
+          </span>
+
+        </div>
+
+      </div>
+
+      <div class="signature">
+
+        <div class="sig-img-box">
+
+          <img
+            class="sig-img"
+            id="signature"
+            src="https://drive.google.com/uc?export=view&id=19jB_ypH8aTv-QPilB3z7xDKMufb98cNn"
+            alt="Authorized signature"
+          >
+
+        </div>
+
+        <div class="sig-line">
+
+          <div class="sig-name" id="ceoName">
+            Umar Umar
+          </div>
+
+          <div class="sig-title" id="ceoTitle">
+            Chief Executive Officer
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <div class="micro">
+      Technology • Practical Skills • Career Readiness
+    </div>
+
+  </section>
+
+  <aside class="side">
+
+    <div class="geo" aria-hidden="true"></div>
+
+    <div class="kicker">
+      Authentic Credential
+    </div>
+
+    <div class="verify-title">
+      Verify this<br>
+      certificate
+    </div>
+
+    <div class="seal">
+
+      <div
+        class="seal-star"
+        id="sealStar"
+      ></div>
+
+      <div class="seal-core">
+
+        <div class="seal-label">
+          Certified
+        </div>
+
+        <div class="seal-year" id="sealYear">
+          2026
+        </div>
+
+        <div class="seal-rule"></div>
+
+      </div>
+
+    </div>
+
+    <div class="qr">
+
+      <canvas
+        id="qrCanvas"
+        width="320"
+        height="320"
+        aria-label="Verification QR code"
+      ></canvas>
+
+    </div>
+
+    <div class="scan">
+      Scan to Verify
+    </div>
+
+    <div
+      class="domain"
+      id="verificationDomain"
+    >
+      verify.techresonate.com
+    </div>
+
+    <div class="side-id">
+
+      Certificate Reference
+
+      <strong id="sideCertificateId">
+        TR-2026-DDP-001
+      </strong>
+
+    </div>
+
+  </aside>
+
+</article>
+
+<div class="print-note">
+  Print at 100% scale on A4 landscape with background graphics enabled.
+</div>
+
+<script>
+
+/* =========================================================
+   DEFAULT PREVIEW DATA
+   Used only when no certificate ID is in the URL.
+========================================================= */
+
+const certificateData = {
+
+  studentName:
+    "LOVELYN JOSEPH",
+
+  programme:
+    "Diploma in Data Processing",
+
+  certificateId:
+    "TR-2026-DDP-001",
+
+  issueDate:
+    "27 September 2026",
+
+  status:
+    "Valid",
+
+  ceo:
+    "Umar Umar",
+
+  ceoTitle:
+    "Chief Executive Officer",
+
+  signature:
+    "https://drive.google.com/uc?export=view&id=19jB_ypH8aTv-QPilB3z7xDKMufb98cNn",
+
+  verificationBaseUrl:
+    "https://verify.techresonate.com/"
+};
+
+
+/* =========================================================
+   APPS SCRIPT API
+========================================================= */
+
+const API_URL =
+  "https://script.google.com/macros/s/AKfycbwYVlT9WS5ov6i0vZc4wienOAwau2ckKVSKe4uMQwM-QCILz3zSxLt4CjWy82iDRy3F7w/exec";
+
+
+/* =========================================================
+   EXTRACT YEAR
+========================================================= */
+
+function extractYear(id) {
+
+  const match =
+    String(id || "")
+      .match(/(?:^|[-_])(20\d{2})(?:[-_]|$)/);
+
+  return match
+    ? match[1]
+    : String(new Date().getFullYear());
+}
+
+
+/* =========================================================
+   BUILD VERIFICATION URL
+========================================================= */
+
+function verificationUrl(data) {
+
+  if (data.verificationUrl) {
+    return data.verificationUrl;
+  }
+
+  const url =
+    new URL(
+      data.verificationBaseUrl ||
+      "https://verify.techresonate.com/",
+      window.location.href
+    );
+
+  url.searchParams.set(
+    "id",
+    data.certificateId || ""
+  );
+
+  return url.toString();
+}
+
+
+/* =========================================================
+   GENERATE 32-POINT SEAL
+========================================================= */
+
+function makeSeal() {
+
+  const points = [];
+
+  const vertices = 64;
+
+  for (
+    let i = 0;
+    i < vertices;
+    i++
+  ) {
+
+    const radius =
+      i % 2
+        ? 42
+        : 49;
+
+    const angle =
+      (-90 + 360 * i / vertices)
+      * Math.PI / 180;
+
+    const x =
+      50 + radius * Math.cos(angle);
+
+    const y =
+      50 + radius * Math.sin(angle);
+
+    points.push(
+      `${x.toFixed(3)}% ${y.toFixed(3)}%`
+    );
+  }
+
+  document
+    .getElementById("sealStar")
+    .style.clipPath =
+      `polygon(${points.join(",")})`;
+}
+
+
+/* =========================================================
+   FIT LONG STUDENT NAMES
+========================================================= */
+
+function fitName() {
+
+  const element =
+    document.getElementById("studentName");
+
+  const container =
+    element.parentElement;
+
+  let size = 10.7;
+
+  element.style.fontSize =
+    size + "mm";
+
+  while (
+    element.scrollWidth >
+    container.clientWidth &&
+    size > 7
+  ) {
+
+    size -= 0.2;
+
+    element.style.fontSize =
+      size + "mm";
+  }
+}
+
+
+/* =========================================================
+   GENERATE QR CODE
+========================================================= */
+
+async function makeQr(url) {
+
+  if (
+    !window.QRCode ||
+    typeof window.QRCode.toCanvas !== "function"
+  ) {
+
+    throw new Error(
+      "QR library failed to load."
+    );
+  }
+
+  await QRCode.toCanvas(
+    document.getElementById("qrCanvas"),
+    url,
+    {
+
+      width:320,
+
+      margin:1,
+
+      errorCorrectionLevel:"H",
+
+      color:{
+        dark:"#0B1A2E",
+        light:"#FFFFFF"
+      }
+
+    }
+  );
+}
+
+
+/* =========================================================
+   RENDER CERTIFICATE
+========================================================= */
+
+async function renderCertificate(data) {
+
+  const year =
+    extractYear(
+      data.certificateId
+    );
+
+  const url =
+    verificationUrl(data);
+
+
+  document.getElementById(
+    "studentName"
+  ).textContent =
+    data.studentName || "";
+
+
+  document.getElementById(
+    "programme"
+  ).textContent =
+    data.programme || "";
+
+
+  document.getElementById(
+    "certificateId"
+  ).textContent =
+    data.certificateId || "";
+
+
+  document.getElementById(
+    "sideCertificateId"
+  ).textContent =
+    data.certificateId || "";
+
+
+  document.getElementById(
+    "issueDate"
+  ).textContent =
+    data.issueDate || "";
+
+
+  document.getElementById(
+    "status"
+  ).textContent =
+    data.status || "";
+
+
+  document.getElementById(
+    "ceoName"
+  ).textContent =
+    data.ceo ||
+    "Umar Umar";
+
+
+  document.getElementById(
+    "ceoTitle"
+  ).textContent =
+    data.ceoTitle ||
+    "Chief Executive Officer";
+
+
+  document.getElementById(
+    "sealYear"
+  ).textContent =
+    year;
+
+
+  if (data.signature) {
+
+    document.getElementById(
+      "signature"
+    ).src =
+      data.signature;
+
+  }
+
+
+  try {
+
+    document.getElementById(
+      "verificationDomain"
+    ).textContent =
+      new URL(url).host;
+
+  }
+
+  catch {
+
+    document.getElementById(
+      "verificationDomain"
+    ).textContent =
+      "verify.techresonate.com";
+
+  }
+
+
+  fitName();
+
+  await makeQr(url);
+}
+
+
+/* =========================================================
+   LOAD CERTIFICATE FROM GOOGLE SHEET
+========================================================= */
+
+async function loadCertificate(id) {
+
+  try {
+
+    const response =
+      await fetch(
+        API_URL +
+        "?id=" +
+        encodeURIComponent(id)
+      );
+
+
+    if (!response.ok) {
+
+      throw new Error(
+        "Unable to connect to certificate database."
+      );
+
+    }
+
+
+    const result =
+      await response.json();
+
+
+    if (!result.success) {
+
+      throw new Error(
+        result.message ||
+        "Certificate not found."
+      );
+
+    }
+
+
+    await renderCertificate({
+
+      studentName:
+        result.studentName,
+
+      programme:
+        result.programme,
+
+      certificateId:
+        result.certificateId,
+
+      issueDate:
+        result.issueDate,
+
+      status:
+        result.status,
+
+      ceo:
+        "Umar Umar",
+
+      ceoTitle:
+        "Chief Executive Officer",
+
+      signature:
+        "https://drive.google.com/uc?export=view&id=19jB_ypH8aTv-QPilB3z7xDKMufb98cNn",
+
+      verificationBaseUrl:
+        "https://verify.techresonate.com/"
+
+    });
+
+  }
+
+  catch(error) {
+
+    console.error(
+      "Certificate loading error:",
+      error
+    );
+
+    document.getElementById(
+      "studentName"
+    ).textContent =
+      "CERTIFICATE NOT FOUND";
+
+    document.getElementById(
+      "programme"
+    ).textContent =
+      "";
+
+    document.getElementById(
+      "certificateId"
+    ).textContent =
+      id || "";
+
+    document.getElementById(
+      "status"
+    ).textContent =
+      "Invalid";
+
+    document.getElementById(
+      "issueDate"
+    ).textContent =
+      "";
+
+    document.getElementById(
+      "sideCertificateId"
+    ).textContent =
+      id || "";
+
+  }
+}
+
+
+/* =========================================================
+   START CERTIFICATE
+========================================================= */
+
+makeSeal();
+
+
+const params =
+  new URLSearchParams(
+    window.location.search
+  );
+
+
+const certificateId =
+  params.get("id");
+
+
+if (certificateId) {
+
+  loadCertificate(
+    certificateId
+  );
+
+}
+
+else {
+
+  renderCertificate(
+    certificateData
+  );
+
+}
+
+
+/* =========================================================
+   HANDLE WINDOW RESIZE
+========================================================= */
+
+window.addEventListener(
+  "resize",
+  fitName
+);
+
+
+/* =========================================================
+   PUBLIC INTEGRATION OBJECT
+========================================================= */
+
+window.TechResonateCertificate = {
+
+  renderCertificate,
+
+  extractYear,
+
+  verificationUrl,
+
+  loadCertificate,
+
+  data:
+    certificateData
+
+};
+
+</script>
+
+</body>
+</html>
