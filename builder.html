@@ -1,1375 +1,3213 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="robots" content="noindex,nofollow,noarchive">
-<title>Tech Resonate Certificate Builder</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Tech Resonate Academy — Certificate Builder</title>
+
 <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.4/build/qrcode.min.js"></script>
 
 <style>
-:root {
-  --n: #0B1A2E;
-  --n2: #0F1F35;
-  --b: #3B82F6;
-  --lb: #60A5FA;
-  --p: #DCEEFF;
-  --w: #FFFFFF;
-  --side: 69mm;
-}
-* { box-sizing: border-box; }
-body {
-  margin: 0;
-  font-family: Arial, Helvetica, sans-serif;
-  background: #e9eef5;
-  color: var(--n);
-}
-button,input,select,textarea { font: inherit; }
-button { cursor: pointer; }
-.builder {
-  display: grid;
-  grid-template-columns: 350px minmax(0,1fr);
-  min-height: 100vh;
-}
-.editor {
-  padding: 16px;
-  background: white;
-  border-right: 1px solid #d7e0eb;
-  height: 100vh;
-  overflow: auto;
-  position: sticky;
-  top: 0;
-  z-index: 5;
-}
-.editor h2 { margin: 0; font-size: 20px; }
-.editor p {
-  font-size: 12px;
-  color: #64748b;
-  line-height: 1.5;
-}
-.section {
-  border: 1px solid #dfe6ef;
-  border-radius: 10px;
-  margin: 12px 0;
-  overflow: hidden;
-}
-.section summary {
-  background: #f7f9fc;
-  padding: 12px;
-  font-size: 13px;
-  font-weight: bold;
-  cursor: pointer;
-}
-.section-body { padding: 12px; }
-.field { margin-bottom: 11px; }
-.field label {
-  display: block;
-  font-size: 11px;
-  text-transform: uppercase;
-  font-weight: bold;
-  letter-spacing: .05em;
-  color: #455468;
-  margin-bottom: 5px;
-}
-.field input, .field textarea, .field select {
-  width: 100%;
-  border: 1px solid #cbd5e1;
-  border-radius: 7px;
-  padding: 9px;
-  color: #162538;
-  background: white;
-}
-.field textarea { min-height: 65px; }
-.field input[type=color] { height: 40px; padding: 3px; }
-.row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px;
-}
-.actions {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 7px;
-}
-.actions button, .control-buttons button {
-  border: 1px solid #cbd5e1;
-  border-radius: 7px;
-  padding: 9px 5px;
-  background: white;
-  color: #243447;
-  font-size: 12px;
-  font-weight: bold;
-}
-.actions .primary {
-  background: var(--b);
-  color: white;
-  border-color: var(--b);
-}
-.actions .dark {
-  background: var(--n);
-  color: white;
-  border-color: var(--n);
-  grid-column: 1 / -1;
-}
-.actions .danger { color: #b91c1c; }
-.help { font-size: 11px; color: #64748b; line-height: 1.5; }
-.preview {
-  padding: 18px;
-  overflow: auto;
-  min-width: 0;
-}
-.toolbar {
-  background: white;
-  border: 1px solid #dfe6ef;
-  padding: 10px 12px;
-  border-radius: 9px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 15px;
-  font-size: 13px;
-}
-.stage-space { margin: auto; position: relative; }
-.stage {
-  width: 297mm;
-  height: 210mm;
-  transform-origin: top left;
-  position: relative;
-}
-.certificate {
-  position: relative;
-  width: 297mm;
-  height: 210mm;
-  background: white;
-  overflow: hidden;
-  box-shadow: 0 15px 45px #0b1a2e2b;
-}
-.certificate:before {
-  content: "";
-  position: absolute;
-  inset: 5mm;
-  border: .65mm solid var(--n);
-  z-index: 20;
-  pointer-events: none;
-}
-.main {
-  position: absolute;
-  inset: 0 var(--side) 0 0;
-  padding: 15mm 16mm 13mm 19mm;
-  display: flex;
-  flex-direction: column;
-  z-index: 3;
-}
-.main:before {
-  content: "";
-  position: absolute;
-  inset: 7mm 6mm 7mm 7mm;
-  border: .25mm solid var(--lb);
-  z-index: -1;
-}
-.main:after {
-  content: "";
-  position: absolute;
-  width: 112mm;
-  height: 112mm;
-  border: 12mm solid var(--p);
-  border-radius: 50%;
-  left: -67mm;
-  top: -60mm;
-  z-index: -2;
-}
-.stripes {
-  position: absolute;
-  left: -10mm;
-  top: 2mm;
-  width: 84mm;
-  height: 12mm;
-  transform: rotate(-8deg);
-  background: linear-gradient(to bottom,
-    var(--n) 0 52%, transparent 52% 68%,
-    var(--b) 68% 88%, transparent 88%);
-  z-index: 1;
-}
-.header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 10mm;
-  min-height: 27mm;
-}
-.logo {
-  width: 56mm;
-  height: 18mm;
-  object-fit: contain;
-  object-position: left center;
-}
-.issuer {
-  text-align: right;
-  text-transform: uppercase;
-  color: var(--b);
-  font-weight: 700;
-  font-size: 2.45mm;
-  letter-spacing: .16em;
-}
-.issuer strong {
-  display: block;
-  color: var(--n);
-  font-size: 3.15mm;
-  margin-top: 1.4mm;
-}
-.title { margin-top: 5mm; }
-.eyebrow {
-  display: flex;
-  align-items: center;
-  gap: 3mm;
-  color: var(--b);
-  font-size: 2.5mm;
-  font-weight: 700;
-  letter-spacing: .22em;
-  text-transform: uppercase;
-}
-.eyebrow:before {
-  content: "";
-  width: 11mm;
-  height: .65mm;
-  background: var(--b);
-}
-h1 {
-  margin: 2.2mm 0 0;
-  font: 700 13mm/.96 Georgia,serif;
-  letter-spacing: .02em;
-  white-space: nowrap;
-  color: var(--n);
-}
-.heading-main { display: inline; }
-.of-completion {
-  display: inline;
-  margin-left: 5mm;
-  color: var(--b);
-  font: 700 7.1mm/1 Arial,sans-serif;
-  letter-spacing: .12em;
-  text-transform: uppercase;
-}
-.presented {
-  margin-top: 9mm;
-  font: italic 3.7mm/1.3 Georgia,serif;
-  color: var(--n2);
-}
-.name-line {
-  position: relative;
-  width: 168mm;
-  margin-top: 2.2mm;
-  padding-bottom: 2.4mm;
-}
-.name-underline {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  border-bottom: .7mm solid var(--b);
-}
-#studentName {
-  display: inline-block;
-  max-width: 100%;
-  white-space: nowrap;
-  text-transform: uppercase;
-  color: var(--n);
-  font: 700 10.7mm/1 Georgia,serif;
-  letter-spacing: .035em;
-}
-.copy {
-  max-width: 164mm;
-  margin-top: 4.5mm;
-  color: var(--n2);
-  font: 3.6mm/1.55 Georgia,serif;
-}
-.programme {
-  display: block;
-  margin-top: 1.3mm;
-  color: var(--b);
-  font: 700 6mm/1.2 Arial,sans-serif;
-  letter-spacing: .02em;
-}
-.period {
-  display: block;
-  margin-top: 3mm;
-  color: var(--n2);
-  font: 700 3.3mm/1.3 Arial,sans-serif;
-  letter-spacing: .03em;
-}
-.bottom {
-  margin-top: auto;
-  padding: 0 1mm 2.5mm 0;
-  display: grid;
-  grid-template-columns: 1.15fr .9fr;
-  gap: 13mm;
-  align-items: end;
-}
-.details {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 4.3mm 8mm;
-}
-.detail { padding-top: 2.1mm; border-top: .25mm solid var(--p); }
-.label {
-  display: block;
-  margin-bottom: 1.1mm;
-  color: var(--b);
-  font-size: 2.1mm;
-  font-weight: 700;
-  letter-spacing: .16em;
-  text-transform: uppercase;
-}
-.value {
-  display: block;
-  color: var(--n);
-  font-size: 3.2mm;
-  font-weight: 700;
-  line-height: 1.2;
-  overflow-wrap: anywhere;
-}
-.signature { text-align: center; align-self: end; }
-.sig-img-box {
-  width: 46mm;
-  height: 16mm;
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
-  overflow: hidden;
-  margin: 0 auto -1.4mm;
-}
-.sig-img {
-  width: 45mm;
-  height: 19mm;
-  object-fit: contain;
-  object-position: center bottom;
-  mix-blend-mode: multiply;
-}
-.sig-line {
-  width: 49mm;
-  margin: auto;
-  border-top: .45mm solid var(--n);
-  padding-top: 1.8mm;
-}
-.sig-name { font: 700 3.7mm/1.1 Georgia,serif; }
-.sig-title {
-  margin-top: .7mm;
-  color: var(--b);
-  font-size: 2.2mm;
-  font-weight: 700;
-  letter-spacing: .12em;
-  text-transform: uppercase;
-}
-.micro {
-  position: absolute;
-  left: 20mm;
-  bottom: 8mm;
-  color: var(--n2);
-  font-size: 1.75mm;
-  letter-spacing: .1em;
-  text-transform: uppercase;
-  opacity: .7;
-}
-.side {
-  position: absolute;
-  right: 0;
-  top: 0;
-  width: var(--side);
-  height: 100%;
-  padding: 13mm 9mm 10mm;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  overflow: hidden;
-  background: var(--n);
-  color: white;
-  z-index: 10;
-}
-.side:before {
-  content: "";
-  position: absolute;
-  width: 76mm;
-  height: 92mm;
-  left: -22mm;
-  top: -22mm;
-  background: var(--b);
-  transform: rotate(24deg);
-  z-index: -3;
-}
-.side:after {
-  content: "";
-  position: absolute;
-  width: 85mm;
-  height: 85mm;
-  border: 10mm solid var(--lb);
-  border-radius: 50%;
-  left: -18mm;
-  bottom: -32mm;
-  opacity: .2;
-  z-index: -2;
-}
-.kicker {
-  font-size: 2.15mm;
-  font-weight: 700;
-  letter-spacing: .22em;
-  text-transform: uppercase;
-  color: var(--p);
-}
-.verify-title {
-  margin-top: 1.5mm;
-  text-align: center;
-  font: 700 5.3mm/1.08 Georgia,serif;
-}
-.seal {
-  width: 44mm;
-  height: 44mm;
-  margin-top: 8.5mm;
-  display: grid;
-  place-items: center;
-  position: relative;
-}
-.seal-star {
-  position: absolute;
-  inset: 0;
-  background: var(--p);
-}
-.seal-core {
-  position: relative;
-  width: 31mm;
-  height: 31mm;
-  border-radius: 50%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  background: var(--n);
-  border: .7mm solid white;
-  box-shadow: 0 0 0 1.2mm var(--b);
-}
-.seal-label {
-  color: var(--p);
-  font-size: 1.9mm;
-  font-weight: 700;
-  letter-spacing: .17em;
-  text-transform: uppercase;
-}
-.seal-year {
-  margin-top: .9mm;
-  color: white;
-  font: 700 7.3mm/1 Georgia,serif;
-}
-.seal-rule { width: 11mm; height: .45mm; margin-top: 1mm; background: var(--lb); }
-.qr {
-  width: 35mm;
-  height: 35mm;
-  margin-top: 8.4mm;
-  padding: 2.3mm;
-  background: white;
-  border: .55mm solid var(--p);
-  display: grid;
-  place-items: center;
-}
-.qr canvas, .qr img {
-  width: 100% !important;
-  height: 100% !important;
-  display: block;
-}
-.scan {
-  margin-top: 4.1mm;
-  font-size: 2.75mm;
-  font-weight: 800;
-  letter-spacing: .18em;
-  text-transform: uppercase;
-}
-.domain {
-  margin-top: 1.6mm;
-  color: var(--p);
-  font-size: 2.3mm;
-  text-align: center;
-}
-.side-id {
-  width: 100%;
-  margin-top: auto;
-  padding-top: 4mm;
-  border-top: .25mm solid #ffffff47;
-  text-align: center;
-  color: var(--p);
-  font-size: 1.95mm;
-  line-height: 1.5;
-  letter-spacing: .12em;
-  text-transform: uppercase;
-}
-.side-id strong {
-  display: block;
-  margin-top: .7mm;
-  color: white;
-  font-size: 2.35mm;
-  letter-spacing: .08em;
-}
-.certificate [data-editor-id] { cursor: move; }
-.certificate [data-editor-id]:hover {
-  outline: 1px dotted #3B82F6;
-  outline-offset: 2px;
-}
-.certificate [data-editor-id].selected {
-  outline: 2px dashed #f59e0b;
-  outline-offset: 2px;
-}
-.status-message { font-size: 11px; color: #58708d; margin-top: 10px; }
-@page { size: A4 landscape; margin: 0; }
-@media print {
-  html, body { width: 297mm; height: 210mm; margin: 0; padding: 0; overflow: hidden; background: white; }
-  .editor, .toolbar { display: none !important; }
-  .builder, .preview, .stage-space { display: block !important; width: 297mm !important; height: 210mm !important; margin: 0 !important; padding: 0 !important; overflow: visible !important; }
-  .stage { width: 297mm !important; height: 210mm !important; transform: none !important; }
-  .certificate { width: 297mm !important; height: 210mm !important; box-shadow: none !important; }
-  .certificate [data-editor-id], .certificate [data-editor-id]:hover, .certificate [data-editor-id].selected { outline: none !important; }
-}
-@media(max-width:900px) {
-  .builder { grid-template-columns: 1fr; }
-  .editor { position: relative; height: auto; border-right: 0; }
-  .preview { min-height: 500px; }
+:root{
+  --navy:#0B1A2E;
+  --blue:#2563EB;
+  --light-blue:#60A5FA;
+  --white:#FFFFFF;
+  --muted:#64748B;
+  --border:#D8E0EA;
+  --panel:#F8FAFC;
+  --danger:#DC2626;
+}
+
+*{
+  box-sizing:border-box;
+}
+
+body{
+  margin:0;
+  font-family:Arial,Helvetica,sans-serif;
+  background:#EEF2F7;
+  color:var(--navy);
+}
+
+button,
+input,
+textarea,
+select{
+  font:inherit;
+}
+
+button{
+  cursor:pointer;
+}
+
+.app{
+  min-height:100vh;
+  display:flex;
+  flex-direction:column;
+}
+
+/* =========================
+   TOP BAR
+========================= */
+
+.topbar{
+  background:var(--navy);
+  color:#fff;
+  padding:14px 20px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:20px;
+  position:sticky;
+  top:0;
+  z-index:1000;
+}
+
+.brand{
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+
+.brand-logo{
+  width:42px;
+  height:42px;
+  border-radius:10px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:900;
+  font-size:18px;
+  color:#fff;
+  background:linear-gradient(135deg,var(--blue),var(--light-blue));
+}
+
+.brand-text strong{
+  display:block;
+  font-size:16px;
+}
+
+.brand-text span{
+  font-size:11px;
+  opacity:.75;
+}
+
+.top-actions{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
+}
+
+.top-actions button{
+  border:1px solid rgba(255,255,255,.2);
+  background:rgba(255,255,255,.08);
+  color:#fff;
+  padding:9px 13px;
+  border-radius:7px;
+}
+
+.top-actions button:hover{
+  background:rgba(255,255,255,.16);
+}
+
+/* =========================
+   MAIN
+========================= */
+
+.main{
+  flex:1;
+  display:grid;
+  grid-template-columns:330px minmax(600px,1fr);
+  gap:18px;
+  padding:18px;
+}
+
+.sidebar{
+  background:#fff;
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:16px;
+  height:calc(100vh - 100px);
+  overflow:auto;
+}
+
+.preview-area{
+  min-width:0;
+  display:flex;
+  align-items:flex-start;
+  justify-content:center;
+  overflow:auto;
+  padding:20px;
+}
+
+/* =========================
+   SIDEBAR
+========================= */
+
+.panel-title{
+  font-size:18px;
+  font-weight:800;
+  margin-bottom:4px;
+}
+
+.panel-subtitle{
+  font-size:12px;
+  color:var(--muted);
+  margin-bottom:18px;
+}
+
+.section{
+  border-top:1px solid #E5EAF0;
+  padding-top:15px;
+  margin-top:15px;
+}
+
+.section h3{
+  margin:0 0 10px;
+  font-size:13px;
+}
+
+.field{
+  margin-bottom:12px;
+}
+
+.field label{
+  display:block;
+  font-size:11px;
+  font-weight:700;
+  margin-bottom:5px;
+  color:#334155;
+}
+
+.field input,
+.field textarea,
+.field select{
+  width:100%;
+  border:1px solid #CBD5E1;
+  border-radius:7px;
+  padding:9px 10px;
+  background:#fff;
+  outline:none;
+}
+
+.field textarea{
+  min-height:70px;
+  resize:vertical;
+}
+
+.field input:focus,
+.field textarea:focus,
+.field select:focus{
+  border-color:var(--blue);
+  box-shadow:0 0 0 2px rgba(37,99,235,.1);
+}
+
+.grid-2{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px;
+}
+
+.grid-3{
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr;
+  gap:7px;
+}
+
+.help{
+  color:var(--muted);
+  font-size:10px;
+  line-height:1.4;
+  margin-top:4px;
+}
+
+.btn{
+  width:100%;
+  border:0;
+  border-radius:7px;
+  padding:10px 12px;
+  font-weight:700;
+  background:var(--blue);
+  color:#fff;
+}
+
+.btn:hover{
+  filter:brightness(.95);
+}
+
+.btn.secondary{
+  background:#E8EEF7;
+  color:var(--navy);
+}
+
+.btn.danger{
+  background:var(--danger);
+  color:#fff;
+}
+
+.btn.outline{
+  background:#fff;
+  color:var(--navy);
+  border:1px solid #CBD5E1;
+}
+
+.action-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:7px;
+}
+
+.color-row{
+  display:grid;
+  grid-template-columns:46px 1fr auto;
+  gap:6px;
+  align-items:center;
+}
+
+.color-row input[type="color"]{
+  width:46px;
+  height:38px;
+  padding:3px;
+}
+
+.small-btn{
+  border:1px solid #CBD5E1;
+  background:#fff;
+  border-radius:6px;
+  padding:8px;
+  font-size:11px;
+}
+
+/* =========================
+   CERTIFICATE
+========================= */
+
+.certificate-wrap{
+  width:297mm;
+  height:210mm;
+  flex:none;
+  transform-origin:top left;
+}
+
+.certificate{
+  width:297mm;
+  height:210mm;
+  position:relative;
+  overflow:hidden;
+  background:#fff;
+  color:var(--navy);
+  border:2mm solid var(--navy);
+  box-shadow:0 15px 40px rgba(15,31,53,.2);
+}
+
+/* Decorative border */
+
+.certificate::before{
+  content:"";
+  position:absolute;
+  inset:5mm;
+  border:0.7mm solid var(--blue);
+  pointer-events:none;
+}
+
+.certificate::after{
+  content:"";
+  position:absolute;
+  inset:8mm;
+  border:0.25mm solid #BFD3F5;
+  pointer-events:none;
+}
+
+/* Decorative corners */
+
+.corner{
+  position:absolute;
+  width:18mm;
+  height:18mm;
+  z-index:1;
+}
+
+.corner::before,
+.corner::after{
+  content:"";
+  position:absolute;
+  background:var(--blue);
+}
+
+.corner::before{
+  width:100%;
+  height:1.2mm;
+}
+
+.corner::after{
+  width:1.2mm;
+  height:100%;
+}
+
+.corner.tl{top:10mm;left:10mm;}
+.corner.tr{top:10mm;right:10mm;transform:rotate(90deg);}
+.corner.bl{bottom:10mm;left:10mm;transform:rotate(-90deg);}
+.corner.br{bottom:10mm;right:10mm;transform:rotate(180deg);}
+
+/* =========================
+   EDITABLE ELEMENTS
+========================= */
+
+.editable{
+  position:absolute;
+  z-index:10;
+  user-select:none;
+  cursor:move;
+}
+
+.editable.selected{
+  outline:0.6mm dashed var(--blue);
+  outline-offset:1mm;
+}
+
+.academy{
+  top:17mm;
+  left:50%;
+  transform:translateX(-50%);
+  text-align:center;
+  white-space:nowrap;
+  font-size:7mm;
+  font-weight:900;
+  letter-spacing:.12em;
+  color:var(--navy);
+}
+
+.tagline{
+  top:27mm;
+  left:50%;
+  transform:translateX(-50%);
+  text-align:center;
+  font-size:3.2mm;
+  letter-spacing:.3em;
+  color:var(--blue);
+  font-weight:700;
+  white-space:nowrap;
+}
+
+.heading{
+  top:39mm;
+  left:50%;
+  transform:translateX(-50%);
+  text-align:center;
+  white-space:nowrap;
+  font-family:Georgia,"Times New Roman",serif;
+  font-size:12mm;
+  line-height:1;
+  font-weight:700;
+  letter-spacing:.025em;
+  color:var(--navy);
+}
+
+.heading-line{
+  position:absolute;
+  top:55mm;
+  left:50%;
+  transform:translateX(-50%);
+  width:65mm;
+  height:.8mm;
+  background:var(--blue);
+  border-radius:5px;
+}
+
+.presented{
+  top:61mm;
+  left:50%;
+  transform:translateX(-50%);
+  font-size:4mm;
+  color:#475569;
+  white-space:nowrap;
+}
+
+.student-name{
+  top:71mm;
+  left:50%;
+  transform:translateX(-50%);
+  font-family:Georgia,"Times New Roman",serif;
+  font-size:11mm;
+  line-height:1;
+  font-weight:700;
+  letter-spacing:.04em;
+  color:var(--blue);
+  text-align:center;
+  white-space:nowrap;
+}
+
+.name-line{
+  position:absolute;
+  top:85mm;
+  left:50%;
+  transform:translateX(-50%);
+  width:100mm;
+  height:.35mm;
+  background:#CBD5E1;
+}
+
+.completion{
+  top:91mm;
+  left:50%;
+  transform:translateX(-50%);
+  width:185mm;
+  text-align:center;
+  font-size:4mm;
+  line-height:1.6;
+  color:#475569;
+}
+
+.programme{
+  top:108mm;
+  left:50%;
+  transform:translateX(-50%);
+  font-family:Georgia,"Times New Roman",serif;
+  font-size:7.5mm;
+  line-height:1.1;
+  font-weight:700;
+  color:var(--navy);
+  text-align:center;
+  white-space:nowrap;
+}
+
+.programme-line{
+  position:absolute;
+  top:119mm;
+  left:50%;
+  transform:translateX(-50%);
+  width:80mm;
+  height:.6mm;
+  background:var(--light-blue);
+}
+
+.award-label{
+  top:128mm;
+  left:50%;
+  transform:translateX(-50%);
+  font-size:3.2mm;
+  color:#64748B;
+  letter-spacing:.12em;
+  text-transform:uppercase;
+  white-space:nowrap;
+}
+
+.award-date{
+  top:134mm;
+  left:50%;
+  transform:translateX(-50%);
+  font-size:4.2mm;
+  font-weight:700;
+  color:var(--navy);
+  white-space:nowrap;
+}
+
+.signature{
+  left:28mm;
+  bottom:23mm;
+  width:55mm;
+  text-align:center;
+}
+
+.signature-line{
+  width:55mm;
+  height:.4mm;
+  background:var(--navy);
+  margin-bottom:2mm;
+}
+
+.signature-name{
+  font-size:3.3mm;
+  font-weight:700;
+}
+
+.signature-title{
+  font-size:2.8mm;
+  color:#64748B;
+  margin-top:1mm;
+}
+
+.qr-box{
+  right:28mm;
+  bottom:20mm;
+  width:31mm;
+  text-align:center;
+}
+
+.qr-box canvas{
+  display:block;
+  width:25mm !important;
+  height:25mm !important;
+  margin:0 auto 2mm;
+}
+
+.qr-label{
+  font-size:2.6mm;
+  color:#64748B;
+  line-height:1.3;
+}
+
+/* =========================
+   RESPONSIVE BUILDER
+========================= */
+
+@media(max-width:1000px){
+  .main{
+    grid-template-columns:1fr;
+  }
+
+  .sidebar{
+    height:auto;
+  }
+
+  .preview-area{
+    justify-content:flex-start;
+  }
+}
+
+/* =========================
+   PRINT
+========================= */
+
+@media print{
+  body{
+    background:#fff;
+  }
+
+  .topbar,
+  .sidebar{
+    display:none !important;
+  }
+
+  .main{
+    display:block;
+    padding:0;
+  }
+
+  .preview-area{
+    padding:0;
+    overflow:visible;
+  }
+
+  .certificate-wrap{
+    transform:none !important;
+  }
+
+  .certificate{
+    box-shadow:none;
+  }
+
+  .editable.selected{
+    outline:none !important;
+  }
+
+  @page{
+    size:A4 landscape;
+    margin:0;
+  }
 }
 </style>
 </head>
 
 <body>
-<div class="builder">
 
-<aside class="editor">
-  <h2>Tech Resonate Certificate Builder</h2>
-  <p>Create, edit, customize and print certificates. Changes can be saved in this browser.</p>
+<div class="app">
 
-  <details class="section" open>
-    <summary>Certificate Content</summary>
-    <div class="section-body">
-      <div class="field">
-        <label>Student Name</label>
-        <input id="inputStudentName" value="LOVELYN JOSEPH">
-      </div>
-      <div class="field">
-        <label>Programme</label>
-        <input id="inputProgramme" value="DIPLOMA IN DATA PROCESSING">
-      </div>
-      <div class="field">
-        <label>Training Period</label>
-        <input id="inputPeriod" value="MAY 2026 – AUGUST, 2026">
-      </div>
-      <div class="field">
-        <label>Certificate ID</label>
-        <input id="inputCertificateId" value="TR-2026-DDP-001">
-      </div>
-      <div class="field">
-        <label>Date Issued</label>
-        <input id="inputIssueDate" value="29th SEPTEMBER, 2026">
-      </div>
-      <div class="field">
-        <label>Certificate Status</label>
-        <input id="inputStatus" value="Valid">
-      </div>
-      <div class="field">
-        <label>Authorized Person Name</label>
-        <input id="inputCeoName" value="Umar Umar">
-      </div>
-      <div class="field">
-        <label>Authorized Person Title</label>
-        <input id="inputCeoTitle" value="Chief Executive Officer">
-      </div>
-      <div class="field">
-        <label>Verification URL</label>
-        <input id="inputQrUrl" type="url" value="https://verify.techresonate.com/?id=TR-2026-DDP-001">
+  <!-- =========================
+       TOP BAR
+  ========================== -->
+
+  <div class="topbar">
+
+    <div class="brand">
+      <div class="brand-logo">TR</div>
+
+      <div class="brand-text">
+        <strong>Tech Resonate Academy</strong>
+        <span>Certificate Builder</span>
       </div>
     </div>
-  </details>
 
-  <details class="section" open>
-    <summary>Certificate Design</summary>
-    <div class="section-body">
-      <div class="field">
-        <label>Editable Element</label>
-        <select id="elementSelect"></select>
+    <div class="top-actions">
+      <button onclick="saveDesign()">Save</button>
+      <button onclick="loadDesign()">Load</button>
+      <button onclick="resetDesign()">Reset</button>
+      <button onclick="window.print()">Print / PDF</button>
+    </div>
+
+  </div>
+
+  <!-- =========================
+       MAIN
+  ========================== -->
+
+  <div class="main">
+
+    <!-- =========================
+         SIDEBAR
+    ========================== -->
+
+    <aside class="sidebar">
+
+      <div class="panel-title">Certificate Designer</div>
+
+      <div class="panel-subtitle">
+        Select an element, edit its text, color, size and position.
       </div>
-      <div class="field">
-        <label>Text Content</label>
-        <textarea id="controlText"></textarea>
-      </div>
-      <div class="field">
-        <label>Text Color</label>
-        <input type="color" id="controlColor" value="#0B1A2E">
-      </div>
-      <div class="row">
+
+
+      <!-- =========================
+           CERTIFICATE CONTENT
+      ========================== -->
+
+      <div class="section">
+
+        <h3>Certificate Information</h3>
+
         <div class="field">
-          <label>X Position (px)</label>
-          <input type="number" id="controlX" value="0">
+          <label>Academy Name</label>
+          <input
+            id="academyInput"
+            type="text"
+            value="Tech Resonate Academy"
+          >
         </div>
+
         <div class="field">
-          <label>Y Position (px)</label>
-          <input type="number" id="controlY" value="0">
+          <label>Tagline</label>
+          <input
+            id="taglineInput"
+            type="text"
+            value="INNOVATION THAT RESONATES"
+          >
         </div>
+
+        <div class="field">
+          <label>Recipient Name</label>
+          <input
+            id="nameInput"
+            type="text"
+            value="LOVELYN JOSEPH"
+          >
+        </div>
+
+        <div class="field">
+          <label>Programme</label>
+          <input
+            id="programmeInput"
+            type="text"
+            value="Diploma in Data Processing"
+          >
+        </div>
+
+        <div class="field">
+          <label>Completion Text</label>
+          <textarea id="completionInput">for successfully completing the prescribed training and practical requirements of the programme</textarea>
+        </div>
+
       </div>
-      <div class="row">
+
+
+      <!-- =========================
+           AWARD DATE
+      ========================== -->
+
+      <div class="section">
+
+        <h3>Award Date</h3>
+
         <div class="field">
-          <label>Font Size (mm)</label>
-          <input type="number" id="controlFont" step=".1">
+          <label>Day</label>
+          <input
+            id="awardDay"
+            type="text"
+            value="Monday"
+            placeholder="e.g. Monday"
+          >
         </div>
-        <div class="field">
-          <label>Rotation (deg)</label>
-          <input type="number" id="controlRotation" value="0">
+
+        <div class="grid-2">
+
+          <div class="field">
+            <label>Date</label>
+            <input
+              id="awardDate"
+              type="text"
+              value="27"
+              placeholder="e.g. 27"
+            >
+          </div>
+
+          <div class="field">
+            <label>Year</label>
+            <input
+              id="awardYear"
+              type="text"
+              value="2026"
+              placeholder="e.g. 2026"
+            >
+          </div>
+
         </div>
+
+        <div class="help">
+          The certificate will display the day, date and year of award together.
+        </div>
+
       </div>
-      <div class="row">
+
+
+      <!-- =========================
+           SELECT ELEMENT
+      ========================== -->
+
+      <div class="section">
+
+        <h3>Element Designer</h3>
+
         <div class="field">
+
+          <label>Select Element</label>
+
+          <select id="elementSelect">
+
+            <option value="academy">Tech Resonate Academy</option>
+
+            <option value="tagline">Tagline</option>
+
+            <option value="heading">Certificate of Completion</option>
+
+            <option value="presented">Presented Text</option>
+
+            <option value="studentName">Recipient Name</option>
+
+            <option value="completion">Completion Text</option>
+
+            <option value="programme">Programme</option>
+
+            <option value="awardLabel">Award Label</option>
+
+            <option value="awardDate">Award Date</option>
+
+            <option value="signature">Signature</option>
+
+            <option value="qr">QR Verification</option>
+
+          </select>
+
+        </div>
+
+
+        <!-- TEXT CONTENT -->
+
+        <div class="field">
+
+          <label>Text Content</label>
+
+          <input
+            id="controlText"
+            type="text"
+            placeholder="Type or replace text"
+          >
+
+          <div class="help">
+            Change the selected text directly here.
+          </div>
+
+        </div>
+
+
+        <!-- COLOR -->
+
+        <div class="field">
+
+          <label>Text Color</label>
+
+          <div class="color-row">
+
+            <input
+              id="controlColor"
+              type="color"
+              value="#0B1A2E"
+            >
+
+            <input
+              id="controlColorHex"
+              type="text"
+              value="#0B1A2E"
+              maxlength="7"
+            >
+
+            <button
+              class="small-btn"
+              type="button"
+              onclick="resetColor()"
+            >
+              Reset
+            </button>
+
+          </div>
+
+        </div>
+
+
+        <!-- FONT -->
+
+        <div class="grid-2">
+
+          <div class="field">
+            <label>Font Size (mm)</label>
+
+            <input
+              id="fontSize"
+              type="number"
+              step="0.1"
+              value="6"
+            >
+          </div>
+
+          <div class="field">
+            <label>Font Weight</label>
+
+            <select id="fontWeight">
+
+              <option value="400">Normal</option>
+              <option value="500">Medium</option>
+              <option value="600">Semi Bold</option>
+              <option value="700">Bold</option>
+              <option value="800">Extra Bold</option>
+              <option value="900">Black</option>
+
+            </select>
+
+          </div>
+
+        </div>
+
+
+        <!-- POSITION -->
+
+        <div class="grid-2">
+
+          <div class="field">
+            <label>Horizontal Position (%)</label>
+
+            <input
+              id="posX"
+              type="number"
+              step="0.1"
+              value="50"
+            >
+          </div>
+
+          <div class="field">
+            <label>Vertical Position (mm)</label>
+
+            <input
+              id="posY"
+              type="number"
+              step="0.1"
+              value="50"
+            >
+          </div>
+
+        </div>
+
+
+        <!-- WIDTH -->
+
+        <div class="field">
+
           <label>Width (mm)</label>
-          <input type="number" id="controlWidth" step=".1">
+
+          <input
+            id="elementWidth"
+            type="number"
+            step="0.5"
+            value="100"
+          >
+
         </div>
+
+
+        <!-- ALIGNMENT -->
+
         <div class="field">
-          <label>Height (mm)</label>
-          <input type="number" id="controlHeight" step=".1">
+
+          <label>Text Alignment</label>
+
+          <select id="textAlign">
+
+            <option value="left">Left</option>
+            <option value="center">Center</option>
+            <option value="right">Right</option>
+
+          </select>
+
         </div>
-      </div>
-      <div class="field">
-        <label>Font Weight</label>
-        <select id="controlWeight">
-          <option value="">Default</option>
-          <option value="400">Normal</option>
-          <option value="700">Bold</option>
-        </select>
-      </div>
-      <div class="field">
-        <label>Text Alignment</label>
-        <select id="controlAlign">
-          <option value="">Default</option>
-          <option value="left">Left</option>
-          <option value="center">Center</option>
-          <option value="right">Right</option>
-        </select>
-      </div>
-      <div class="actions">
-        <button id="moveUp">↑ Up</button>
-        <button id="moveDown">↓ Down</button>
-        <button id="moveLeft">← Left</button>
-        <button id="moveRight">Right →</button>
-        <button id="centerElement">Center</button>
-        <button id="resetElement">Reset Element</button>
-        <button id="hideElement">Show / Hide</button>
-      </div>
-      <p class="help">Select an element from the list or click it on the certificate. Drag elements to move them.</p>
-    </div>
-  </details>
 
-  <details class="section" open>
-    <summary>Colors</summary>
-    <div class="section-body">
-      <div class="field">
-        <label>Main Navy</label>
-        <input type="color" id="navyColor" value="#0B1A2E">
-      </div>
-      <div class="field">
-        <label>Blue</label>
-        <input type="color" id="blueColor" value="#3B82F6">
-      </div>
-      <div class="field">
-        <label>Light Blue</label>
-        <input type="color" id="lightBlueColor" value="#60A5FA">
-      </div>
-      <div class="field">
-        <label>Pale Blue</label>
-        <input type="color" id="paleColor" value="#DCEEFF">
-      </div>
-    </div>
-  </details>
 
-  <details class="section" open>
-    <summary>Logo Manager</summary>
-    <div class="section-body">
-      <div class="field">
-        <label>Upload Logo</label>
-        <input type="file" id="logoUpload" accept="image/*">
-      </div>
-      <div class="actions">
-        <button id="removeLogo" class="danger">Remove Logo</button>
-        <button id="restoreLogo">Restore Logo</button>
-      </div>
-    </div>
-  </details>
+        <!-- LETTER SPACING -->
 
-  <details class="section" open>
-    <summary>Signature Manager</summary>
-    <div class="section-body">
-      <div class="field">
-        <label>Upload Signature</label>
-        <input type="file" id="signatureUpload" accept="image/*">
-      </div>
-      <div class="actions">
-        <button id="removeSignature" class="danger">Remove Signature</button>
-        <button id="restoreSignature">Restore Default</button>
-      </div>
-    </div>
-  </details>
+        <div class="field">
 
-  <details class="section" open>
-    <summary>QR Code Manager</summary>
-    <div class="section-body">
-      <div class="field">
-        <label>Show QR Code</label>
-        <select id="showQr">
-          <option value="yes">Show</option>
-          <option value="no">Hide</option>
-        </select>
-      </div>
-      <button id="regenerateQr" style="width:100%">Regenerate QR Code</button>
-    </div>
-  </details>
+          <label>Letter Spacing (em)</label>
 
-  <details class="section" open>
-    <summary>Actions</summary>
-    <div class="section-body">
-      <div class="actions">
-        <button class="primary" id="saveDesign">Save Design</button>
-        <button id="resetDesign">Reset Design</button>
-        <button id="resetCertificate">Reset Certificate</button>
-        <button class="dark" id="printCertificate">Print / Save PDF</button>
-      </div>
-      <div class="status-message" id="statusMessage" aria-live="polite"></div>
-    </div>
-  </details>
-</aside>
+          <input
+            id="letterSpacing"
+            type="number"
+            step="0.01"
+            value="0"
+          >
 
-<main class="preview">
-  <div class="toolbar">
-    <strong>Live Certificate Preview</strong>
-    <div>
-      Zoom
-      <select id="zoom">
-        <option value="auto">Auto</option>
-        <option value="1">100%</option>
-        <option value=".8">80%</option>
-        <option value=".6">60%</option>
-        <option value=".5">50%</option>
-      </select>
-    </div>
+        </div>
+
+
+        <!-- ROTATION -->
+
+        <div class="field">
+
+          <label>Rotation (degrees)</label>
+
+          <input
+            id="rotation"
+            type="number"
+            step="1"
+            value="0"
+          >
+
+        </div>
+
+
+        <!-- VISIBILITY -->
+
+        <div class="action-grid">
+
+          <button
+            class="btn secondary"
+            type="button"
+            onclick="toggleSelectedVisibility()"
+          >
+            Show / Hide
+          </button>
+
+          <button
+            class="btn danger"
+            type="button"
+            onclick="clearSelectedText()"
+          >
+            Clear Text
+          </button>
+
+        </div>
+
+
+        <div class="action-grid" style="margin-top:7px">
+
+          <button
+            class="btn secondary"
+            type="button"
+            onclick="centerSelected()"
+          >
+            Center
+          </button>
+
+          <button
+            class="btn outline"
+            type="button"
+            onclick="resetSelected()"
+          >
+            Reset Element
+          </button>
+
+        </div>
+
+      </div>
+
+
+      <!-- =========================
+           QR VERIFICATION
+      ========================== -->
+
+      <div class="section">
+
+        <h3>QR Verification</h3>
+
+        <div class="field">
+
+          <label>Verification URL</label>
+
+          <input
+            id="qrUrl"
+            type="text"
+            value="https://techresonate.com/verify"
+            placeholder="https://..."
+          >
+
+        </div>
+
+        <button
+          class="btn"
+          type="button"
+          onclick="generateQR()"
+        >
+          Generate QR Code
+        </button>
+
+      </div>
+
+
+      <!-- =========================
+           SIGNATURE
+      ========================== -->
+
+      <div class="section">
+
+        <h3>Signature</h3>
+
+        <div class="field">
+
+          <label>Signer Name</label>
+
+          <input
+            id="signatureName"
+            type="text"
+            value="Authorized Signatory"
+          >
+
+        </div>
+
+        <div class="field">
+
+          <label>Signer Title</label>
+
+          <input
+            id="signatureTitle"
+            type="text"
+            value="Tech Resonate Academy"
+          >
+
+        </div>
+
+      </div>
+
+
+      <div class="section">
+
+        <button
+          class="btn"
+          type="button"
+          onclick="window.print()"
+        >
+          Print Certificate
+        </button>
+
+      </div>
+
+    </aside>
+
+
+    <!-- =========================
+         PREVIEW
+    ========================== -->
+
+    <main class="preview-area">
+
+      <div class="certificate-wrap">
+
+        <div
+          id="certificate"
+          class="certificate"
+        >
+
+          <div class="corner tl"></div>
+          <div class="corner tr"></div>
+          <div class="corner bl"></div>
+          <div class="corner br"></div>
+
+
+          <!-- ACADEMY -->
+
+          <div
+            id="academy"
+            class="editable academy"
+            data-key="academy"
+          >
+            Tech Resonate Academy
+          </div>
+
+
+          <!-- TAGLINE -->
+
+          <div
+            id="tagline"
+            class="editable tagline"
+            data-key="tagline"
+          >
+            INNOVATION THAT RESONATES
+          </div>
+
+
+          <!-- SINGLE HEADING ELEMENT -->
+
+          <div
+            id="heading"
+            class="editable heading"
+            data-key="heading"
+          >
+            Certificate of Completion
+          </div>
+
+
+          <div class="heading-line"></div>
+
+
+          <!-- PRESENTED -->
+
+          <div
+            id="presented"
+            class="editable presented"
+            data-key="presented"
+          >
+            This certificate is proudly presented to
+          </div>
+
+
+          <!-- NAME -->
+
+          <div
+            id="studentName"
+            class="editable student-name"
+            data-key="studentName"
+          >
+            LOVELYN JOSEPH
+          </div>
+
+
+          <div class="name-line"></div>
+
+
+          <!-- COMPLETION -->
+
+          <div
+            id="completion"
+            class="editable completion"
+            data-key="completion"
+          >
+            for successfully completing the prescribed training and practical requirements of the programme
+          </div>
+
+
+          <!-- PROGRAMME -->
+
+          <div
+            id="programme"
+            class="editable programme"
+            data-key="programme"
+          >
+            Diploma in Data Processing
+          </div>
+
+
+          <div class="programme-line"></div>
+
+
+          <!-- AWARD LABEL -->
+
+          <div
+            id="awardLabel"
+            class="editable award-label"
+            data-key="awardLabel"
+          >
+            Awarded On
+          </div>
+
+
+          <!-- AWARD DATE -->
+
+          <div
+            id="awardDateDisplay"
+            class="editable award-date"
+            data-key="awardDate"
+          >
+            Monday, 27 — 2026
+          </div>
+
+
+          <!-- SIGNATURE -->
+
+          <div
+            id="signature"
+            class="editable signature"
+            data-key="signature"
+          >
+
+            <div class="signature-line"></div>
+
+            <div
+              id="signatureNameDisplay"
+              class="signature-name"
+            >
+              Authorized Signatory
+            </div>
+
+            <div
+              id="signatureTitleDisplay"
+              class="signature-title"
+            >
+              Tech Resonate Academy
+            </div>
+
+          </div>
+
+
+          <!-- QR -->
+
+          <div
+            id="qr"
+            class="editable qr-box"
+            data-key="qr"
+          >
+
+            <canvas id="qrCanvas"></canvas>
+
+            <div class="qr-label">
+              Scan to verify certificate
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </main>
+
   </div>
 
-  <div id="stageSpace" class="stage-space">
-    <div class="stage" id="stage">
-      <article class="certificate" id="certificate">
-        <div class="stripes"></div>
-
-        <section class="main">
-          <header class="header">
-            <img class="logo" id="logo"
-              data-editor-id="logo"
-              src="https://techresonate.com/logo.png"
-              alt="Tech Resonate Logo">
-
-            <div class="issuer">
-              <span data-editor-id="officialCertificate">Official Certificate</span>
-              <strong data-editor-id="academyText">Tech Resonate Academy</strong>
-            </div>
-          </header>
-
-          <div class="title">
-            <div class="eyebrow" data-editor-id="eyebrow">
-              Achievement &amp; Completion
-            </div>
-            <h1>
-              <span class="heading-main" data-editor-id="heading">Certificate</span>
-              <span class="of-completion" data-editor-id="completion">of Completion</span>
-            </h1>
-          </div>
-
-          <div class="presented" data-editor-id="presented">
-            This is to certify that
-          </div>
-
-          <div class="name-line">
-            <div id="studentName" data-editor-id="studentName">LOVELYN JOSEPH</div>
-            <div class="name-underline"></div>
-          </div>
-
-          <div class="copy">
-            <span data-editor-id="description" id="description">
-              Having successfully completed his/her program and fulfilled all the requirements, has been awarded a Certificate of
-            </span>
-            <span class="programme" id="programme" data-editor-id="programme">
-              DIPLOMA IN DATA PROCESSING
-            </span>
-            <span class="period" id="period" data-editor-id="period">
-              Period: MAY 2026 – AUGUST, 2026
-            </span>
-          </div>
-
-          <div class="bottom">
-            <div class="details">
-              <div class="detail">
-                <span class="label">Certificate ID</span>
-                <span class="value" id="certificateId" data-editor-id="certificateId">TR-2026-DDP-001</span>
-              </div>
-              <div class="detail">
-                <span class="label">Date Issued</span>
-                <span class="value" id="issueDate" data-editor-id="issueDate">29th SEPTEMBER, 2026</span>
-              </div>
-              <div class="detail">
-                <span class="label">Certificate Status</span>
-                <span class="value" id="status" data-editor-id="status">Valid</span>
-              </div>
-              <div class="detail">
-                <span class="label">Issued By</span>
-                <span class="value" data-editor-id="issuedBy">Tech Resonate Academy</span>
-              </div>
-            </div>
-
-            <div class="signature">
-              <div class="sig-img-box">
-                <img class="sig-img" id="signature"
-                  data-editor-id="signature"
-                  alt="Authorized signature">
-              </div>
-              <div class="sig-line">
-                <div class="sig-name" id="ceoName" data-editor-id="ceoName">Umar Umar</div>
-                <div class="sig-title" id="ceoTitle" data-editor-id="ceoTitle">Chief Executive Officer</div>
-              </div>
-            </div>
-          </div>
-
-          <div class="micro" data-editor-id="micro">
-            Technology • Practical Skills • Career Readiness
-          </div>
-        </section>
-
-        <aside class="side">
-          <div class="kicker" data-editor-id="authentic">Authentic Credential</div>
-          <div class="verify-title" data-editor-id="verifyTitle">Verify this<br>certificate</div>
-
-          <div class="seal">
-            <div class="seal-star"></div>
-            <div class="seal-core">
-              <div class="seal-label">Certified</div>
-              <div class="seal-year" id="sealYear">2026</div>
-              <div class="seal-rule"></div>
-            </div>
-          </div>
-
-          <div class="qr" id="qrBox">
-            <canvas id="qrCanvas" width="320" height="320"></canvas>
-          </div>
-          <div class="scan" data-editor-id="scan">Scan to Verify</div>
-          <div class="domain" data-editor-id="domain">verify.techresonate.com</div>
-          <div class="side-id">
-            <span data-editor-id="reference">Certificate Reference</span>
-            <strong id="sideCertificateId">TR-2026-DDP-001</strong>
-          </div>
-        </aside>
-      </article>
-    </div>
-  </div>
-</main>
 </div>
 
+
 <script>
-"use strict";
-
-const DEFAULT = {
-  studentName: "LOVELYN JOSEPH",
-  programme: "DIPLOMA IN DATA PROCESSING",
-  period: "MAY 2026 – AUGUST, 2026",
-  certificateId: "TR-2026-DDP-001",
-  issueDate: "29th SEPTEMBER, 2026",
-  status: "Valid",
-  ceo: "Umar Umar",
-  ceoTitle: "Chief Executive Officer",
-  logo: "https://techresonate.com/logo.png",
-  signature: "https://drive.google.com/uc?export=view&id=19jB_ypH8aTv-QPilB3z7xDKMufb98cNn"
-};
-
-const $ = id => document.getElementById(id);
-const certificate = $("certificate");
-const stage = $("stage");
-const stageSpace = $("stageSpace");
-const select = $("elementSelect");
-const textControl = $("controlText");
-const colorControl = $("controlColor");
+/* =========================================================
+   ELEMENT DEFINITIONS
+========================================================= */
 
 const ELEMENTS = {
-  logo: {label:"Logo", selector:"#logo", text:false},
-  officialCertificate:{label:"Official Certificate",selector:"[data-editor-id='officialCertificate']",text:true},
-  academyText:{label:"Academy Name",selector:"[data-editor-id='academyText']",text:true},
-  eyebrow:{label:"Achievement & Completion",selector:"[data-editor-id='eyebrow']",text:true},
-  heading:{label:"Certificate Heading",selector:"[data-editor-id='heading']",text:true},
-  completion:{label:"Of Completion",selector:"[data-editor-id='completion']",text:true},
-  presented:{label:"Certification Intro",selector:"[data-editor-id='presented']",text:true},
-  studentName:{label:"Student Name",selector:"#studentName",text:true},
-  description:{label:"Certificate Description",selector:"#description",text:true},
-  programme:{label:"Programme",selector:"#programme",text:true},
-  period:{label:"Training Period",selector:"#period",text:true},
-  certificateId:{label:"Certificate ID",selector:"#certificateId",text:true},
-  issueDate:{label:"Date Issued",selector:"#issueDate",text:true},
-  status:{label:"Certificate Status",selector:"#status",text:true},
-  issuedBy:{label:"Issued By",selector:"[data-editor-id='issuedBy']",text:true},
-  signature:{label:"Signature",selector:"#signature",text:false},
-  ceoName:{label:"Authorized Person Name",selector:"#ceoName",text:true},
-  ceoTitle:{label:"Authorized Person Title",selector:"#ceoTitle",text:true},
-  micro:{label:"Footer Text",selector:"[data-editor-id='micro']",text:true},
-  authentic:{label:"Authentic Credential",selector:"[data-editor-id='authentic']",text:true},
-  verifyTitle:{label:"Verification Heading",selector:"[data-editor-id='verifyTitle']",text:true},
-  scan:{label:"Scan to Verify",selector:"[data-editor-id='scan']",text:true},
-  domain:{label:"Verification Domain",selector:"[data-editor-id='domain']",text:true},
-  reference:{label:"Certificate Reference",selector:"[data-editor-id='reference']",text:true}
+
+  academy:{
+    text:true,
+    el:"academy"
+  },
+
+  tagline:{
+    text:true,
+    el:"tagline"
+  },
+
+  heading:{
+    text:true,
+    el:"heading"
+  },
+
+  presented:{
+    text:true,
+    el:"presented"
+  },
+
+  studentName:{
+    text:true,
+    el:"studentName"
+  },
+
+  completion:{
+    text:true,
+    el:"completion"
+  },
+
+  programme:{
+    text:true,
+    el:"programme"
+  },
+
+  awardLabel:{
+    text:true,
+    el:"awardLabel"
+  },
+
+  awardDate:{
+    text:true,
+    el:"awardDateDisplay"
+  },
+
+  signature:{
+    text:false,
+    el:"signature"
+  },
+
+  qr:{
+    text:false,
+    el:"qr"
+  }
+
 };
 
-let selectedKey = "studentName";
-let states = {};
-let drag = null;
-let scale = 1;
-let nudgeStep = 5;
-let logoData = DEFAULT.logo;
-let signatureData = DEFAULT.signature;
 
-function notify(message) {
-  $("statusMessage").textContent = message;
+/* =========================================================
+   STATE
+========================================================= */
+
+let selectedKey = "heading";
+
+let designState = {};
+
+let defaultHTML = {};
+
+
+/* =========================================================
+   ELEMENT HELPER
+========================================================= */
+
+function elementFor(key){
+
+  return document.getElementById(
+    ELEMENTS[key].el
+  );
+
 }
 
-function element(key) {
-  return certificate.querySelector(ELEMENTS[key].selector);
+
+/* =========================================================
+   DEFAULT CONTENT
+========================================================= */
+
+Object.keys(ELEMENTS).forEach(key => {
+
+  const el = elementFor(key);
+
+  if(
+    el &&
+    ELEMENTS[key].text
+  ){
+
+    defaultHTML[key] = el.innerHTML;
+
+  }
+
+});
+
+
+/* =========================================================
+   STATE
+========================================================= */
+
+function getState(key){
+
+  if(!designState[key]){
+
+    designState[key] = {
+
+      text:null,
+
+      color:null,
+
+      fontSize:null,
+
+      fontWeight:null,
+
+      x:null,
+
+      y:null,
+
+      width:null,
+
+      align:null,
+
+      letterSpacing:null,
+
+      rotation:null,
+
+      visible:true
+
+    };
+
+  }
+
+  return designState[key];
+
 }
 
-function getState(key) {
-  if (!states[key]) states[key] = {x:0,y:0,rotation:0,visible:true};
-  return states[key];
+
+/* =========================================================
+   RGB TO HEX
+========================================================= */
+
+function rgbToHex(rgb){
+
+  if(!rgb){
+    return "#0B1A2E";
+  }
+
+  const values = rgb.match(/\d+/g);
+
+  if(
+    !values ||
+    values.length < 3
+  ){
+
+    return "#0B1A2E";
+
+  }
+
+  return "#" +
+    values
+      .slice(0,3)
+      .map(v =>
+        Number(v)
+          .toString(16)
+          .padStart(2,"0")
+      )
+      .join("")
+      .toUpperCase();
+
 }
 
-function getYear(id) {
-  const match = String(id).match(/20\d{2}/);
-  return match ? match[0] : "2026";
+
+/* =========================================================
+   NORMALIZE HEX
+========================================================= */
+
+function normalizeHex(value){
+
+  if(!value){
+    return null;
+  }
+
+  let v = value.trim();
+
+  if(!v.startsWith("#")){
+    v = "#" + v;
+  }
+
+  if(/^#[0-9a-fA-F]{6}$/.test(v)){
+    return v.toUpperCase();
+  }
+
+  return null;
+
 }
 
-function generatedUrl() {
-  return "https://verify.techresonate.com/?id=" +
-    encodeURIComponent($("inputCertificateId").value.trim());
-}
 
-function updateQR() {
-  const visible = $("showQr").value === "yes";
-  $("qrBox").style.display = visible ? "grid" : "none";
-  if (!visible) return;
+/* =========================================================
+   APPLY STATE
+========================================================= */
 
-  if (!window.QRCode || !QRCode.toCanvas) {
-    notify("QR library did not load. Check your internet connection.");
+function applyElementState(key){
+
+  const el = elementFor(key);
+
+  const s = getState(key);
+
+  if(!el){
     return;
   }
 
-  QRCode.toCanvas($("qrCanvas"), generatedUrl(), {
-    width:320,
-    margin:1,
-    errorCorrectionLevel:"H",
-    color:{dark:"#0B1A2E",light:"#FFFFFF"}
-  }, error => {
-    if (error) notify("Could not generate QR code.");
-  });
 
-  $("domain").textContent = new URL(generatedUrl()).host;
-}
+  if(
+    ELEMENTS[key].text &&
+    s.text !== null
+  ){
 
-function renderContent() {
-  const values = {
-    studentName:$("inputStudentName").value,
-    programme:$("inputProgramme").value,
-    period:"Period: " + $("inputPeriod").value,
-    certificateId:$("inputCertificateId").value,
-    issueDate:$("inputIssueDate").value,
-    status:$("inputStatus").value,
-    ceoName:$("inputCeoName").value,
-    ceoTitle:$("inputCeoTitle").value
-  };
+    el.textContent = s.text;
 
-  Object.entries(values).forEach(([id,value]) => {
-    if ($(id)) $(id).textContent = value;
-  });
-
-  $("sideCertificateId").textContent = values.certificateId;
-  $("sealYear").textContent = getYear(values.certificateId);
-  fitName();
-  updateQR();
-}
-
-function fitName() {
-  const el = $("studentName");
-  const box = el.parentElement;
-  if (states.studentName?.fontSize != null) return;
-
-  let size = 10.7;
-  el.style.fontSize = size + "mm";
-  while (el.scrollWidth > box.clientWidth && size > 7) {
-    size -= .2;
-    el.style.fontSize = size + "mm";
   }
-}
 
-function setInputs(data) {
-  $("inputStudentName").value = data.studentName || "";
-  $("inputProgramme").value = data.programme || "";
-  $("inputPeriod").value = data.period || "";
-  $("inputCertificateId").value = data.certificateId || "";
-  $("inputIssueDate").value = data.issueDate || "";
-  $("inputStatus").value = data.status || "";
-  $("inputCeoName").value = data.ceo || "";
-  $("inputCeoTitle").value = data.ceoTitle || "";
-  renderContent();
-}
 
-function applyState(key) {
-  const el = element(key);
-  if (!el) return;
-  const s = getState(key);
+  if(
+    ELEMENTS[key].text &&
+    s.color
+  ){
+
+    el.style.color = s.color;
+
+  }
+
+
+  if(s.fontSize !== null){
+
+    el.style.fontSize =
+      s.fontSize + "mm";
+
+  }
+
+
+  if(s.fontWeight !== null){
+
+    el.style.fontWeight =
+      s.fontWeight;
+
+  }
+
+
+  if(s.x !== null){
+
+    el.style.left =
+      s.x + "%";
+
+  }
+
+
+  if(s.y !== null){
+
+    el.style.top =
+      s.y + "mm";
+
+  }
+
+
+  if(s.width !== null){
+
+    el.style.width =
+      s.width + "mm";
+
+  }
+
+
+  if(s.align !== null){
+
+    el.style.textAlign =
+      s.align;
+
+  }
+
+
+  if(s.letterSpacing !== null){
+
+    el.style.letterSpacing =
+      s.letterSpacing + "em";
+
+  }
+
+
+  const baseTransform =
+    key === "academy" ||
+    key === "tagline" ||
+    key === "heading" ||
+    key === "presented" ||
+    key === "studentName" ||
+    key === "completion" ||
+    key === "programme" ||
+    key === "awardLabel" ||
+    key === "awardDate"
+
+      ? "translateX(-50%)"
+
+      : "";
+
+  const rotation =
+    s.rotation !== null
+      ? ` rotate(${s.rotation}deg)`
+      : "";
 
   el.style.transform =
-    `translate(${s.x || 0}px,${s.y || 0}px) rotate(${s.rotation || 0}deg)`;
-  el.style.width = s.width == null ? "" : s.width + "mm";
-  el.style.height = s.height == null ? "" : s.height + "mm";
-  el.style.fontSize = s.fontSize == null ? "" : s.fontSize + "mm";
-  el.style.color = s.color || "";
-  el.style.fontWeight = s.weight || "";
-  el.style.textAlign = s.align || "";
-  el.style.visibility = s.visible === false ? "hidden" : "visible";
+    baseTransform + rotation;
+
+
+  el.style.visibility =
+    s.visible === false
+      ? "hidden"
+      : "visible";
+
 }
 
-function applyAll() {
-  Object.keys(ELEMENTS).forEach(applyState);
-  fitName();
-}
 
-function selectElement(key) {
-  if (!ELEMENTS[key]) return;
+/* =========================================================
+   SELECT ELEMENT
+========================================================= */
+
+function selectElement(key){
+
   selectedKey = key;
-  select.value = key;
-  certificate.querySelectorAll(".selected").forEach(el => el.classList.remove("selected"));
 
-  const el = element(key);
-  if (el) el.classList.add("selected");
+  document
+    .querySelectorAll(".editable")
+    .forEach(el => {
 
-  const meta = ELEMENTS[key];
+      el.classList.remove("selected");
+
+    });
+
+  const el = elementFor(key);
+
+  if(el){
+
+    el.classList.add("selected");
+
+  }
+
+  document.getElementById(
+    "elementSelect"
+  ).value = key;
+
+  refreshControls();
+
+}
+
+
+/* =========================================================
+   REFRESH CONTROLS
+========================================================= */
+
+function refreshControls(){
+
+  const key = selectedKey;
+
+  const el = elementFor(key);
+
   const s = getState(key);
-  $("controlText").disabled = !meta.text;
-  $("controlColor").disabled = !meta.text;
-  textControl.value = meta.text ? el.textContent : "";
-  colorControl.value = s.color || "#0B1A2E";
-  $("controlX").value = s.x || 0;
-  $("controlY").value = s.y || 0;
-  $("controlRotation").value = s.rotation || 0;
-  $("controlWidth").value = s.width ?? "";
-  $("controlHeight").value = s.height ?? "";
-  $("controlFont").value = s.fontSize ?? "";
-  $("controlWeight").value = s.weight || "";
-  $("controlAlign").value = s.align || "";
-}
 
-function editSelectedText() {
-  const meta = ELEMENTS[selectedKey];
-  if (!meta.text) return;
-  element(selectedKey).textContent = textControl.value;
-  getState(selectedKey).text = textControl.value;
-  if (selectedKey === "studentName") fitName();
-}
-
-function bindNumber(id, property) {
-  $(id).addEventListener("input", () => {
-    const value = parseFloat($(id).value);
-    if (!Number.isFinite(value)) return;
-    getState(selectedKey)[property] = value;
-    applyState(selectedKey);
-  });
-}
-
-function uploadImage(file, callback) {
-  if (!file) return;
-  if (!file.type.startsWith("image/")) {
-    notify("Please select an image file.");
+  if(!el){
     return;
   }
-  const reader = new FileReader();
-  reader.onload = () => callback(reader.result);
-  reader.onerror = () => notify("Could not read image.");
-  reader.readAsDataURL(file);
-}
 
-function populateElements() {
-  Object.entries(ELEMENTS).forEach(([key,meta]) => {
-    const option = document.createElement("option");
-    option.value = key;
-    option.textContent = meta.label;
-    select.appendChild(option);
-  });
-}
 
-function saveDesign() {
-  Object.entries(ELEMENTS).forEach(([key,meta]) => {
-    if (meta.text) getState(key).text = element(key).textContent;
-  });
-  const data = {
-    states,
-    content: {
-      studentName:$("inputStudentName").value,
-      programme:$("inputProgramme").value,
-      period:$("inputPeriod").value,
-      certificateId:$("inputCertificateId").value,
-      issueDate:$("inputIssueDate").value,
-      status:$("inputStatus").value,
-      ceo:$("inputCeoName").value,
-      ceoTitle:$("inputCeoTitle").value
-    },
-    logoData, signatureData
-  };
-  try {
-    localStorage.setItem("trCertificateDesign", JSON.stringify(data));
-    notify("Design saved in this browser.");
-  } catch(e) {
-    notify("Unable to save. Uploaded images may be too large.");
+  /* TEXT */
+
+  const textInput =
+    document.getElementById(
+      "controlText"
+    );
+
+  if(ELEMENTS[key].text){
+
+    textInput.disabled = false;
+
+    textInput.value =
+      el.textContent;
+
+  }else{
+
+    textInput.disabled = true;
+
+    textInput.value = "";
+
   }
+
+
+  /* COLOR */
+
+  const color =
+    s.color ||
+    rgbToHex(
+      getComputedStyle(el).color
+    );
+
+  document.getElementById(
+    "controlColor"
+  ).value = color;
+
+  document.getElementById(
+    "controlColorHex"
+  ).value = color;
+
+
+  /* FONT SIZE */
+
+  const computedSize =
+    parseFloat(
+      getComputedStyle(el).fontSize
+    ) / 3.7795;
+
+  document.getElementById(
+    "fontSize"
+  ).value =
+    s.fontSize !== null
+      ? s.fontSize
+      : Number(computedSize.toFixed(2));
+
+
+  /* WEIGHT */
+
+  document.getElementById(
+    "fontWeight"
+  ).value =
+    s.fontWeight !== null
+      ? s.fontWeight
+      : getComputedStyle(el).fontWeight;
+
+
+  /* X */
+
+  if(s.x !== null){
+
+    document.getElementById(
+      "posX"
+    ).value = s.x;
+
+  }
+
+
+  /* Y */
+
+  if(s.y !== null){
+
+    document.getElementById(
+      "posY"
+    ).value = s.y;
+
+  }
+
+
+  /* WIDTH */
+
+  document.getElementById(
+    "elementWidth"
+  ).value =
+    s.width !== null
+      ? s.width
+      : parseFloat(
+          getComputedStyle(el).width
+        ) / 3.7795;
+
+
+  /* ALIGN */
+
+  document.getElementById(
+    "textAlign"
+  ).value =
+    s.align ||
+    getComputedStyle(el).textAlign;
+
+
+  /* LETTER SPACING */
+
+  let spacing =
+    parseFloat(
+      getComputedStyle(el).letterSpacing
+    );
+
+  if(isNaN(spacing)){
+    spacing = 0;
+  }
+
+  document.getElementById(
+    "letterSpacing"
+  ).value =
+    s.letterSpacing !== null
+      ? s.letterSpacing
+      : Number((spacing / parseFloat(getComputedStyle(el).fontSize)).toFixed(3));
+
+
+  /* ROTATION */
+
+  document.getElementById(
+    "rotation"
+  ).value =
+    s.rotation !== null
+      ? s.rotation
+      : 0;
+
 }
 
-function loadDesign() {
-  try {
-    const data = JSON.parse(localStorage.getItem("trCertificateDesign") || "null");
-    if (!data) return;
-    states = data.states || {};
-    if (data.content) setInputs(data.content);
-    if (data.logoData) {
-      logoData = data.logoData;
-      $("logo").src = logoData;
-    }
-    if (data.signatureData) {
-      signatureData = data.signatureData;
-      $("signature").src = signatureData;
-    }
-    Object.entries(ELEMENTS).forEach(([key,meta]) => {
-      if (meta.text && states[key]?.text != null) {
-        element(key).textContent = states[key].text;
+
+/* =========================================================
+   UPDATE TEXT
+========================================================= */
+
+function setText(value){
+
+  const key = selectedKey;
+
+  if(!ELEMENTS[key].text){
+    return;
+  }
+
+  const el = elementFor(key);
+
+  const s = getState(key);
+
+  el.textContent = value;
+
+  s.text = value;
+
+  if(key === "studentName"){
+
+    fitStudentName();
+
+  }
+
+  refreshControls();
+
+}
+
+
+/* =========================================================
+   SET COLOR
+========================================================= */
+
+function setColor(value){
+
+  const key = selectedKey;
+
+  if(!ELEMENTS[key].text){
+    return;
+  }
+
+  const hex =
+    normalizeHex(value);
+
+  if(!hex){
+    return;
+  }
+
+  const s = getState(key);
+
+  s.color = hex;
+
+  elementFor(key).style.color = hex;
+
+  document.getElementById(
+    "controlColor"
+  ).value = hex;
+
+  document.getElementById(
+    "controlColorHex"
+  ).value = hex;
+
+}
+
+
+/* =========================================================
+   RESET COLOR
+========================================================= */
+
+function resetColor(){
+
+  const key = selectedKey;
+
+  const el = elementFor(key);
+
+  const s = getState(key);
+
+  delete s.color;
+
+  el.style.color = "";
+
+  refreshControls();
+
+}
+
+
+/* =========================================================
+   CLEAR TEXT
+========================================================= */
+
+function clearSelectedText(){
+
+  const key = selectedKey;
+
+  if(!ELEMENTS[key].text){
+    return;
+  }
+
+  setText("");
+
+}
+
+
+/* =========================================================
+   TOGGLE VISIBILITY
+========================================================= */
+
+function toggleSelectedVisibility(){
+
+  const key = selectedKey;
+
+  const s = getState(key);
+
+  s.visible =
+    s.visible === false
+      ? true
+      : false;
+
+  applyElementState(key);
+
+}
+
+
+/* =========================================================
+   CENTER
+========================================================= */
+
+function centerSelected(){
+
+  const key = selectedKey;
+
+  const s = getState(key);
+
+  s.x = 50;
+
+  const el = elementFor(key);
+
+  el.style.left = "50%";
+
+  if(
+    key === "academy" ||
+    key === "tagline" ||
+    key === "heading" ||
+    key === "presented" ||
+    key === "studentName" ||
+    key === "completion" ||
+    key === "programme" ||
+    key === "awardLabel" ||
+    key === "awardDate"
+  ){
+
+    el.style.transform =
+      `translateX(-50%)${s.rotation ? ` rotate(${s.rotation}deg)` : ""}`;
+
+  }
+
+  refreshControls();
+
+}
+
+
+/* =========================================================
+   RESET SELECTED
+========================================================= */
+
+function resetSelected(){
+
+  const key = selectedKey;
+
+  const el = elementFor(key);
+
+  if(
+    ELEMENTS[key].text &&
+    defaultHTML[key] !== undefined
+  ){
+
+    el.innerHTML =
+      defaultHTML[key];
+
+  }
+
+  delete designState[key];
+
+  applyElementState(key);
+
+  refreshControls();
+
+}
+
+
+/* =========================================================
+   RESET DESIGN
+========================================================= */
+
+function resetDesign(){
+
+  if(
+    !confirm(
+      "Reset the entire certificate design?"
+    )
+  ){
+
+    return;
+
+  }
+
+  designState = {};
+
+  Object.keys(ELEMENTS)
+    .forEach(key => {
+
+      const el =
+        elementFor(key);
+
+      if(
+        ELEMENTS[key].text &&
+        defaultHTML[key] !== undefined
+      ){
+
+        el.innerHTML =
+          defaultHTML[key];
+
       }
+
+      el.removeAttribute("style");
+
     });
-    applyAll();
-  } catch(e) {
-    notify("Could not load saved design.");
+
+
+  /* restore QR */
+
+  generateQR();
+
+  updateCertificateText();
+
+  selectElement("heading");
+
+}
+
+
+/* =========================================================
+   INPUT HELPERS
+========================================================= */
+
+function bindInput(
+  id,
+  callback
+){
+
+  document
+    .getElementById(id)
+    .addEventListener(
+      "input",
+      callback
+    );
+
+}
+
+
+/* =========================================================
+   TEXT CONTROL
+========================================================= */
+
+bindInput(
+  "controlText",
+  function(){
+
+    setText(this.value);
+
   }
+);
+
+
+/* =========================================================
+   COLOR CONTROL
+========================================================= */
+
+bindInput(
+  "controlColor",
+  function(){
+
+    setColor(this.value);
+
+  }
+);
+
+
+bindInput(
+  "controlColorHex",
+  function(){
+
+    const hex =
+      normalizeHex(this.value);
+
+    if(hex){
+
+      setColor(hex);
+
+    }
+
+  }
+);
+
+
+/* =========================================================
+   FONT SIZE
+========================================================= */
+
+bindInput(
+  "fontSize",
+  function(){
+
+    const value =
+      parseFloat(this.value);
+
+    if(isNaN(value)){
+      return;
+    }
+
+    const s =
+      getState(selectedKey);
+
+    s.fontSize = value;
+
+    elementFor(
+      selectedKey
+    ).style.fontSize =
+      value + "mm";
+
+  }
+);
+
+
+/* =========================================================
+   FONT WEIGHT
+========================================================= */
+
+document
+  .getElementById("fontWeight")
+  .addEventListener(
+    "change",
+    function(){
+
+      const s =
+        getState(selectedKey);
+
+      s.fontWeight =
+        this.value;
+
+      elementFor(
+        selectedKey
+      ).style.fontWeight =
+        this.value;
+
+    }
+  );
+
+
+/* =========================================================
+   POSITION X
+========================================================= */
+
+bindInput(
+  "posX",
+  function(){
+
+    const value =
+      parseFloat(this.value);
+
+    if(isNaN(value)){
+      return;
+    }
+
+    const s =
+      getState(selectedKey);
+
+    s.x = value;
+
+    const el =
+      elementFor(selectedKey);
+
+    el.style.left =
+      value + "%";
+
+  }
+);
+
+
+/* =========================================================
+   POSITION Y
+========================================================= */
+
+bindInput(
+  "posY",
+  function(){
+
+    const value =
+      parseFloat(this.value);
+
+    if(isNaN(value)){
+      return;
+    }
+
+    const s =
+      getState(selectedKey);
+
+    s.y = value;
+
+    elementFor(
+      selectedKey
+    ).style.top =
+      value + "mm";
+
+  }
+);
+
+
+/* =========================================================
+   WIDTH
+========================================================= */
+
+bindInput(
+  "elementWidth",
+  function(){
+
+    const value =
+      parseFloat(this.value);
+
+    if(isNaN(value)){
+      return;
+    }
+
+    const s =
+      getState(selectedKey);
+
+    s.width = value;
+
+    elementFor(
+      selectedKey
+    ).style.width =
+      value + "mm";
+
+  }
+);
+
+
+/* =========================================================
+   ALIGNMENT
+========================================================= */
+
+document
+  .getElementById("textAlign")
+  .addEventListener(
+    "change",
+    function(){
+
+      const s =
+        getState(selectedKey);
+
+      s.align =
+        this.value;
+
+      elementFor(
+        selectedKey
+      ).style.textAlign =
+        this.value;
+
+    }
+  );
+
+
+/* =========================================================
+   LETTER SPACING
+========================================================= */
+
+bindInput(
+  "letterSpacing",
+  function(){
+
+    const value =
+      parseFloat(this.value);
+
+    if(isNaN(value)){
+      return;
+    }
+
+    const s =
+      getState(selectedKey);
+
+    s.letterSpacing =
+      value;
+
+    elementFor(
+      selectedKey
+    ).style.letterSpacing =
+      value + "em";
+
+  }
+);
+
+
+/* =========================================================
+   ROTATION
+========================================================= */
+
+bindInput(
+  "rotation",
+  function(){
+
+    const value =
+      parseFloat(this.value);
+
+    if(isNaN(value)){
+      return;
+    }
+
+    const s =
+      getState(selectedKey);
+
+    s.rotation =
+      value;
+
+    const el =
+      elementFor(selectedKey);
+
+    const centered =
+      [
+        "academy",
+        "tagline",
+        "heading",
+        "presented",
+        "studentName",
+        "completion",
+        "programme",
+        "awardLabel",
+        "awardDate"
+      ].includes(selectedKey);
+
+    el.style.transform =
+      (centered
+        ? "translateX(-50%)"
+        : "") +
+      ` rotate(${value}deg)`;
+
+  }
+);
+
+
+/* =========================================================
+   ELEMENT SELECT
+========================================================= */
+
+document
+  .getElementById("elementSelect")
+  .addEventListener(
+    "change",
+    function(){
+
+      selectElement(
+        this.value
+      );
+
+    }
+  );
+
+
+/* =========================================================
+   CERTIFICATE INPUTS
+========================================================= */
+
+bindInput(
+  "academyInput",
+  function(){
+
+    document.getElementById(
+      "academy"
+    ).textContent =
+      this.value;
+
+    const s =
+      getState("academy");
+
+    s.text =
+      this.value;
+
+  }
+);
+
+
+bindInput(
+  "taglineInput",
+  function(){
+
+    document.getElementById(
+      "tagline"
+    ).textContent =
+      this.value;
+
+    getState("tagline").text =
+      this.value;
+
+  }
+);
+
+
+bindInput(
+  "nameInput",
+  function(){
+
+    document.getElementById(
+      "studentName"
+    ).textContent =
+      this.value;
+
+    getState("studentName").text =
+      this.value;
+
+    fitStudentName();
+
+  }
+);
+
+
+bindInput(
+  "programmeInput",
+  function(){
+
+    document.getElementById(
+      "programme"
+    ).textContent =
+      this.value;
+
+    getState("programme").text =
+      this.value;
+
+  }
+);
+
+
+bindInput(
+  "completionInput",
+  function(){
+
+    document.getElementById(
+      "completion"
+    ).textContent =
+      this.value;
+
+    getState("completion").text =
+      this.value;
+
+  }
+);
+
+
+/* =========================================================
+   AWARD DATE
+========================================================= */
+
+function updateAwardDate(){
+
+  const day =
+    document.getElementById(
+      "awardDay"
+    ).value.trim();
+
+  const date =
+    document.getElementById(
+      "awardDate"
+    ).value.trim();
+
+  const year =
+    document.getElementById(
+      "awardYear"
+    ).value.trim();
+
+  const result =
+    [day,date,year]
+      .filter(Boolean)
+      .join(", ");
+
+  document.getElementById(
+    "awardDateDisplay"
+  ).textContent =
+    result;
+
+  getState("awardDate").text =
+    result;
+
 }
 
-function resetDesign() {
-  states = {};
-  Object.keys(ELEMENTS).forEach(key => {
-    const el = element(key);
-    ["transform","width","height","fontSize","color","fontWeight","textAlign","visibility"]
-      .forEach(prop => el.style[prop] = "");
-  });
-  localStorage.removeItem("trCertificateDesign");
-  setInputs(DEFAULT);
-  applyAll();
-  selectElement("studentName");
-  notify("Design reset.");
-}
 
-function resetCertificate() {
-  states = {};
-  setInputs(DEFAULT);
-  logoData = DEFAULT.logo;
-  signatureData = DEFAULT.signature;
-  $("logo").src = logoData;
-  $("signature").src = signatureData;
-  Object.keys(ELEMENTS).forEach(key => {
-    const el = element(key);
-    ["transform","width","height","fontSize","color","fontWeight","textAlign","visibility"]
-      .forEach(prop => el.style[prop] = "");
-  });
-  applyAll();
-  selectElement("studentName");
-  notify("Certificate content restored to defaults.");
-}
+bindInput(
+  "awardDay",
+  updateAwardDate
+);
 
-function updateZoom() {
-  const z = $("zoom").value;
-  const available = $("stageSpace").parentElement.clientWidth - 15;
-  scale = z === "auto" ? Math.min(1, available / stage.offsetWidth) : Number(z);
-  stage.style.transform = `scale(${scale})`;
-  stageSpace.style.width = (stage.offsetWidth * scale) + "px";
-  stageSpace.style.height = (stage.offsetHeight * scale) + "px";
-}
+bindInput(
+  "awardDate",
+  updateAwardDate
+);
 
-function attach() {
-  [
-    "inputStudentName","inputProgramme","inputPeriod","inputCertificateId",
-    "inputIssueDate","inputStatus","inputCeoName","inputCeoTitle"
-  ].forEach(id => $(id).addEventListener("input", renderContent));
+bindInput(
+  "awardYear",
+  updateAwardDate
+);
 
-  select.addEventListener("change", () => selectElement(select.value));
-  textControl.addEventListener("input", editSelectedText);
 
-  colorControl.addEventListener("input", () => {
-    if (!ELEMENTS[selectedKey].text) return;
-    getState(selectedKey).color = colorControl.value;
-    applyState(selectedKey);
-  });
+/* =========================================================
+   SIGNATURE
+========================================================= */
 
-  bindNumber("controlX","x");
-  bindNumber("controlY","y");
-  bindNumber("controlRotation","rotation");
-  bindNumber("controlWidth","width");
-  bindNumber("controlHeight","height");
-  bindNumber("controlFont","fontSize");
+bindInput(
+  "signatureName",
+  function(){
 
-  $("controlWeight").addEventListener("change", () => {
-    getState(selectedKey).weight = $("controlWeight").value;
-    applyState(selectedKey);
-  });
-  $("controlAlign").addEventListener("change", () => {
-    getState(selectedKey).align = $("controlAlign").value;
-    applyState(selectedKey);
-  });
+    document.getElementById(
+      "signatureNameDisplay"
+    ).textContent =
+      this.value;
 
-  $("moveUp").onclick = () => nudge(0,-nudgeStep);
-  $("moveDown").onclick = () => nudge(0,nudgeStep);
-  $("moveLeft").onclick = () => nudge(-nudgeStep,0);
-  $("moveRight").onclick = () => nudge(nudgeStep,0);
+  }
+);
 
-  function nudge(x,y) {
-    const s = getState(selectedKey);
-    s.x = (s.x || 0) + x;
-    s.y = (s.y || 0) + y;
-    applyState(selectedKey);
-    selectElement(selectedKey);
+
+bindInput(
+  "signatureTitle",
+  function(){
+
+    document.getElementById(
+      "signatureTitleDisplay"
+    ).textContent =
+      this.value;
+
+  }
+);
+
+
+/* =========================================================
+   QR CODE
+========================================================= */
+
+function generateQR(){
+
+  const canvas =
+    document.getElementById(
+      "qrCanvas"
+    );
+
+  const url =
+    document.getElementById(
+      "qrUrl"
+    ).value.trim();
+
+  if(!url){
+    return;
   }
 
-  $("centerElement").onclick = () => {
-    const el = element(selectedKey);
-    const parent = el.parentElement;
-    const r = el.getBoundingClientRect();
-    const p = parent.getBoundingClientRect();
-    const s = getState(selectedKey);
-    s.x = (s.x || 0) + ((p.left + p.width/2) - (r.left + r.width/2))/scale;
-    s.y = (s.y || 0) + ((p.top + p.height/2) - (r.top + r.height/2))/scale;
-    applyState(selectedKey);
-    selectElement(selectedKey);
-  };
+  QRCode.toCanvas(
+    canvas,
+    url,
+    {
+      width:120,
+      margin:1,
+      errorCorrectionLevel:"H"
+    },
+    function(error){
 
-  $("resetElement").onclick = () => {
-    delete states[selectedKey];
-    const el = element(selectedKey);
-    ["transform","width","height","fontSize","color","fontWeight","textAlign","visibility"]
-      .forEach(prop => el.style[prop] = "");
-    applyState(selectedKey);
-    selectElement(selectedKey);
-    notify("Element reset.");
-  };
+      if(error){
 
-  $("hideElement").onclick = () => {
-    const s = getState(selectedKey);
-    s.visible = s.visible === false;
-    applyState(selectedKey);
-    selectElement(selectedKey);
-  };
+        console.error(error);
 
-  certificate.addEventListener("pointerdown", e => {
-    const target = e.target.closest("[data-editor-id]");
-    if (!target || e.button !== 0) return;
-    const key = target.dataset.editorId;
-    if (!ELEMENTS[key]) return;
-    selectElement(key);
-    const s = getState(key);
-    drag = {
-      key, startX:e.clientX, startY:e.clientY,
-      x:s.x || 0, y:s.y || 0,
-      pointerId:e.pointerId
-    };
-    target.setPointerCapture?.(e.pointerId);
-    e.preventDefault();
-  });
+      }
 
-  certificate.addEventListener("pointermove", e => {
-    if (!drag || e.pointerId !== drag.pointerId) return;
-    const s = getState(drag.key);
-    s.x = drag.x + (e.clientX - drag.startX)/scale;
-    s.y = drag.y + (e.clientY - drag.startY)/scale;
-    applyState(drag.key);
-    $("controlX").value = s.x.toFixed(1);
-    $("controlY").value = s.y.toFixed(1);
-  });
+    }
+  );
 
-  certificate.addEventListener("pointerup", () => drag = null);
-  certificate.addEventListener("pointercancel", () => drag = null);
-
-  $("logoUpload").addEventListener("change", e => {
-    uploadImage(e.target.files[0], src => {
-      logoData = src;
-      $("logo").src = src;
-      notify("Logo uploaded. Save the design to keep it.");
-    });
-  });
-  $("removeLogo").onclick = () => {
-    logoData = "";
-    $("logo").removeAttribute("src");
-    notify("Logo removed.");
-  };
-  $("restoreLogo").onclick = () => {
-    logoData = DEFAULT.logo;
-    $("logo").src = logoData;
-    notify("Default logo restored.");
-  };
-
-  $("signatureUpload").addEventListener("change", e => {
-    uploadImage(e.target.files[0], src => {
-      signatureData = src;
-      $("signature").src = src;
-      notify("Signature uploaded.");
-    });
-  });
-  $("removeSignature").onclick = () => {
-    signatureData = "";
-    $("signature").removeAttribute("src");
-    notify("Signature removed.");
-  };
-  $("restoreSignature").onclick = () => {
-    signatureData = DEFAULT.signature;
-    $("signature").src = signatureData;
-    notify("Default signature restored.");
-  };
-
-  $("showQr").addEventListener("change", updateQR);
-  $("regenerateQr").onclick = updateQR;
-
-  $("navyColor").addEventListener("input", e => {
-    document.documentElement.style.setProperty("--n",e.target.value);
-  });
-  $("blueColor").addEventListener("input", e => {
-    document.documentElement.style.setProperty("--b",e.target.value);
-  });
-  $("lightBlueColor").addEventListener("input", e => {
-    document.documentElement.style.setProperty("--lb",e.target.value);
-  });
-  $("paleColor").addEventListener("input", e => {
-    document.documentElement.style.setProperty("--p",e.target.value);
-  });
-
-  $("saveDesign").onclick = saveDesign;
-  $("resetDesign").onclick = resetDesign;
-  $("resetCertificate").onclick = resetCertificate;
-  $("printCertificate").onclick = () => window.print();
-  $("zoom").addEventListener("change", updateZoom);
-  window.addEventListener("resize", () => {
-    fitName();
-    updateZoom();
-  });
 }
 
-function init() {
-  populateElements();
-  setInputs(DEFAULT);
-  $("logo").src = DEFAULT.logo;
-  $("signature").src = DEFAULT.signature;
-  loadDesign();
-  attach();
-  selectElement("studentName");
-  updateQR();
-  requestAnimationFrame(updateZoom);
+
+/* =========================================================
+   STUDENT NAME FIT
+========================================================= */
+
+function fitStudentName(){
+
+  const el =
+    document.getElementById(
+      "studentName"
+    );
+
+  if(!el){
+    return;
+  }
+
+  let size =
+    parseFloat(
+      getComputedStyle(el).fontSize
+    );
+
+  const maxWidth =
+    120 * 3.7795;
+
+  while(
+    el.scrollWidth > maxWidth &&
+    size > 5
+  ){
+
+    size -= .2;
+
+    el.style.fontSize =
+      size + "px";
+
+  }
+
 }
-init();
+
+
+/* =========================================================
+   SAVE
+========================================================= */
+
+function saveDesign(){
+
+  const data = {
+
+    designState,
+
+    academy:
+      document.getElementById(
+        "academyInput"
+      ).value,
+
+    tagline:
+      document.getElementById(
+        "taglineInput"
+      ).value,
+
+    name:
+      document.getElementById(
+        "nameInput"
+      ).value,
+
+    programme:
+      document.getElementById(
+        "programmeInput"
+      ).value,
+
+    completion:
+      document.getElementById(
+        "completionInput"
+      ).value,
+
+    awardDay:
+      document.getElementById(
+        "awardDay"
+      ).value,
+
+    awardDate:
+      document.getElementById(
+        "awardDate"
+      ).value,
+
+    awardYear:
+      document.getElementById(
+        "awardYear"
+      ).value,
+
+    qrUrl:
+      document.getElementById(
+        "qrUrl"
+      ).value,
+
+    signatureName:
+      document.getElementById(
+        "signatureName"
+      ).value,
+
+    signatureTitle:
+      document.getElementById(
+        "signatureTitle"
+      ).value
+
+  };
+
+  localStorage.setItem(
+    "techResonateCertificate",
+    JSON.stringify(data)
+  );
+
+  alert(
+    "Certificate design saved."
+  );
+
+}
+
+
+/* =========================================================
+   LOAD
+========================================================= */
+
+function loadDesign(){
+
+  const raw =
+    localStorage.getItem(
+      "techResonateCertificate"
+    );
+
+  if(!raw){
+
+    alert(
+      "No saved certificate found."
+    );
+
+    return;
+
+  }
+
+  try{
+
+    const data =
+      JSON.parse(raw);
+
+    designState =
+      data.designState || {};
+
+
+    if(data.academy !== undefined){
+
+      document.getElementById(
+        "academyInput"
+      ).value =
+        data.academy;
+
+      document.getElementById(
+        "academy"
+      ).textContent =
+        data.academy;
+
+    }
+
+
+    if(data.tagline !== undefined){
+
+      document.getElementById(
+        "taglineInput"
+      ).value =
+        data.tagline;
+
+      document.getElementById(
+        "tagline"
+      ).textContent =
+        data.tagline;
+
+    }
+
+
+    if(data.name !== undefined){
+
+      document.getElementById(
+        "nameInput"
+      ).value =
+        data.name;
+
+      document.getElementById(
+        "studentName"
+      ).textContent =
+        data.name;
+
+    }
+
+
+    if(data.programme !== undefined){
+
+      document.getElementById(
+        "programmeInput"
+      ).value =
+        data.programme;
+
+      document.getElementById(
+        "programme"
+      ).textContent =
+        data.programme;
+
+    }
+
+
+    if(data.completion !== undefined){
+
+      document.getElementById(
+        "completionInput"
+      ).value =
+        data.completion;
+
+      document.getElementById(
+        "completion"
+      ).textContent =
+        data.completion;
+
+    }
+
+
+    if(data.awardDay !== undefined){
+
+      document.getElementById(
+        "awardDay"
+      ).value =
+        data.awardDay;
+
+    }
+
+
+    if(data.awardDate !== undefined){
+
+      document.getElementById(
+        "awardDate"
+      ).value =
+        data.awardDate;
+
+    }
+
+
+    if(data.awardYear !== undefined){
+
+      document.getElementById(
+        "awardYear"
+      ).value =
+        data.awardYear;
+
+    }
+
+
+    if(data.qrUrl !== undefined){
+
+      document.getElementById(
+        "qrUrl"
+      ).value =
+        data.qrUrl;
+
+    }
+
+
+    if(data.signatureName !== undefined){
+
+      document.getElementById(
+        "signatureName"
+      ).value =
+        data.signatureName;
+
+      document.getElementById(
+        "signatureNameDisplay"
+      ).textContent =
+        data.signatureName;
+
+    }
+
+
+    if(data.signatureTitle !== undefined){
+
+      document.getElementById(
+        "signatureTitle"
+      ).value =
+        data.signatureTitle;
+
+      document.getElementById(
+        "signatureTitleDisplay"
+      ).textContent =
+        data.signatureTitle;
+
+    }
+
+
+    Object.keys(ELEMENTS)
+      .forEach(key => {
+
+        applyElementState(key);
+
+      });
+
+
+    updateAwardDate();
+
+    generateQR();
+
+    fitStudentName();
+
+    refreshControls();
+
+    alert(
+      "Certificate design loaded."
+    );
+
+  }catch(error){
+
+    console.error(error);
+
+    alert(
+      "Unable to load saved certificate."
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   CLICK TO SELECT
+========================================================= */
+
+document
+  .querySelectorAll(".editable")
+  .forEach(el => {
+
+    el.addEventListener(
+      "click",
+      function(event){
+
+        event.stopPropagation();
+
+        selectElement(
+          this.dataset.key
+        );
+
+      }
+    );
+
+  });
+
+
+/* =========================================================
+   DRAGGING
+========================================================= */
+
+let dragging = false;
+
+let dragKey = null;
+
+let startX = 0;
+
+let startY = 0;
+
+let originalLeft = 0;
+
+let originalTop = 0;
+
+
+document
+  .querySelectorAll(".editable")
+  .forEach(el => {
+
+    el.addEventListener(
+      "mousedown",
+      function(event){
+
+        if(event.button !== 0){
+          return;
+        }
+
+        const key =
+          this.dataset.key;
+
+        selectElement(key);
+
+        dragging = true;
+
+        dragKey = key;
+
+        startX =
+          event.clientX;
+
+        startY =
+          event.clientY;
+
+        const rect =
+          this.getBoundingClientRect();
+
+        const certRect =
+          document
+            .getElementById(
+              "certificate"
+            )
+            .getBoundingClientRect();
+
+        originalLeft =
+          rect.left -
+          certRect.left;
+
+        originalTop =
+          rect.top -
+          certRect.top;
+
+        event.preventDefault();
+
+      }
+    );
+
+  });
+
+
+document.addEventListener(
+  "mousemove",
+  function(event){
+
+    if(
+      !dragging ||
+      !dragKey
+    ){
+
+      return;
+
+    }
+
+    const cert =
+      document.getElementById(
+        "certificate"
+      );
+
+    const rect =
+      cert.getBoundingClientRect();
+
+    const scale =
+      rect.width /
+      (297 * 3.779527559);
+
+    const dx =
+      (event.clientX - startX) /
+      scale;
+
+    const dy =
+      (event.clientY - startY) /
+      scale;
+
+    const newLeft =
+      originalLeft + dx;
+
+    const newTop =
+      originalTop + dy;
+
+    const xPercent =
+      (
+        newLeft /
+        (297 * 3.779527559)
+      ) * 100;
+
+    const yMm =
+      newTop /
+      3.779527559;
+
+    const s =
+      getState(dragKey);
+
+    s.x =
+      xPercent;
+
+    s.y =
+      yMm;
+
+    const el =
+      elementFor(dragKey);
+
+    el.style.left =
+      xPercent + "%";
+
+    el.style.top =
+      yMm + "mm";
+
+  }
+);
+
+
+document.addEventListener(
+  "mouseup",
+  function(){
+
+    dragging = false;
+
+    dragKey = null;
+
+  }
+);
+
+
+/* =========================================================
+   KEYBOARD NUDGE
+========================================================= */
+
+document.addEventListener(
+  "keydown",
+  function(event){
+
+    if(
+      event.target.tagName === "INPUT" ||
+      event.target.tagName === "TEXTAREA" ||
+      event.target.tagName === "SELECT"
+    ){
+
+      return;
+
+    }
+
+    const key =
+      selectedKey;
+
+    const el =
+      elementFor(key);
+
+    if(!el){
+      return;
+    }
+
+    const s =
+      getState(key);
+
+    let x =
+      s.x !== null
+        ? s.x
+        : parseFloat(
+            getComputedStyle(el).left
+          ) /
+          document
+            .getElementById("certificate")
+            .clientWidth *
+          100;
+
+    let y =
+      s.y !== null
+        ? s.y
+        : parseFloat(
+            getComputedStyle(el).top
+          ) /
+          3.7795;
+
+
+    if(event.key === "ArrowLeft"){
+
+      x -= .2;
+
+    }else if(event.key === "ArrowRight"){
+
+      x += .2;
+
+    }else if(event.key === "ArrowUp"){
+
+      y -= .5;
+
+    }else if(event.key === "ArrowDown"){
+
+      y += .5;
+
+    }else{
+
+      return;
+
+    }
+
+    event.preventDefault();
+
+    s.x = x;
+
+    s.y = y;
+
+    el.style.left =
+      x + "%";
+
+    el.style.top =
+      y + "mm";
+
+    refreshControls();
+
+  }
+);
+
+
+/* =========================================================
+   INITIALIZE
+========================================================= */
+
+function initialize(){
+
+  updateAwardDate();
+
+  generateQR();
+
+  selectElement(
+    "heading"
+  );
+
+  fitStudentName();
+
+}
+
+
+initialize();
+
 </script>
+
 </body>
 </html>
