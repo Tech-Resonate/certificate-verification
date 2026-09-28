@@ -230,7 +230,7 @@ h1 .of-completion{display:block;margin-top:2.6mm;color:var(--b);font:700 7.1mm/1
           <input id="inputQrUrl" type="url" readonly>
 
           <div class="help">
-            Default: https://verify.techresonate.com/?id=CERTIFICATE_ID
+            Default: https://tech-resonate.github.io/certificate-verification/?id=CERTIFICATE_ID
           </div>
         </div>
 
@@ -630,13 +630,15 @@ h1 .of-completion{display:block;margin-top:2.6mm;color:var(--b);font:700 7.1mm/1
           >
             Save Design
           </button>
-           <button
-  type="button"
-  id="addCertificateToDatabase"
-  class="primary"
->
-  Add Certificate to Database
-</button>
+
+          <button
+            type="button"
+            id="addCertificateToDatabase"
+            class="primary"
+          >
+            Add Certificate to Database
+          </button>
+
           <button
             type="button"
             id="resetDesign"
@@ -1080,7 +1082,7 @@ h1 .of-completion{display:block;margin-top:2.6mm;color:var(--b);font:700 7.1mm/1
                 id="verificationDomain"
                 data-editor-id="verificationDomain"
               >
-                verify.techresonate.com
+                tech-resonate.github.io
               </div>
 
               <div class="side-id">
@@ -1126,8 +1128,14 @@ const DEFAULT_CERTIFICATE={
   ceo:"Umar Umar",
   ceoTitle:"Chief Executive Officer",
   signature:"https://drive.google.com/uc?export=view&id=19jB_ypH8aTv-QPilB3z7xDKMufb98cNn",
-  verificationBaseUrl:"https://verify.techresonate.com/"
+  verificationBaseUrl:"https://tech-resonate.github.io/certificate-verification/"
 };
+
+const GOOGLE_APPS_SCRIPT_URL =
+  "https://script.google.com/macros/s/AKfycbwYVlT9WS5ov6i0vZc4wienOAwau2ckKVSKe4uMQwM-QCILz3zSxLt4CjWy82iDRy3F7w/exec";
+
+const GITHUB_VERIFICATION_BASE =
+  "https://tech-resonate.github.io/certificate-verification/";
 
 const STORAGE={
   design:"techResonateCertificateBuilder.design.v2",
@@ -1444,9 +1452,10 @@ function generatedVerificationUrl(){
       .value
       .trim();
 
-  return `https://tech-resonate.github.io/certificate-verification/?id=${encodeURIComponent(id)}`;
+  return `${GITHUB_VERIFICATION_BASE}?id=${encodeURIComponent(id)}`;
 
 }
+
 function activeVerificationUrl(){
 
   const auto=
@@ -1661,11 +1670,6 @@ function makeQr(url){
 
   qrTimer=setTimeout(async()=>{
 
-    /*
-      If a custom QR has been uploaded,
-      never replace it with the automatic QR.
-    */
-
     if(designState.qrUpload){
 
       renderUploadedQr(
@@ -1806,14 +1810,14 @@ function updateVerification(url){
           url,
           location.href
         ).host ||
-        "verify.techresonate.com";
+        "tech-resonate.github.io";
 
   }catch{
 
     document
       .getElementById("verificationDomain")
       .textContent=
-        "verify.techresonate.com";
+        "tech-resonate.github.io";
 
   }
 
@@ -2790,7 +2794,8 @@ function loadDesign(){
 
     const raw=
       localStorage.getItem(
-        STORAGE.design      );
+        STORAGE.design
+      );
 
     if(raw){
 
@@ -2821,11 +2826,6 @@ function loadDesign(){
     .forEach(getState);
 
   applyAllDesign();
-
-  /*
-    Restore saved uploaded QR
-    after the design has loaded.
-  */
 
   if(designState.qrUpload){
 
@@ -2925,7 +2925,7 @@ function resetDesign(){
       "Scan to Verify",
 
     verificationDomain:
-      "verify.techresonate.com",
+      "tech-resonate.github.io",
 
     certificateReference:
       "Certificate Reference"
@@ -3282,6 +3282,128 @@ function resetCertificate(){
   notify(
     "Certificate content reset. Saved design remains unchanged."
   );
+
+}
+
+/* =========================
+   ADD CERTIFICATE TO DATABASE
+   ========================= */
+
+async function addCertificateToDatabase(){
+
+  const certificateId =
+    document
+      .getElementById("inputCertificateId")
+      .value
+      .trim();
+
+  const studentName =
+    document
+      .getElementById("inputStudentName")
+      .value
+      .trim();
+
+  const programme =
+    document
+      .getElementById("inputProgramme")
+      .value
+      .trim();
+
+  const issueDate =
+    document
+      .getElementById("inputIssueDate")
+      .value
+      .trim();
+
+  const status =
+    document
+      .getElementById("inputStatus")
+      .value
+      .trim() || "Valid";
+
+  if(!certificateId){
+
+    notify("Certificate ID must not be empty.");
+
+    return;
+
+  }
+
+  if(!studentName){
+
+    notify("Student Name must not be empty.");
+
+    return;
+
+  }
+
+  if(!programme){
+
+    notify("Programme must not be empty.");
+
+    return;
+
+  }
+
+  const certificateUrl =
+    `${GITHUB_VERIFICATION_BASE}?id=${encodeURIComponent(certificateId)}`;
+
+  const payload={
+
+    certificateId: certificateId,
+
+    studentName: studentName,
+
+    programme: programme,
+
+    issueDate: issueDate,
+
+    status: status,
+
+    passportPhoto: "",
+
+    paymentStatus: "Unpaid",
+
+    paymentReference: "",
+
+    certificateUrl: certificateUrl
+
+  };
+
+  notify("Sending certificate to database...");
+
+  try{
+
+    const response =
+      await fetch(
+        GOOGLE_APPS_SCRIPT_URL,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "text/plain;charset=utf-8"
+          },
+          body: JSON.stringify(payload)
+        }
+      );
+
+    const text =
+      await response.text();
+
+    console.log("Apps Script response:", text);
+
+    notify("Certificate added to database successfully.");
+
+    makeQr(certificateUrl);
+
+  }catch(err){
+
+    console.error(err);
+
+    notify(
+      "Could not add certificate to database. Check your connection or Apps Script URL."
+    );
+
+  }
 
 }
 
@@ -4096,10 +4218,6 @@ function attachActionEvents(){
         })
     );
 
-  /* =========================
-     QR UPLOAD EVENTS
-     ========================= */
-
   document
     .getElementById("qrUpload")
     .addEventListener(
@@ -4136,78 +4254,69 @@ function attachActionEvents(){
     );
 
   const saveDesignButton =
-  document.getElementById("saveDesign");
+    document.getElementById("saveDesign");
 
-if(saveDesignButton){
-  saveDesignButton.addEventListener(
-    "click",
-    function(event){
-      event.preventDefault();
-      saveDesign();
-    }
-  );
-}
-
-const addCertificateButton =
-  document.getElementById("addCertificateToDatabase");
-
-if(addCertificateButton){
-  addCertificateButton.addEventListener(
-    "click",
-    function(event){
-      event.preventDefault();
-
-      if(typeof addCertificateToDatabase === "function"){
-        addCertificateToDatabase();
-      }else{
-        notify(
-          "Add Certificate function is not available yet."
-        );
+  if(saveDesignButton){
+    saveDesignButton.addEventListener(
+      "click",
+      function(event){
+        event.preventDefault();
+        saveDesign();
       }
-    }
-  );
-}
-
-const resetDesignButton =
-  document.getElementById("resetDesign");
-
-if(resetDesignButton){
-  resetDesignButton.addEventListener(
-    "click",
-    function(event){
-      event.preventDefault();
-      resetDesign();
-    }
-  );
-}
-
-const resetCertificateButton =
-  document.getElementById("resetCertificate");
-
-if(resetCertificateButton){
-  resetCertificateButton.addEventListener(
-    "click",
-    function(event){
-      event.preventDefault();
-      resetCertificate();
-    }
-  );
-}
-
-const printCertificateButton =
-  document.getElementById("printCertificate");
-
-if(printCertificateButton){
-  printCertificateButton.addEventListener(
-    "click",
-    function(event){
-      event.preventDefault();
-      window.print();
-    }
-  );
-}
-      ()=>window.print()
     );
+  }
+
+  const addCertificateButton =
+    document.getElementById("addCertificateToDatabase");
+
+  if(addCertificateButton){
+    addCertificateButton.addEventListener(
+      "click",
+      function(event){
+        event.preventDefault();
+        addCertificateToDatabase();
+      }
+    );
+  }
+
+  const resetDesignButton =
+    document.getElementById("resetDesign");
+
+  if(resetDesignButton){
+    resetDesignButton.addEventListener(
+      "click",
+      function(event){
+        event.preventDefault();
+        resetDesign();
+      }
+    );
+  }
+
+  const resetCertificateButton =
+    document.getElementById("resetCertificate");
+
+  if(resetCertificateButton){
+    resetCertificateButton.addEventListener(
+      "click",
+      function(event){
+        event.preventDefault();
+        resetCertificate();
+      }
+    );
+  }
+
+  const printCertificateButton =
+    document.getElementById("printCertificate");
+
+  if(printCertificateButton){
+    printCertificateButton.addEventListener(
+      "click",
+      function(event){
+        event.preventDefault();
+        window.print();
+      }
+    );
+  }
 
   previewZoom.addEventListener(
     "change",
@@ -4263,12 +4372,6 @@ if(printCertificateButton){
   );
 
 }
-         }
-
-    }
-  );
-
-}
 
 function init(){
 
@@ -4310,6 +4413,8 @@ window.TechResonateCertificateBuilder={
   resetCertificate,
 
   saveDesign,
+
+  addCertificateToDatabase,
 
   selectElement,
 
