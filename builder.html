@@ -630,7 +630,13 @@ h1 .of-completion{display:block;margin-top:2.6mm;color:var(--b);font:700 7.1mm/1
           >
             Save Design
           </button>
-
+           <button
+  type="button"
+  id="addCertificateToDatabase"
+  class="primary"
+>
+  Add Certificate to Database
+</button>
           <button
             type="button"
             id="resetDesign"
@@ -1438,10 +1444,9 @@ function generatedVerificationUrl(){
       .value
       .trim();
 
-  return `https://verify.techresonate.com/?id=${encodeURIComponent(id)}`;
+  return `https://tech-resonate.github.io/certificate-verification/?id=${encodeURIComponent(id)}`;
 
 }
-
 function activeVerificationUrl(){
 
   const auto=
@@ -4136,6 +4141,12 @@ function attachActionEvents(){
       "click",
       saveDesign
     );
+   document
+  .getElementById("addCertificateToDatabase")
+  .addEventListener(
+    "click",
+    addCertificateToDatabase
+  );
 
   document
     .getElementById("resetDesign")
