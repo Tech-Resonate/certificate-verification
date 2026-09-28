@@ -1,948 +1,383 @@
-<!DOCTYPE html>
-
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <title>Certificate Verification | Tech Resonate</title>
-
-<meta
-name="description"
-content="Verify the authenticity of certificates issued by Tech Resonate."
-
->
-
-  <style>
-    :root {
-      --navy: #071a33;
-      --navy-2: #0b2850;
-      --blue: #1683ff;
-      --blue-2: #4da3ff;
-      --light-blue: #eaf5ff;
-      --white: #ffffff;
-      --text: #12304a;
-      --muted: #6b8299;
-      --border: #dceaf7;
-      --success: #16834a;
-      --success-bg: #ecfbf3;
-      --danger: #c73535;
-      --danger-bg: #fff1f1;
-      --warning: #a66a00;
-      --warning-bg: #fff8e8;
-    }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
-    body {
-      font-family: Arial, Helvetica, sans-serif;
-      background: var(--navy);
-      color: var(--text);
-      min-height: 100vh;
-      overflow-x: hidden;
-    }
-
-    .background {
-      position: fixed;
-      inset: 0;
-      overflow: hidden;
-      pointer-events: none;
-      z-index: 0;
-    }
-
-    .orb {
-      position: absolute;
-      border-radius: 50%;
-      filter: blur(2px);
-      opacity: 0.25;
-      animation: float 9s ease-in-out infinite;
-    }
-
-    .orb-one {
-      width: 280px;
-      height: 280px;
-      background: #1683ff;
-      top: -100px;
-      left: -100px;
-    }
-
-    .orb-two {
-      width: 350px;
-      height: 350px;
-      background: #4da3ff;
-      right: -150px;
-      top: 30%;
-      animation-delay: 2s;
-    }
-
-    .orb-three {
-      width: 200px;
-      height: 200px;
-      background: #7ac1ff;
-      bottom: -80px;
-      left: 25%;
-      animation-delay: 4s;
-    }
-
-    @keyframes float {
-      0%, 100% {
-        transform: translateY(0) scale(1);
-      }
-
-      50% {
-        transform: translateY(-25px) scale(1.05);
-      }
-    }
-
-    .page {
-      position: relative;
-      z-index: 1;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-    }
-
-    header {
-      padding: 22px 20px;
-      display: flex;
-      justify-content: center;
-    }
-
-    .logo-box {
-      background: white;
-      padding: 12px 22px;
-      border-radius: 14px;
-      box-shadow: 0 10px 35px rgba(0, 0, 0, 0.18);
-      animation: slideDown 0.7s ease;
-    }
-
-    .logo {
-      width: 155px;
-      height: auto;
-      display: block;
-    }
-
-    @keyframes slideDown {
-      from {
-        opacity: 0;
-        transform: translateY(-15px);
-      }
-
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    .hero {
-      text-align: center;
-      color: white;
-      padding: 25px 20px 10px;
-    }
-
-    .badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      background: rgba(255, 255, 255, 0.1);
-      border: 1px solid rgba(255, 255, 255, 0.18);
-      padding: 8px 14px;
-      border-radius: 30px;
-      font-size: 13px;
-      margin-bottom: 18px;
-      backdrop-filter: blur(10px);
-    }
-
-    .badge-dot {
-      width: 8px;
-      height: 8px;
-      background: #4da3ff;
-      border-radius: 50%;
-      box-shadow: 0 0 12px #4da3ff;
-    }
-
-    .hero h1 {
-      font-size: clamp(30px, 7vw, 52px);
-      line-height: 1.08;
-      margin-bottom: 14px;
-      letter-spacing: -1px;
-    }
-
-    .hero h1 span {
-      color: #61b0ff;
-    }
-
-    .hero p {
-      max-width: 600px;
-      margin: auto;
-      color: #c8d9ea;
-      line-height: 1.7;
-      font-size: 15px;
-    }
-
-    .container {
-      width: 100%;
-      max-width: 720px;
-      margin: 30px auto 50px;
-      padding: 0 18px;
-    }
-
-    .verification-card {
-      background: white;
-      border-radius: 24px;
-      padding: 28px;
-      box-shadow:
-        0 25px 70px rgba(0, 0, 0, 0.25),
-        0 5px 20px rgba(22, 131, 255, 0.12);
-      animation: cardUp 0.8s ease;
-    }
-
-    @keyframes cardUp {
-      from {
-        opacity: 0;
-        transform: translateY(25px);
-      }
-
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    .search-label {
-      font-size: 14px;
-      font-weight: bold;
-      color: var(--text);
-      margin-bottom: 9px;
-      display: block;
-    }
-
-    .search-box {
-      display: flex;
-      gap: 10px;
-    }
-
-    .search-box input {
-      flex: 1;
-      min-width: 0;
-      height: 52px;
-      padding: 0 16px;
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      font-size: 15px;
-      color: var(--text);
-      background: #f9fcff;
-      outline: none;
-      transition: 0.25s ease;
-    }
-
-    .search-box input:focus {
-      border-color: var(--blue);
-      box-shadow: 0 0 0 4px rgba(22, 131, 255, 0.1);
-      background: white;
-    }
-
-    .verify-button {
-      height: 52px;
-      border: none;
-      border-radius: 12px;
-      padding: 0 22px;
-      background: linear-gradient(135deg, #1683ff, #0b5fbd);
-      color: white;
-      font-weight: bold;
-      font-size: 15px;
-      cursor: pointer;
-      transition: 0.25s ease;
-      box-shadow: 0 8px 20px rgba(22, 131, 255, 0.25);
-    }
-
-    .verify-button:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 12px 25px rgba(22, 131, 255, 0.35);
-    }
-
-    .loading {
-      display: none;
-      text-align: center;
-      padding: 30px 10px 10px;
-    }
-
-    .loader {
-      width: 42px;
-      height: 42px;
-      border: 4px solid #dceeff;
-      border-top-color: var(--blue);
-      border-radius: 50%;
-      animation: spin 0.8s linear infinite;
-      margin: auto auto 12px;
-    }
-
-    @keyframes spin {
-      to {
-        transform: rotate(360deg);
-      }
-    }
-
-    .loading p {
-      color: var(--muted);
-      font-size: 14px;
-    }
-
-    .result {
-      display: none;
-      margin-top: 25px;
-      animation: resultIn 0.5s ease;
-    }
-
-    @keyframes resultIn {
-      from {
-        opacity: 0;
-        transform: translateY(10px);
-      }
-
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    .verification-icon {
-      width: 72px;
-      height: 72px;
-      margin: 0 auto 15px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 34px;
-      font-weight: bold;
-      animation: pop 0.5s ease;
-    }
-
-    @keyframes pop {
-      0% {
-        transform: scale(0.5);
-        opacity: 0;
-      }
-
-      70% {
-        transform: scale(1.08);
-      }
-
-      100% {
-        transform: scale(1);
-        opacity: 1;
-      }
-    }
-
-    .valid-result {
-      background: var(--success-bg);
-      border: 1px solid #b9e8cb;
-      border-radius: 18px;
-      padding: 25px;
-      text-align: center;
-    }
-
-    .valid-result .verification-icon {
-      background: #d9f6e5;
-      color: var(--success);
-    }
-
-    .invalid-result {
-      background: var(--danger-bg);
-      border: 1px solid #f0caca;
-      border-radius: 18px;
-      padding: 25px;
-      text-align: center;
-    }
-
-    .invalid-result .verification-icon {
-      background: #ffe0e0;
-      color: var(--danger);
-    }
-
-    .result-title {
-      font-size: 24px;
-      font-weight: bold;
-      margin-bottom: 8px;
-    }
-
-    .valid-result .result-title {
-      color: var(--success);
-    }
-
-    .invalid-result .result-title {
-      color: var(--danger);
-    }
-
-    .result-message {
-      color: var(--muted);
-      line-height: 1.6;
-      font-size: 14px;
-    }
-
-    .student-profile {
-      margin-top: 24px;
-      background: white;
-      border: 1px solid var(--border);
-      border-radius: 18px;
-      padding: 20px;
-      display: flex;
-      align-items: center;
-      gap: 18px;
-      text-align: left;
-      box-shadow: 0 8px 25px rgba(22, 131, 255, 0.07);
-    }
-
-    .passport-frame {
-      width: 105px;
-      height: 125px;
-      flex-shrink: 0;
-      padding: 4px;
-      border-radius: 14px;
-      background: linear-gradient(135deg, #1683ff, #7ac1ff);
-      box-shadow: 0 8px 22px rgba(22, 131, 255, 0.2);
-      overflow: hidden;
-    }
-
-    .passport-photo {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
-      border-radius: 10px;
-      background: #eef6fd;
-    }
-
-    .student-info {
-      min-width: 0;
-    }
-
-    .verified-label {
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      font-size: 11px;
-      font-weight: bold;
-      color: var(--success);
-      text-transform: uppercase;
-      letter-spacing: 0.7px;
-      margin-bottom: 7px;
-    }
-
-    .student-name {
-      font-size: 21px;
-      font-weight: bold;
-      color: var(--text);
-      line-height: 1.25;
-      word-break: break-word;
-      margin-bottom: 6px;
-    }
-
-    .student-programme {
-      color: var(--muted);
-      font-size: 13px;
-      line-height: 1.5;
-    }
-
-    .certificate-details {
-      margin-top: 18px;
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 12px;
-      text-align: left;
-    }
-
-    .detail-box {
-      background: white;
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 15px;
-      transition: 0.25s ease;
-    }
-
-    .detail-box:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 20px rgba(22, 131, 255, 0.08);
-    }
-
-    .detail-icon {
-      width: 32px;
-      height: 32px;
-      border-radius: 9px;
-      background: var(--light-blue);
-      color: var(--blue);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 15px;
-      margin-bottom: 10px;
-    }
-
-    .detail-label {
-      display: block;
-      color: var(--muted);
-      font-size: 11px;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      margin-bottom: 5px;
-    }
-
-    .detail-value {
-      display: block;
-      color: var(--text);
-      font-weight: bold;
-      font-size: 14px;
-      line-height: 1.4;
-      word-break: break-word;
-    }
-
-    .status-valid {
-      color: var(--success);
-    }
-
-    .photo-note {
-      margin-top: 12px;
-      color: var(--muted);
-      font-size: 11px;
-      line-height: 1.5;
-      text-align: center;
-    }
-
-    /* Payment section */
-
-    .payment-section {
-      margin-top: 22px;
-      padding: 22px;
-      background: var(--warning-bg);
-      border: 1px solid #f0d89b;
-      border-radius: 18px;
-      text-align: left;
-    }
-
-    .payment-title {
-      color: var(--warning);
-      font-size: 20px;
-      font-weight: bold;
-      margin-bottom: 8px;
-    }
-
-    .payment-message {
-      color: #765d2c;
-      font-size: 14px;
-      line-height: 1.6;
-      margin-bottom: 18px;
-    }
-
-    .payment-fee {
-      background: white;
-      border: 1px solid #eadfbe;
-      border-radius: 14px;
-      padding: 15px;
-      margin-bottom: 15px;
-      text-align: center;
-    }
-
-    .payment-fee-label {
-      display: block;
-      color: var(--muted);
-      font-size: 11px;
-      text-transform: uppercase;
-      margin-bottom: 5px;
-    }
-
-    .payment-fee-value {
-      display: block;
-      color: var(--text);
-      font-size: 26px;
-      font-weight: bold;
-    }
-
-    .payment-details {
-      background: white;
-      border: 1px solid #eadfbe;
-      border-radius: 14px;
-      padding: 16px;
-      margin-bottom: 16px;
-    }
-
-    .payment-details h3 {
-      color: var(--text);
-      font-size: 15px;
-      margin-bottom: 12px;
-    }
-
-    .payment-row {
-      display: flex;
-      justify-content: space-between;
-      gap: 15px;
-      padding: 9px 0;
-      border-bottom: 1px solid #edf1f5;
-      font-size: 13px;
-    }
-
-    .payment-row:last-child {
-      border-bottom: none;
-    }
-
-    .payment-row span:first-child {
-      color: var(--muted);
-    }
-
-    .payment-row strong {
-      color: var(--text);
-      text-align: right;
-    }
-
-    .reference-label {
-      display: block;
-      font-size: 13px;
-      font-weight: bold;
-      color: var(--text);
-      margin-bottom: 7px;
-    }
-
-    .reference-input {
-      width: 100%;
-      height: 48px;
-      padding: 0 14px;
-      border: 1px solid #d8dfe7;
-      border-radius: 10px;
-      outline: none;
-      font-size: 14px;
-      margin-bottom: 10px;
-    }
-
-    .reference-input:focus {
-      border-color: var(--blue);
-      box-shadow: 0 0 0 4px rgba(22, 131, 255, 0.1);
-    }
-
-    .payment-button {
-      width: 100%;
-      min-height: 48px;
-      border: none;
-      border-radius: 10px;
-      background: linear-gradient(135deg, #1683ff, #0b5fbd);
-      color: white;
-      font-weight: bold;
-      cursor: pointer;
-      font-size: 14px;
-      padding: 12px 16px;
-      transition: 0.25s ease;
-    }
-
-    .payment-button:hover {
-      transform: translateY(-1px);
-    }
-
-    .payment-note {
-      margin-top: 12px;
-      color: var(--muted);
-      font-size: 11px;
-      line-height: 1.5;
-      text-align: center;
-    }
-
-    .paid-section {
-      margin-top: 22px;
-      padding: 20px;
-      background: var(--success-bg);
-      border: 1px solid #b9e8cb;
-      border-radius: 18px;
-      text-align: center;
-    }
-
-    .paid-title {
-      color: var(--success);
-      font-size: 19px;
-      font-weight: bold;
-      margin-bottom: 7px;
-    }
-
-    .paid-message {
-      color: #527663;
-      font-size: 14px;
-      line-height: 1.6;
-      margin-bottom: 15px;
-    }
-
-    .certificate-button {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 48px;
-      padding: 0 22px;
-      border-radius: 10px;
-      background: var(--success);
-      color: white;
-      text-decoration: none;
-      font-size: 14px;
-      font-weight: bold;
-      transition: 0.25s ease;
-    }
-
-    .certificate-button:hover {
-      transform: translateY(-1px);
-    }
-
-    .how-it-works {
-      margin-top: 30px;
-      text-align: center;
-    }
-
-    .how-it-works h2 {
-      font-size: 17px;
-      color: var(--text);
-      margin-bottom: 18px;
-    }
-
-    .steps {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
-    }
-
-    .step {
-      padding: 15px 8px;
-      background: #f7fbff;
-      border-radius: 12px;
-      border: 1px solid #e4eff8;
-    }
-
-    .step-number {
-      width: 28px;
-      height: 28px;
-      margin: auto auto 8px;
-      background: var(--blue);
-      color: white;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 12px;
-      font-weight: bold;
-    }
-
-    .step p {
-      font-size: 12px;
-      color: var(--muted);
-      line-height: 1.5;
-    }
-
-    footer {
-      text-align: center;
-      color: #91aac2;
-      padding: 0 20px 28px;
-      font-size: 12px;
-    }
-
-    footer strong {
-      color: #c9dced;
-    }
-
-    @media (max-width: 560px) {
-
-      header {
-        padding-top: 18px;
-      }
-
-      .logo-box {
-        padding: 10px 18px;
-      }
-
-      .logo {
-        width: 135px;
-      }
-
-      .hero {
-        padding-top: 20px;
-      }
-
-      .hero h1 {
-        font-size: 32px;
-      }
-
-      .hero p {
-        font-size: 14px;
-      }
-
-      .container {
-        margin-top: 25px;
-      }
-
-      .verification-card {
-        padding: 20px 16px;
-        border-radius: 20px;
-      }
-
-      .search-box {
-        flex-direction: column;
-      }
-
-      .verify-button {
-        width: 100%;
-      }
-
-      .student-profile {
-        flex-direction: column;
-        text-align: center;
-      }
-
-      .passport-frame {
-        width: 115px;
-        height: 135px;
-      }
-
-      .student-info {
-        width: 100%;
-      }
-
-      .certificate-details {
-        grid-template-columns: 1fr;
-      }
-
-      .steps {
-        grid-template-columns: 1fr;
-      }
-
-      .step {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        text-align: left;
-      }
-
-      .step-number {
-        flex-shrink: 0;
-        margin: 0;
-      }
-
-      .payment-row {
-        flex-direction: column;
-        gap: 3px;
-      }
-
-      .payment-row strong {
-        text-align: left;
-      }
-    }
-  </style>
-
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow,noarchive">
+<title>Certificate Verification — Tech Resonate</title>
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+  --n:#0B1A2E;
+  --n2:#0F1F35;
+  --b:#3B82F6;
+  --lb:#60A5FA;
+  --p:#DCEEFF;
+  --w:#FFFFFF;
+}
+
+body{
+  min-height:100vh;
+  font-family:Arial,Helvetica,sans-serif;
+  background:
+    radial-gradient(circle at 10% 20%,rgba(59,130,246,.16),transparent 30%),
+    radial-gradient(circle at 90% 80%,rgba(96,165,250,.12),transparent 30%),
+    linear-gradient(135deg,var(--n),var(--n2));
+  color:var(--w);
+  overflow-x:hidden;
+}
+
+body:before,
+body:after{
+  content:"";
+  position:fixed;
+  border-radius:50%;
+  filter:blur(70px);
+  opacity:.35;
+  pointer-events:none;
+  z-index:-1;
+}
+
+body:before{
+  width:300px;
+  height:300px;
+  background:var(--b);
+  top:-100px;
+  left:-100px;
+}
+
+body:after{
+  width:300px;
+  height:300px;
+  background:var(--lb);
+  bottom:-100px;
+  right:-100px;
+}
+
+.container{
+  width:min(1100px,92%);
+  margin:auto;
+}
+
+header{
+  padding:25px 0;
+  border-bottom:1px solid rgba(255,255,255,.08);
+}
+
+.header-inner{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:20px;
+}
+
+.logo{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  font-weight:800;
+  font-size:20px;
+}
+
+.logo-mark{
+  width:42px;
+  height:42px;
+  border-radius:12px;
+  display:grid;
+  place-items:center;
+  background:linear-gradient(135deg,var(--b),var(--lb));
+  color:white;
+  font-weight:900;
+}
+
+.hero{
+  text-align:center;
+  padding:70px 0 45px;
+}
+
+.hero h1{
+  font-size:clamp(34px,6vw,62px);
+  line-height:1.05;
+  margin-bottom:16px;
+}
+
+.hero h1 span{
+  color:var(--lb);
+}
+
+.hero p{
+  max-width:680px;
+  margin:auto;
+  color:var(--p);
+  line-height:1.7;
+  font-size:17px;
+}
+
+.verification-box{
+  max-width:720px;
+  margin:0 auto 50px;
+  padding:28px;
+  border-radius:22px;
+  background:rgba(255,255,255,.06);
+  border:1px solid rgba(255,255,255,.1);
+  backdrop-filter:blur(16px);
+  box-shadow:0 25px 70px rgba(0,0,0,.25);
+}
+
+.input-group{
+  display:flex;
+  gap:12px;
+}
+
+.input-group input{
+  flex:1;
+  min-width:0;
+  padding:16px 18px;
+  border:none;
+  outline:none;
+  border-radius:12px;
+  background:rgba(255,255,255,.1);
+  color:white;
+  font-size:16px;
+  border:1px solid rgba(255,255,255,.12);
+}
+
+.input-group input::placeholder{
+  color:rgba(255,255,255,.55);
+}
+
+.verify-button,
+.certificate-button{
+  border:none;
+  text-decoration:none;
+  cursor:pointer;
+  padding:16px 22px;
+  border-radius:12px;
+  background:linear-gradient(135deg,var(--b),var(--lb));
+  color:white;
+  font-weight:800;
+  transition:.2s;
+  display:inline-block;
+}
+
+.verify-button:hover,
+.certificate-button:hover{
+  transform:translateY(-2px);
+}
+
+.message{
+  text-align:center;
+  margin-top:18px;
+  display:none;
+  padding:14px;
+  border-radius:12px;
+}
+
+.message.error{
+  display:block;
+  background:rgba(239,68,68,.12);
+  border:1px solid rgba(239,68,68,.25);
+  color:#fecaca;
+}
+
+.message.success{
+  display:block;
+  background:rgba(34,197,94,.12);
+  border:1px solid rgba(34,197,94,.25);
+  color:#bbf7d0;
+}
+
+.result{
+  display:none;
+  max-width:850px;
+  margin:0 auto 60px;
+  padding:32px;
+  border-radius:22px;
+  background:rgba(255,255,255,.06);
+  border:1px solid rgba(255,255,255,.1);
+  backdrop-filter:blur(16px);
+}
+
+.result.show{
+  display:block;
+}
+
+.result-header{
+  text-align:center;
+  margin-bottom:30px;
+}
+
+.result-header h2{
+  font-size:30px;
+  margin-bottom:8px;
+}
+
+.result-header p{
+  color:var(--p);
+}
+
+.verified-badge{
+  display:inline-block;
+  margin-bottom:15px;
+  padding:8px 15px;
+  border-radius:30px;
+  background:rgba(34,197,94,.15);
+  color:#86efac;
+  border:1px solid rgba(34,197,94,.25);
+  font-weight:800;
+}
+
+.details{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:15px;
+}
+
+.detail{
+  padding:18px;
+  border-radius:14px;
+  background:rgba(255,255,255,.05);
+  border:1px solid rgba(255,255,255,.07);
+}
+
+.detail small{
+  display:block;
+  color:rgba(255,255,255,.55);
+  margin-bottom:6px;
+}
+
+.detail strong{
+  display:block;
+  word-break:break-word;
+}
+
+.photo{
+  text-align:center;
+  margin-bottom:25px;
+}
+
+.photo img{
+  width:130px;
+  height:160px;
+  object-fit:cover;
+  border-radius:12px;
+  border:2px solid rgba(255,255,255,.15);
+}
+
+.payment{
+  margin-top:25px;
+  padding:22px;
+  border-radius:15px;
+  background:rgba(255,255,255,.05);
+  border:1px solid rgba(255,255,255,.08);
+}
+
+.payment h3{
+  margin-bottom:10px;
+}
+
+.payment p{
+  color:var(--p);
+  line-height:1.6;
+}
+
+.certificate-area{
+  text-align:center;
+  margin-top:25px;
+  padding-top:25px;
+  border-top:1px solid rgba(255,255,255,.08);
+}
+
+.certificate-area p{
+  color:var(--p);
+  margin-bottom:15px;
+}
+
+footer{
+  text-align:center;
+  padding:35px 0;
+  color:rgba(255,255,255,.55);
+  border-top:1px solid rgba(255,255,255,.08);
+}
+
+@media(max-width:650px){
+  .input-group{
+    flex-direction:column;
+  }
+
+  .details{
+    grid-template-columns:1fr;
+  }
+
+  .verification-box,
+  .result{
+    padding:22px;
+  }
+}
+</style>
 </head>
 
 <body>
 
-  <div class="background">
-    <div class="orb orb-one"></div>
-    <div class="orb orb-two"></div>
-    <div class="orb orb-three"></div>
-  </div>
-
-  <div class="page">
-
-```
 <header>
-  <div class="logo-box">
-    <img
-      src="https://techresonate.com/logo.png"
-      alt="Tech Resonate"
-      class="logo"
-    >
+  <div class="container header-inner">
+    <div class="logo">
+      <div class="logo-mark">TR</div>
+      <div>Tech Resonate</div>
+    </div>
   </div>
 </header>
 
+<main>
+
 <section class="hero">
-
-  <div class="badge">
-    <span class="badge-dot"></span>
-    Official Certificate Verification
+  <div class="container">
+    <h1>Official <span>Certificate Verification</span></h1>
+    <p>
+      Verify the authenticity of a Tech Resonate certificate using the
+      unique certificate identification number.
+    </p>
   </div>
-
-  <h1>
-    Certificate <span>Verification</span>
-  </h1>
-
-  <p>
-    Verify the authenticity of certificates issued by
-    Tech Resonate quickly and securely.
-  </p>
-
 </section>
 
-<main class="container">
+<section class="container">
 
-  <section class="verification-card">
+  <div class="verification-box">
 
-    <label class="search-label" for="certificateId">
-      Certificate ID
-    </label>
-
-    <div class="search-box">
-
+    <div class="input-group">
       <input
         type="text"
         id="certificateId"
-        placeholder="e.g. TR-2026-SEO-002"
+        placeholder="Enter Certificate ID"
         autocomplete="off"
       >
 
       <button
+        type="button"
         class="verify-button"
         onclick="verifyCertificate()"
       >
         Verify Certificate
       </button>
-
     </div>
 
-    <div id="loading" class="loading">
-      <div class="loader"></div>
-      <p>Checking certificate...</p>
-    </div>
+    <div id="message" class="message"></div>
 
-    <div id="result" class="result"></div>
+  </div>
 
-    <div class="how-it-works">
+  <div id="result" class="result"></div>
 
-      <h2>How verification works</h2>
-
-      <div class="steps">
-
-        <div class="step">
-          <div class="step-number">1</div>
-          <p>Enter the Certificate ID</p>
-        </div>
-
-        <div class="step">
-          <div class="step-number">2</div>
-          <p>We check the official record</p>
-        </div>
-
-        <div class="step">
-          <div class="step-number">3</div>
-          <p>View the verification result</p>
-        </div>
-
-      </div>
-
-    </div>
-
-  </section>
+</section>
 
 </main>
 
 <footer>
-  <strong>TECH RESONATE</strong><br>
-  INNOVATION THAT RESONATES
-</footer>
-```
-
+  <div class="container">
+    © 2026 Tech Resonate. All rights reserved.
   </div>
+</footer>
 
 <script>
 
@@ -950,594 +385,419 @@ const API_URL =
   "https://script.google.com/macros/s/AKfycbwYVlT9WS5ov6i0vZc4wienOAwau2ckKVSKe4uMQwM-QCILz3zSxLt4CjWy82iDRy3F7w/exec";
 
 
-function formatDate(dateString) {
+/* =========================================================
+   CERTIFICATE FILE LOCATION
+   =========================================================
 
-  if (!dateString || dateString === "----------") {
-    return dateString || "Not provided";
-  }
+   Every certificate PDF will be stored inside:
 
-  try {
+   /certificates/
 
-    return new Intl.DateTimeFormat("en-GB", {
-      day: "numeric",
-      month: "long",
-      year: "numeric",
-      timeZone: "Africa/Lagos"
-    }).format(new Date(dateString));
+   Example:
 
-  } catch (error) {
+   /certificates/TR-2026-DDP-001.pdf
 
-    return dateString;
+   The website automatically creates the correct URL
+   from the Certificate ID.
+========================================================= */
 
-  }
-
-}
+const CERTIFICATE_BASE_URL =
+  "https://tech-resonate.github.io/certificate-verification/certificates/";
 
 
-function escapeHtml(value) {
+function escapeHtml(value){
 
-  if (value === null || value === undefined) {
-    return "";
-  }
-
-  return String(value)
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#039;");
+  return String(value ?? "")
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#039;");
 
 }
 
 
-/*
-  Clean Certificate IDs before verification.
+/* =========================================================
+   CREATE CERTIFICATE PDF URL
+========================================================= */
 
-  This makes the verification system tolerant of:
-  - extra spaces
-  - spaces inside the ID
-  - accidental trailing hyphens
-  - lowercase letters
+function getCertificateFileUrl(certificateId){
 
-  Example:
-  TR-2026-DDP-001-
-  becomes:
-  TR-2026-DDP-001
-*/
-function cleanCertificateId(value) {
-
-  return String(value || "")
-    .trim()
-    .replace(/\s+/g, "")
-    .replace(/-+$/, "")
-    .toUpperCase();
-
-}
-
-
-function verifyCertificate() {
-
-  const input =
-    document.getElementById("certificateId");
-
-  const certificateId =
-    cleanCertificateId(input.value);
-
-  /*
-    Put the cleaned ID back into the input.
-    This does not change the design.
-  */
-  input.value = certificateId;
-
-  const result =
-    document.getElementById("result");
-
-  const loading =
-    document.getElementById("loading");
-
-
-  if (!certificateId) {
-
-    result.style.display = "block";
-
-    result.className = "result invalid-result";
-
-    result.innerHTML = `
-
-      <div class="verification-icon">
-        !
-      </div>
-
-      <div class="result-title">
-        Certificate ID Required
-      </div>
-
-      <p class="result-message">
-        Please enter a Certificate ID to verify the certificate.
-      </p>
-
-    `;
-
-    return;
-  }
-
-
-  result.style.display = "none";
-
-  loading.style.display = "block";
-
-
-  fetch(
-    API_URL +
-    "?id=" +
-    encodeURIComponent(certificateId)
-  )
-
-  .then(response => {
-
-    if (!response.ok) {
-      throw new Error(
-        "Verification server returned an error."
-      );
-    }
-
-    return response.json();
-
-  })
-
-  .then(data => {
-
-    loading.style.display = "none";
-
-    result.style.display = "block";
-
-
-    if (data.success) {
-
-      result.className = "result valid-result";
-
-      const photoSection = data.photoUrl
-        ? `
-          <div class="student-profile">
-
-            <div class="passport-frame">
-
-              <img
-                src="${escapeHtml(data.photoUrl)}"
-                alt="Passport photo of ${escapeHtml(data.studentName)}"
-                class="passport-photo"
-                onerror="this.parentElement.style.display='none';"
-              >
-
-            </div>
-
-            <div class="student-info">
-
-              <div class="verified-label">
-                ✓ Officially Verified
-              </div>
-
-              <div class="student-name">
-                ${escapeHtml(data.studentName)}
-              </div>
-
-              <div class="student-programme">
-                ${escapeHtml(data.programme)}
-              </div>
-
-            </div>
-
-          </div>
-        `
-        : `
-          <div class="student-profile">
-
-            <div class="student-info">
-
-              <div class="verified-label">
-                ✓ Officially Verified
-              </div>
-
-              <div class="student-name">
-                ${escapeHtml(data.studentName)}
-              </div>
-
-              <div class="student-programme">
-                ${escapeHtml(data.programme)}
-              </div>
-
-            </div>
-
-          </div>
-        `;
-
-
-      let paymentSection = "";
-
-      const paymentStatus =
-        String(data.paymentStatus || "")
-          .trim()
-          .toLowerCase();
-
-
-      if (paymentStatus === "paid") {
-
-        if (data.certificateUrl) {
-
-          paymentSection = `
-
-            <div class="paid-section">
-
-              <div class="paid-title">
-                ✓ Certificate Available
-              </div>
-
-              <p class="paid-message">
-                Your certificate payment has been confirmed.
-                You can now access your certificate.
-              </p>
-
-              <a
-                class="certificate-button"
-                href="${escapeHtml(data.certificateUrl)}"
-                target="_blank"
-                rel="noopener"
-              >
-                View Certificate
-              </a>
-
-            </div>
-
-          `;
-
-        } else {
-
-          paymentSection = `
-
-            <div class="paid-section">
-
-              <div class="paid-title">
-                ✓ Payment Confirmed
-              </div>
-
-              <p class="paid-message">
-                Your certificate payment has been confirmed.
-                Your certificate will be made available here.
-              </p>
-
-            </div>
-
-          `;
-
-        }
-
-      } else {
-
-        paymentSection = `
-
-          <div class="payment-section">
-
-            <div class="payment-title">
-               Certificate Locked
-            </div>
-
-            <p class="payment-message">
-              Your certificate fee has not been completed.
-              Please make the certificate payment to access
-              your certificate.
-            </p>
-
-            <div class="payment-fee">
-
-              <span class="payment-fee-label">
-                Certificate Fee
-              </span>
-
-              <span class="payment-fee-value">
-                ₦10,000
-              </span>
-
-            </div>
-
-            <div class="payment-details">
-
-              <h3>
-                Payment Details
-              </h3>
-
-              <div class="payment-row">
-                <span>Bank</span>
-                <strong>OPay</strong>
-              </div>
-
-              <div class="payment-row">
-                <span>Account Name</span>
-                <strong>Tech Resonate Limited</strong>
-              </div>
-
-              <div class="payment-row">
-                <span>Account Number</span>
-                <strong>6595180773</strong>
-              </div>
-
-            </div>
-
-            <label
-              class="reference-label"
-              for="paymentReference"
-            >
-              Transaction Reference
-            </label>
-
-            <input
-              type="text"
-              id="paymentReference"
-              class="reference-input"
-              placeholder="Enter your OPay transaction reference"
-              autocomplete="off"
-            >
-
-            <button
-              class="payment-button"
-              onclick="submitPaymentReference('${escapeHtml(data.certificateId)}', '${escapeHtml(data.studentName)}')"
-            >
-              Submit Payment Reference
-            </button>
-
-            <p class="payment-note">
-              After making the transfer, enter your transaction
-              reference above. Your payment will be manually
-              verified by Tech Resonate before the certificate
-              is unlocked.
-            </p>
-
-          </div>
-
-        `;
-
-      }
-
-
-      result.innerHTML = `
-
-        <div class="verification-icon">
-          ✓
-        </div>
-
-        <div class="result-title">
-          Certificate Verified
-        </div>
-
-        <p class="result-message">
-          This certificate matches an official
-          Tech Resonate verification record.
-        </p>
-
-        ${photoSection}
-
-        <div class="certificate-details">
-
-          <div class="detail-box">
-
-            <div class="detail-icon">
-              ID
-            </div>
-
-            <span class="detail-label">
-              Certificate ID
-            </span>
-
-            <span class="detail-value">
-              ${escapeHtml(data.certificateId)}
-            </span>
-
-          </div>
-
-
-          <div class="detail-box">
-
-            <div class="detail-icon">
-              ✓
-            </div>
-
-            <span class="detail-label">
-              Programme
-            </span>
-
-            <span class="detail-value">
-              ${escapeHtml(data.programme)}
-            </span>
-
-          </div>
-
-
-          <div class="detail-box">
-
-            <div class="detail-icon">
-              📅
-            </div>
-
-            <span class="detail-label">
-              Issue Date
-            </span>
-
-            <span class="detail-value">
-              ${escapeHtml(formatDate(data.issueDate))}
-            </span>
-
-          </div>
-
-
-          <div class="detail-box">
-
-            <div class="detail-icon">
-              ✓
-            </div>
-
-            <span class="detail-label">
-              Status
-            </span>
-
-            <span class="detail-value status-valid">
-              ${escapeHtml(data.status)}
-            </span>
-
-          </div>
-
-        </div>
-
-        ${paymentSection}
-
-        <p class="photo-note">
-          Verification information is provided by Tech Resonate.
-        </p>
-
-      `;
-
-    } else {
-
-      result.className = "result invalid-result";
-
-      result.innerHTML = `
-
-        <div class="verification-icon">
-          ✕
-        </div>
-
-        <div class="result-title">
-          Certificate Not Found
-        </div>
-
-        <p class="result-message">
-          We couldn't verify this certificate.
-          Please check the Certificate ID and try again.
-        </p>
-
-      `;
-
-    }
-
-  })
-
-  .catch(error => {
-
-    console.error(error);
-
-    loading.style.display = "none";
-
-    result.style.display = "block";
-
-    result.className = "result invalid-result";
-
-    result.innerHTML = `
-
-      <div class="verification-icon">
-        !
-      </div>
-
-      <div class="result-title">
-        Verification Error
-      </div>
-
-      <p class="result-message">
-        We couldn't connect to the verification service.
-        Please try again later.
-      </p>
-
-    `;
-
-  });
-
-}
-
-
-/*
-  Submit payment reference through WhatsApp.
-
-  The payment is NOT automatically marked as paid.
-  Tech Resonate must verify the bank transfer first.
-*/
-
-function submitPaymentReference(certificateId, studentName) {
-
-  const input =
-    document.getElementById("paymentReference");
-
-  const reference =
-    input.value.trim();
-
-
-  if (!reference) {
-
-    alert(
-      "Please enter your payment transaction reference."
-    );
-
-    input.focus();
-
-    return;
-
-  }
-
-
-  const message =
-    "Hello Tech Resonate,%0A%0A" +
-    "I have paid the certificate fee of ₦10,000.%0A%0A" +
-    "Certificate ID: " +
+  return (
+    CERTIFICATE_BASE_URL +
     encodeURIComponent(certificateId) +
-    "%0A" +
-    "Student Name: " +
-    encodeURIComponent(studentName) +
-    "%0A" +
-    "Payment Reference: " +
-    encodeURIComponent(reference) +
-    "%0A%0A" +
-    "Please verify my payment and unlock my certificate.";
-
-
-  /*
-    Replace the number below with the official
-    Tech Resonate WhatsApp number before publishing.
-  */
-
-  const whatsappNumber = "2349039302155";
-
-
-  const whatsappUrl =
-    "https://wa.me/" +
-    whatsappNumber +
-    "?text=" +
-    message;
-
-
-  window.open(
-    whatsappUrl,
-    "_blank"
+    ".pdf"
   );
 
 }
 
 
-/* Automatically verify certificate through QR-code URL */
+/* =========================================================
+   MESSAGE
+========================================================= */
 
-window.onload = function() {
+function showMessage(message,type){
 
-  const params =
-    new URLSearchParams(window.location.search);
+  const box =
+    document.getElementById("message");
+
+  box.className =
+    "message " + type;
+
+  box.textContent =
+    message;
+
+}
+
+
+/* =========================================================
+   VERIFY CERTIFICATE
+========================================================= */
+
+async function verifyCertificate(){
+
+  const input =
+    document.getElementById("certificateId");
 
   /*
-    Clean the ID coming from the QR code / URL too.
-    Example:
+    Remove spaces and accidental trailing hyphens.
+
+    So:
+
+    TR-2026-DDP-001
+
+    and
+
     TR-2026-DDP-001-
-    becomes:
+
+    will both search for:
+
     TR-2026-DDP-001
   */
-  const id =
-    cleanCertificateId(params.get("id"));
 
-  if (id) {
+  const certificateId =
+    input.value
+      .trim()
+      .replace(/-+$/,"");
 
-    document.getElementById("certificateId").value = id;
+
+  if(!certificateId){
+
+    showMessage(
+      "Please enter a Certificate ID.",
+      "error"
+    );
+
+    return;
+  }
+
+
+  showMessage(
+    "Verifying certificate...",
+    "success"
+  );
+
+
+  const resultBox =
+    document.getElementById("result");
+
+
+  resultBox.classList.remove("show");
+
+
+  try{
+
+    const response =
+      await fetch(
+        API_URL +
+        "?id=" +
+        encodeURIComponent(certificateId)
+      );
+
+
+    if(!response.ok){
+
+      throw new Error(
+        "Unable to connect to verification server."
+      );
+
+    }
+
+
+    const data =
+      await response.json();
+
+
+    if(!data.success){
+
+      showMessage(
+        data.message ||
+        "Certificate not found.",
+        "error"
+      );
+
+      resultBox.innerHTML = "";
+
+      resultBox.classList.remove("show");
+
+      return;
+    }
+
+
+    showMessage(
+      "Certificate verified successfully.",
+      "success"
+    );
+
+
+    /*
+      Certificate PDF URL is now generated
+      directly from the Certificate ID.
+
+      Example:
+
+      TR-2026-DDP-001
+
+      becomes:
+
+      https://tech-resonate.github.io/
+      certificate-verification/certificates/
+      TR-2026-DDP-001.pdf
+    */
+
+    const certificateFileUrl =
+      getCertificateFileUrl(
+        data.certificateId
+      );
+
+
+    let photoHtml = "";
+
+
+    if(data.photoUrl){
+
+      photoHtml = `
+        <div class="photo">
+          <img
+            src="${escapeHtml(data.photoUrl)}"
+            alt="Certificate holder"
+          >
+        </div>
+      `;
+
+    }
+
+
+    let certificateHtml = "";
+
+
+    if(
+      String(data.paymentStatus || "")
+        .toLowerCase()
+        .trim() === "paid"
+    ){
+
+      certificateHtml = `
+
+        <div class="certificate-area">
+
+          <p>
+            Your certificate is available.
+          </p>
+
+          <a
+            class="certificate-button"
+            href="${escapeHtml(certificateFileUrl)}"
+            target="_blank"
+            rel="noopener"
+          >
+            View Certificate
+          </a>
+
+        </div>
+
+      `;
+
+    }else{
+
+      certificateHtml = `
+
+        <div class="payment">
+
+          <h3>Payment Required</h3>
+
+          <p>
+            This certificate has not yet been marked as paid.
+            Please complete the required payment and submit
+            your payment reference to the certificate administrator.
+          </p>
+
+        </div>
+
+      `;
+
+    }
+
+
+    resultBox.innerHTML = `
+
+      <div class="result-header">
+
+        <div class="verified-badge">
+          ✓ Certificate Verified
+        </div>
+
+        <h2>
+          Certificate Verification
+        </h2>
+
+        <p>
+          This certificate record has been found
+          in the Tech Resonate verification database.
+        </p>
+
+      </div>
+
+
+      ${photoHtml}
+
+
+      <div class="details">
+
+        <div class="detail">
+
+          <small>
+            Certificate ID
+          </small>
+
+          <strong>
+            ${escapeHtml(data.certificateId)}
+          </strong>
+
+        </div>
+
+
+        <div class="detail">
+
+          <small>
+            Student Name
+          </small>
+
+          <strong>
+            ${escapeHtml(data.studentName)}
+          </strong>
+
+        </div>
+
+
+        <div class="detail">
+
+          <small>
+            Programme
+          </small>
+
+          <strong>
+            ${escapeHtml(data.programme)}
+          </strong>
+
+        </div>
+
+
+        <div class="detail">
+
+          <small>
+            Issue Date
+          </small>
+
+          <strong>
+            ${escapeHtml(data.issueDate)}
+          </strong>
+
+        </div>
+
+
+        <div class="detail">
+
+          <small>
+            Status
+          </small>
+
+          <strong>
+            ${escapeHtml(data.status)}
+          </strong>
+
+        </div>
+
+
+        <div class="detail">
+
+          <small>
+            Payment Status
+          </small>
+
+          <strong>
+            ${escapeHtml(data.paymentStatus)}
+          </strong>
+
+        </div>
+
+      </div>
+
+
+      ${certificateHtml}
+
+    `;
+
+
+    resultBox.classList.add("show");
+
+
+  }catch(error){
+
+    console.error(error);
+
+
+    showMessage(
+      "Could not connect to the certificate verification system.",
+      "error"
+    );
+
+
+    resultBox.classList.remove("show");
+
+  }
+
+}
+
+
+/* =========================================================
+   AUTO VERIFY FROM URL
+========================================================= */
+
+window.onload = function(){
+
+  const params =
+    new URLSearchParams(
+      window.location.search
+    );
+
+
+  let id =
+    params.get("id");
+
+
+  if(id){
+
+    id =
+      id
+        .trim()
+        .replace(/-+$/,"");
+
+
+    document.getElementById(
+      "certificateId"
+    ).value = id;
+
 
     verifyCertificate();
 
@@ -1546,17 +806,24 @@ window.onload = function() {
 };
 
 
-/* Allow Enter key to verify */
+/* =========================================================
+   ENTER KEY
+========================================================= */
 
 document
   .getElementById("certificateId")
-  .addEventListener("keydown", function(event) {
+  .addEventListener(
+    "keydown",
+    function(event){
 
-    if (event.key === "Enter") {
-      verifyCertificate();
+      if(event.key === "Enter"){
+
+        verifyCertificate();
+
+      }
+
     }
-
-  });
+  );
 
 </script>
 
