@@ -1037,7 +1037,7 @@ h1 .of-completion{display:block;margin-top:2.6mm;color:var(--b);font:700 7.1mm/1
                     id="sealLabel"
                     data-editor-id="sealLabel"
                   >
-                    Certified
+                    TECH RESONATE
                   </div>
 
                   <div
@@ -1441,6 +1441,50 @@ function extractYear(id){
   return m
     ?m[1]
     :String(new Date().getFullYear());
+
+}
+
+/* =========================
+   CERTIFICATE ID GENERATION
+   ========================= */
+
+const ID_ALPHABET =
+  "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+
+function generateCertificateId(){
+
+  const bytes =
+    new Uint8Array(10);
+
+  crypto.getRandomValues(bytes);
+
+  let randomPart="";
+
+  for(let i=0;i<10;i++){
+
+    randomPart +=
+      ID_ALPHABET[
+        bytes[i] % ID_ALPHABET.length
+      ];
+
+  }
+
+  return "TR-2026-" + randomPart;
+
+}
+
+function applyNewCertificateId(){
+
+  const newId =
+    generateCertificateId();
+
+  document
+    .getElementById("inputCertificateId")
+    .value = newId;
+
+  renderContentFromInputs();
+
+  return newId;
 
 }
 
@@ -2916,7 +2960,7 @@ function resetDesign(){
       "Authentic Credential",
 
     sealLabel:
-      "Certified",
+      "TECH RESONATE",
 
     sealYear:
       "2026",
@@ -3279,8 +3323,11 @@ function resetCertificate(){
 
   loadSignature();
 
+  const newId =
+    applyNewCertificateId();
+
   notify(
-    "Certificate content reset. Saved design remains unchanged."
+    "Certificate content reset. New ID generated: " + newId
   );
 
 }
@@ -4354,19 +4401,9 @@ function attachActionEvents(){
         event.key==="Backspace"
       ){
 
-        const meta=
-          ELEMENTS[selectedKey];
+        event.preventDefault();
 
-        if(
-          meta &&
-          meta.text
-        ){
-
-          event.preventDefault();
-
-          deleteSelectedText();
-
-        }
+        deleteSelectedText();
 
       }
 
@@ -4384,6 +4421,8 @@ function init(){
   setInputsFromData(
     DEFAULT_CERTIFICATE
   );
+
+  applyNewCertificateId();
 
   loadSignature();
 
@@ -4417,6 +4456,8 @@ window.TechResonateCertificateBuilder={
   saveDesign,
 
   addCertificateToDatabase,
+
+  applyNewCertificateId,
 
   selectElement,
 
