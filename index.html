@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -6,10 +7,11 @@
 
   <title>Certificate Verification | Tech Resonate</title>
 
-  <meta
-    name="description"
-    content="Verify the authenticity of certificates issued by Tech Resonate."
-  >
+<meta
+name="description"
+content="Verify the authenticity of certificates issued by Tech Resonate."
+
+>
 
   <style>
     :root {
@@ -830,6 +832,7 @@
       }
     }
   </style>
+
 </head>
 
 <body>
@@ -842,100 +845,102 @@
 
   <div class="page">
 
-    <header>
-      <div class="logo-box">
-        <img
-          src="https://techresonate.com/logo.png"
-          alt="Tech Resonate"
-          class="logo"
-        >
+```
+<header>
+  <div class="logo-box">
+    <img
+      src="https://techresonate.com/logo.png"
+      alt="Tech Resonate"
+      class="logo"
+    >
+  </div>
+</header>
+
+<section class="hero">
+
+  <div class="badge">
+    <span class="badge-dot"></span>
+    Official Certificate Verification
+  </div>
+
+  <h1>
+    Certificate <span>Verification</span>
+  </h1>
+
+  <p>
+    Verify the authenticity of certificates issued by
+    Tech Resonate quickly and securely.
+  </p>
+
+</section>
+
+<main class="container">
+
+  <section class="verification-card">
+
+    <label class="search-label" for="certificateId">
+      Certificate ID
+    </label>
+
+    <div class="search-box">
+
+      <input
+        type="text"
+        id="certificateId"
+        placeholder="e.g. TR-2026-SEO-002"
+        autocomplete="off"
+      >
+
+      <button
+        class="verify-button"
+        onclick="verifyCertificate()"
+      >
+        Verify Certificate
+      </button>
+
+    </div>
+
+    <div id="loading" class="loading">
+      <div class="loader"></div>
+      <p>Checking certificate...</p>
+    </div>
+
+    <div id="result" class="result"></div>
+
+    <div class="how-it-works">
+
+      <h2>How verification works</h2>
+
+      <div class="steps">
+
+        <div class="step">
+          <div class="step-number">1</div>
+          <p>Enter the Certificate ID</p>
+        </div>
+
+        <div class="step">
+          <div class="step-number">2</div>
+          <p>We check the official record</p>
+        </div>
+
+        <div class="step">
+          <div class="step-number">3</div>
+          <p>View the verification result</p>
+        </div>
+
       </div>
-    </header>
 
-    <section class="hero">
+    </div>
 
-      <div class="badge">
-        <span class="badge-dot"></span>
-        Official Certificate Verification
-      </div>
+  </section>
 
-      <h1>
-        Certificate <span>Verification</span>
-      </h1>
+</main>
 
-      <p>
-        Verify the authenticity of certificates issued by
-        Tech Resonate quickly and securely.
-      </p>
-
-    </section>
-
-    <main class="container">
-
-      <section class="verification-card">
-
-        <label class="search-label" for="certificateId">
-          Certificate ID
-        </label>
-
-        <div class="search-box">
-
-          <input
-            type="text"
-            id="certificateId"
-            placeholder="e.g. TR-2026-SEO-002"
-            autocomplete="off"
-          >
-
-          <button
-            class="verify-button"
-            onclick="verifyCertificate()"
-          >
-            Verify Certificate
-          </button>
-
-        </div>
-
-        <div id="loading" class="loading">
-          <div class="loader"></div>
-          <p>Checking certificate...</p>
-        </div>
-
-        <div id="result" class="result"></div>
-
-        <div class="how-it-works">
-
-          <h2>How verification works</h2>
-
-          <div class="steps">
-
-            <div class="step">
-              <div class="step-number">1</div>
-              <p>Enter the Certificate ID</p>
-            </div>
-
-            <div class="step">
-              <div class="step-number">2</div>
-              <p>We check the official record</p>
-            </div>
-
-            <div class="step">
-              <div class="step-number">3</div>
-              <p>View the verification result</p>
-            </div>
-
-          </div>
-
-        </div>
-
-      </section>
-
-    </main>
-
-    <footer>
-      <strong>TECH RESONATE</strong><br>
-      INNOVATION THAT RESONATES
-    </footer>
+<footer>
+  <strong>TECH RESONATE</strong><br>
+  INNOVATION THAT RESONATES
+</footer>
+```
 
   </div>
 
@@ -985,13 +990,44 @@ function escapeHtml(value) {
 }
 
 
+/*
+  Clean Certificate IDs before verification.
+
+  This makes the verification system tolerant of:
+  - extra spaces
+  - spaces inside the ID
+  - accidental trailing hyphens
+  - lowercase letters
+
+  Example:
+  TR-2026-DDP-001-
+  becomes:
+  TR-2026-DDP-001
+*/
+function cleanCertificateId(value) {
+
+  return String(value || "")
+    .trim()
+    .replace(/\s+/g, "")
+    .replace(/-+$/, "")
+    .toUpperCase();
+
+}
+
+
 function verifyCertificate() {
 
   const input =
     document.getElementById("certificateId");
 
   const certificateId =
-    input.value.trim();
+    cleanCertificateId(input.value);
+
+  /*
+    Put the cleaned ID back into the input.
+    This does not change the design.
+  */
+  input.value = certificateId;
 
   const result =
     document.getElementById("result");
@@ -1037,7 +1073,17 @@ function verifyCertificate() {
     encodeURIComponent(certificateId)
   )
 
-  .then(response => response.json())
+  .then(response => {
+
+    if (!response.ok) {
+      throw new Error(
+        "Verification server returned an error."
+      );
+    }
+
+    return response.json();
+
+  })
 
   .then(data => {
 
@@ -1109,7 +1155,9 @@ function verifyCertificate() {
       let paymentSection = "";
 
       const paymentStatus =
-        String(data.paymentStatus || "").trim().toLowerCase();
+        String(data.paymentStatus || "")
+          .trim()
+          .toLowerCase();
 
 
       if (paymentStatus === "paid") {
@@ -1477,8 +1525,15 @@ window.onload = function() {
   const params =
     new URLSearchParams(window.location.search);
 
+  /*
+    Clean the ID coming from the QR code / URL too.
+    Example:
+    TR-2026-DDP-001-
+    becomes:
+    TR-2026-DDP-001
+  */
   const id =
-    params.get("id");
+    cleanCertificateId(params.get("id"));
 
   if (id) {
 
