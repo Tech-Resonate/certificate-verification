@@ -137,6 +137,7 @@ h1 .of-completion{display:block;margin-top:2.6mm;color:var(--b);font:700 7.1mm/1
 .seal-rule{width:11mm;height:.45mm;margin-top:1mm;background:var(--lb)}
 .qr{width:35mm;height:35mm;margin-top:8.4mm;padding:2.3mm;background:var(--w);border:.55mm solid var(--p);box-shadow:0 1.5mm 4mm rgba(11,26,46,.25);display:grid;place-items:center}
 .qr canvas{width:100%!important;height:100%!important;display:block}
+.qr img{width:100%;height:100%;object-fit:contain;display:block}
 .scan{margin-top:4.1mm;font-size:2.75mm;font-weight:800;letter-spacing:.18em;text-transform:uppercase}
 .domain{margin-top:1.6mm;color:var(--p);font-size:2.3mm;text-align:center}
 .side-id{width:100%;margin-top:auto;padding-top:4mm;border-top:.25mm solid rgba(255,255,255,.28);text-align:center;color:var(--p);font-size:1.95mm;line-height:1.5;letter-spacing:.12em;text-transform:uppercase}
@@ -359,10 +360,6 @@ h1 .of-completion{display:block;margin-top:2.6mm;color:var(--b);font:700 7.1mm/1
 
         </div>
 
-        <!-- =========================
-             NEW FONT CONTROLS
-             ========================= -->
-
         <div class="field">
           <label for="controlFontFamily">Font Family</label>
 
@@ -442,10 +439,6 @@ h1 .of-completion{display:block;margin-top:2.6mm;color:var(--b);font:700 7.1mm/1
           </button>
 
         </div>
-
-        <!-- =========================
-             TEXT ALIGNMENT
-             ========================= -->
 
         <span class="segment-label">
           Text Alignment
@@ -567,6 +560,55 @@ h1 .of-completion{display:block;margin-top:2.6mm;color:var(--b);font:700 7.1mm/1
 
         <div class="help">
           Saved signature data stays in this browser's localStorage and is reused next time.
+        </div>
+
+      </div>
+
+    </details>
+
+    <!-- =========================
+         QR CODE UPLOAD
+         ========================= -->
+
+    <details class="panel-section" open>
+
+      <summary>QR Code</summary>
+
+      <div class="section-body">
+
+        <div class="field">
+
+          <label for="qrUpload">
+            Upload QR Code Image
+          </label>
+
+          <input
+            id="qrUpload"
+            class="file-input"
+            type="file"
+            accept="image/png,image/jpeg,image/webp"
+          >
+
+          <div class="help">
+            Upload a PNG, JPG, JPEG, or WebP QR code. The uploaded QR will replace the automatic verification QR.
+          </div>
+
+        </div>
+
+        <div class="action-grid">
+
+          <button
+            type="button"
+            id="removeUploadedQr"
+            class="danger"
+          >
+            Remove Uploaded QR
+          </button>
+
+        </div>
+
+        <div class="help">
+          Removing the uploaded QR restores the automatic QR generated from the verification URL.
         </div>
 
       </div>
@@ -1444,11 +1486,190 @@ function makeSeal(){
 
 }
 
+/* =========================
+   QR UPLOAD FUNCTIONS
+   ========================= */
+
+function renderUploadedQr(dataUrl){
+
+  const qrBox=
+    document.getElementById("qrCode");
+
+  const canvas=
+    document.getElementById("qrCanvas");
+
+  if(!qrBox || !canvas)return;
+
+  let img=
+    document.getElementById("uploadedQrImage");
+
+  if(!img){
+
+    img=
+      document.createElement("img");
+
+    img.id="uploadedQrImage";
+
+    img.alt=
+      "Uploaded verification QR code";
+
+    qrBox.appendChild(img);
+
+  }
+
+  img.src=dataUrl;
+
+  img.style.display="block";
+
+  canvas.style.display="none";
+
+}
+
+function restoreAutomaticQr(){
+
+  const canvas=
+    document.getElementById("qrCanvas");
+
+  const img=
+    document.getElementById("uploadedQrImage");
+
+  if(img){
+
+    img.remove();
+
+  }
+
+  canvas.style.display="block";
+
+  makeQr(
+    activeVerificationUrl()
+  );
+
+}
+
+async function handleQrFile(file){
+
+  if(!file)return;
+
+  const allowedTypes=[
+    "image/png",
+    "image/jpeg",
+    "image/webp"
+  ];
+
+  if(!allowedTypes.includes(file.type)){
+
+    notify(
+      "Please upload a PNG, JPG, JPEG, or WebP QR image."
+    );
+
+    return;
+
+  }
+
+  if(file.size>2*1024*1024){
+
+    notify(
+      "QR image is too large. Please use an image under 2 MB."
+    );
+
+    return;
+
+  }
+
+  try{
+
+    const dataUrl=
+      await new Promise(
+        (resolve,reject)=>{
+
+          const reader=
+            new FileReader();
+
+          reader.onload=
+            ()=>resolve(
+              reader.result
+            );
+
+          reader.onerror=reject;
+
+          reader.readAsDataURL(
+            file
+          );
+
+        }
+      );
+
+    designState.qrUpload=
+      dataUrl;
+
+    renderUploadedQr(
+      dataUrl
+    );
+
+    notify(
+      "Uploaded QR code added. Click Save Design to keep it."
+    );
+
+  }catch(err){
+
+    console.error(err);
+
+    notify(
+      "Could not read the QR image."
+    );
+
+  }
+
+}
+
+function removeUploadedQr(){
+
+  delete designState.qrUpload;
+
+  const input=
+    document.getElementById(
+      "qrUpload"
+    );
+
+  if(input){
+
+    input.value="";
+
+  }
+
+  restoreAutomaticQr();
+
+  notify(
+    "Uploaded QR removed. Automatic verification QR restored."
+  );
+
+}
+
+/* =========================
+   QR GENERATION
+   ========================= */
+
 function makeQr(url){
 
   clearTimeout(qrTimer);
 
   qrTimer=setTimeout(async()=>{
+
+    /*
+      If a custom QR has been uploaded,
+      never replace it with the automatic QR.
+    */
+
+    if(designState.qrUpload){
+
+      renderUploadedQr(
+        designState.qrUpload
+      );
+
+      return;
+
+    }
 
     if(!window.QRCode?.toCanvas){
 
@@ -1462,8 +1683,26 @@ function makeQr(url){
 
     try{
 
+      const canvas=
+        document.getElementById(
+          "qrCanvas"
+        );
+
+      const uploaded=
+        document.getElementById(
+          "uploadedQrImage"
+        );
+
+      if(uploaded){
+
+        uploaded.remove();
+
+      }
+
+      canvas.style.display="block";
+
       await QRCode.toCanvas(
-        document.getElementById("qrCanvas"),
+        canvas,
         url,
         {
           width:320,
@@ -1526,7 +1765,8 @@ function updateQrUrlField(){
       .checked;
 
   const input=
-    document.getElementById("inputQrUrl");
+    document
+      .getElementById("inputQrUrl");
 
   if(auto){
 
@@ -1842,11 +2082,9 @@ function applyElementState(key){
         ?""
         :String(s.fontWeight);
 
-    /* NEW: Font Family */
     el.style.fontFamily=
       s.fontFamily||"";
 
-    /* NEW: Font Style */
     el.style.fontStyle=
       s.fontStyle||"";
 
@@ -1857,11 +2095,6 @@ function applyElementState(key){
     }
 
     if(typeof s.text==="string"){
-
-      /*
-        Keep the line break for the
-        verification heading.
-      */
 
       if(
         key==="verifyCertificate" &&
@@ -2418,13 +2651,6 @@ function refreshControls(){
   controlFontFamily.value=
     currentFontFamily;
 
-  /*
-    Some system fonts may return a computed
-    font-family that does not exactly match
-    one of our option values. In that case,
-    keep the selector on Master / Default.
-  */
-
   if(
     controlFontFamily.value!==
     currentFontFamily
@@ -2592,23 +2818,24 @@ function loadDesign(){
 
   applyAllDesign();
 
+  /*
+    Restore saved uploaded QR
+    after the design has loaded.
+  */
+
+  if(designState.qrUpload){
+
+    renderUploadedQr(
+      designState.qrUpload
+    );
+
+  }
+
 }
 
 function saveDesign(){
 
   try{
-
-    /*
-      The current designState is already
-      updated whenever the user edits text,
-      color, position, font, alignment,
-      weight, style, etc.
-
-      We save it directly.
-
-      This also prevents the verification
-      heading from losing its <br> line break.
-    */
 
     localStorage.setItem(
       STORAGE.design,
@@ -2639,11 +2866,6 @@ function resetDesign(){
     .forEach(
       resetElementInlineStyles
     );
-
-  /*
-    Restore original text for standard
-    certificate elements.
-  */
 
   const originalText={
 
@@ -2723,11 +2945,6 @@ function resetDesign(){
     }
   );
 
-  /*
-    Restore the verification heading
-    with its original line break.
-  */
-
   const verifyEl=
     elementFor(
       "verifyCertificate"
@@ -2739,10 +2956,6 @@ function resetDesign(){
       "Verify this<br>certificate";
 
   }
-
-  /*
-    Remove custom text elements.
-  */
 
   Object.keys(ELEMENTS)
     .filter(
@@ -2763,6 +2976,19 @@ function resetDesign(){
     });
 
   designState={};
+
+  const qrUpload=
+    document.getElementById(
+      "qrUpload"
+    );
+
+  if(qrUpload){
+
+    qrUpload.value="";
+
+  }
+
+  restoreAutomaticQr();
 
   Object.keys(ELEMENTS)
     .forEach(
@@ -3161,11 +3387,6 @@ function updateSelectedText(){
   state.text=
     controlText.value;
 
-  /*
-    Keep the verification heading
-    line break when possible.
-  */
-
   if(
     selectedKey==="verifyCertificate" &&
     controlText.value.includes("\n")
@@ -3323,11 +3544,6 @@ function deleteSelectedText(){
 
   if(!meta||!el)return;
 
-  /*
-    Custom text:
-    completely remove it.
-  */
-
   if(
     selectedKey.startsWith(
       "customText_"
@@ -3355,11 +3571,6 @@ function deleteSelectedText(){
 
   }
 
-  /*
-    Existing text:
-    clear its content.
-  */
-
   if(meta.text){
 
     el.textContent="";
@@ -3386,11 +3597,6 @@ function deleteSelectedText(){
     return;
 
   }
-
-  /*
-    Images / shapes / QR / signature:
-    hide instead of deleting.
-  */
 
   const state=
     getState(selectedKey);
@@ -3585,10 +3791,6 @@ function attachDesignerEvents(){
     }
   );
 
-  /*
-    NEW: Font Family
-  */
-
   controlFontFamily.addEventListener(
     "change",
     ()=>{
@@ -3612,10 +3814,6 @@ function attachDesignerEvents(){
 
     }
   );
-
-  /*
-    NEW: Font Style
-  */
 
   document
     .querySelectorAll(
@@ -3646,11 +3844,6 @@ function attachDesignerEvents(){
         )
     );
 
-  /*
-    Text Alignment:
-    Left / Center / Right / Justify
-  */
-
   document
     .querySelectorAll(
       "#alignButtons button"
@@ -3679,10 +3872,6 @@ function attachDesignerEvents(){
           }
         )
     );
-
-  /*
-    Font Weight
-  */
 
   document
     .querySelectorAll(
@@ -3714,10 +3903,6 @@ function attachDesignerEvents(){
           }
         )
     );
-
-  /*
-    Visibility
-  */
 
   document
     .querySelectorAll(
@@ -3759,21 +3944,10 @@ function attachDesignerEvents(){
     "pointerdown",
     e=>{
 
-      /*
-        If the user selects the actual
-        Certificate + of Completion group,
-        the H1 itself is selected.
-      */
-
       let target=
         e.target.closest(
           "h1[data-editor-id]"
         );
-
-      /*
-        Otherwise use the closest normal
-        editable element.
-      */
 
       if(!target){
 
@@ -3918,6 +4092,29 @@ function attachActionEvents(){
         })
     );
 
+  /* =========================
+     QR UPLOAD EVENTS
+     ========================= */
+
+  document
+    .getElementById("qrUpload")
+    .addEventListener(
+      "change",
+      e=>
+        handleQrFile(
+          e.target.files?.[0]
+        )
+    );
+
+  document
+    .getElementById(
+      "removeUploadedQr"
+    )
+    .addEventListener(
+      "click",
+      removeUploadedQr
+    );
+
   document
     .getElementById("saveSignature")
     .addEventListener(
@@ -3977,12 +4174,6 @@ function attachActionEvents(){
 
     }
   );
-
-  /*
-    Keyboard delete / backspace.
-    Do not activate while typing in the
-    text editor or certificate input fields.
-  */
 
   document.addEventListener(
     "keydown",
