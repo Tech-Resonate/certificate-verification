@@ -6,6 +6,7 @@
 <meta name="robots" content="noindex,nofollow,noarchive">
 <title>Tech Resonate Certificate Builder</title>
 <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.4/build/qrcode.min.js"></script>
+
 <style>
 :root{--n:#0B1A2E;--n2:#0F1F35;--b:#3B82F6;--lb:#60A5FA;--p:#DCEEFF;--w:#FFFFFF;--side:69mm}
 *{box-sizing:border-box}
@@ -55,9 +56,10 @@ button{cursor:pointer}
 .control-grid .field{margin:0}
 .control-grid input,.control-grid select{height:34px!important}
 .segment-label{display:block;margin:11px 0 5px;color:#455468;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.06em}
-.segmented{display:grid;grid-template-columns:repeat(3,1fr);gap:5px}
+.segmented{display:grid;grid-template-columns:repeat(4,1fr);gap:5px}
 .segmented.two{grid-template-columns:repeat(2,1fr)}
 .segmented button.active{background:var(--n);border-color:var(--n);color:#fff}
+.segmented button:disabled,.field select:disabled,.field input:disabled,.field textarea:disabled{opacity:.55;cursor:not-allowed}
 .element-reset{width:100%;margin-top:10px}
 .signature-preview{height:72px;border:1px dashed #bbc7d6;border-radius:10px;background:#f8fafc;display:grid;place-items:center;overflow:hidden;margin:8px 0 10px}
 .signature-preview img{max-width:95%;max-height:64px;object-fit:contain}
@@ -167,7 +169,9 @@ h1 .of-completion{display:block;margin-top:2.6mm;color:var(--b);font:700 7.1mm/1
 
 <body>
 <div class="builder-shell">
+
   <aside class="editor-panel" id="editorPanel">
+
     <div class="editor-head">
       <h2>Tech Resonate Certificate Builder</h2>
       <p>Private creation/design tool. Changes here affect only this builder preview and the printed certificate.</p>
@@ -176,33 +180,74 @@ h1 .of-completion{display:block;margin-top:2.6mm;color:var(--b);font:700 7.1mm/1
 
     <details class="panel-section" open>
       <summary>Certificate Content</summary>
+
       <div class="section-body">
-        <div class="field"><label for="inputStudentName">Student Name</label><input id="inputStudentName" type="text"></div>
-        <div class="field"><label for="inputProgramme">Programme</label><input id="inputProgramme" type="text"></div>
-        <div class="field"><label for="inputCertificateId">Certificate ID</label><input id="inputCertificateId" type="text"></div>
-        <div class="field"><label for="inputIssueDate">Issue Date</label><input id="inputIssueDate" type="text"></div>
-        <div class="field"><label for="inputStatus">Certificate Status</label><input id="inputStatus" type="text"></div>
-        <div class="field"><label for="inputCeoName">Authorized Person / CEO Name</label><input id="inputCeoName" type="text"></div>
-        <div class="field"><label for="inputCeoTitle">Authorized Person / CEO Title</label><input id="inputCeoTitle" type="text"></div>
+
+        <div class="field">
+          <label for="inputStudentName">Student Name</label>
+          <input id="inputStudentName" type="text">
+        </div>
+
+        <div class="field">
+          <label for="inputProgramme">Programme</label>
+          <input id="inputProgramme" type="text">
+        </div>
+
+        <div class="field">
+          <label for="inputCertificateId">Certificate ID</label>
+          <input id="inputCertificateId" type="text">
+        </div>
+
+        <div class="field">
+          <label for="inputIssueDate">Issue Date</label>
+          <input id="inputIssueDate" type="text">
+        </div>
+
+        <div class="field">
+          <label for="inputStatus">Certificate Status</label>
+          <input id="inputStatus" type="text">
+        </div>
+
+        <div class="field">
+          <label for="inputCeoName">Authorized Person / CEO Name</label>
+          <input id="inputCeoName" type="text">
+        </div>
+
+        <div class="field">
+          <label for="inputCeoTitle">Authorized Person / CEO Title</label>
+          <input id="inputCeoTitle" type="text">
+        </div>
 
         <div class="field">
           <label for="inputQrUrl">QR Verification URL</label>
+
           <div class="check-row">
             <input id="autoQrUrl" type="checkbox" checked>
             <span>Automatically build URL from Certificate ID</span>
           </div>
+
           <input id="inputQrUrl" type="url" readonly>
-          <div class="help">Default: https://verify.techresonate.com/?id=CERTIFICATE_ID</div>
+
+          <div class="help">
+            Default: https://verify.techresonate.com/?id=CERTIFICATE_ID
+          </div>
         </div>
+
       </div>
     </details>
 
     <details class="panel-section" open>
+
       <summary>Element Designer</summary>
+
       <div class="section-body">
 
-        <label class="segment-label" style="margin-top:0" for="elementSelect">Editable Element</label>
+        <label class="segment-label" style="margin-top:0" for="elementSelect">
+          Editable Element
+        </label>
+
         <select id="elementSelect" class="element-select"></select>
+
         <div id="selectedElementTitle" class="selected-element-title"></div>
 
         <div class="field">
@@ -216,8 +261,15 @@ h1 .of-completion{display:block;margin-top:2.6mm;color:var(--b);font:700 7.1mm/1
         </div>
 
         <div class="action-grid" style="margin-bottom:10px">
-          <button type="button" id="addNewText">+ Add New Text</button>
-          <button type="button" id="deleteSelectedText" class="danger">Clear / Delete</button>
+
+          <button type="button" id="addNewText">
+            + Add New Text
+          </button>
+
+          <button type="button" id="deleteSelectedText" class="danger">
+            Clear / Delete
+          </button>
+
         </div>
 
         <div class="increment-row">
@@ -228,154 +280,536 @@ h1 .of-completion{display:block;margin-top:2.6mm;color:var(--b);font:700 7.1mm/1
         </div>
 
         <div class="nudge-wrap">
+
           <span class="empty"></span>
-          <button type="button" data-nudge="up">↑ Up</button>
+
+          <button type="button" data-nudge="up">
+            ↑ Up
+          </button>
+
           <span class="empty"></span>
-          <button type="button" data-nudge="left">← Left</button>
-          <button type="button" data-nudge="down">↓ Down</button>
-          <button type="button" data-nudge="right">Right →</button>
+
+          <button type="button" data-nudge="left">
+            ← Left
+          </button>
+
+          <button type="button" data-nudge="down">
+            ↓ Down
+          </button>
+
+          <button type="button" data-nudge="right">
+            Right →
+          </button>
+
         </div>
 
         <div class="center-row">
-          <button type="button" id="centerH">Center Horizontally</button>
-          <button type="button" id="centerV">Center Vertically</button>
+
+          <button type="button" id="centerH">
+            Center Horizontally
+          </button>
+
+          <button type="button" id="centerV">
+            Center Vertically
+          </button>
+
         </div>
 
         <div class="control-grid">
-          <div class="field"><label for="controlX">X Offset (px)</label><input id="controlX" type="number" step="1"></div>
-          <div class="field"><label for="controlY">Y Offset (px)</label><input id="controlY" type="number" step="1"></div>
-          <div class="field"><label for="controlWidth">Width (mm)</label><input id="controlWidth" type="number" step="0.1" min="0"></div>
-          <div class="field"><label for="controlHeight">Height (mm)</label><input id="controlHeight" type="number" step="0.1" min="0"></div>
-          <div class="field"><label for="controlFontSize">Font Size (mm)</label><input id="controlFontSize" type="number" step="0.05" min="0"></div>
-          <div class="field"><label for="controlLetterSpacing">Letter Spacing (em)</label><input id="controlLetterSpacing" type="number" step="0.005"></div>
-          <div class="field"><label for="controlLineHeight">Line Height</label><input id="controlLineHeight" type="number" step="0.05" min="0.1"></div>
-          <div class="field"><label for="controlRotation">Rotation (deg)</label><input id="controlRotation" type="number" step="1"></div>
+
+          <div class="field">
+            <label for="controlX">X Offset (px)</label>
+            <input id="controlX" type="number" step="1">
+          </div>
+
+          <div class="field">
+            <label for="controlY">Y Offset (px)</label>
+            <input id="controlY" type="number" step="1">
+          </div>
+
+          <div class="field">
+            <label for="controlWidth">Width (mm)</label>
+            <input id="controlWidth" type="number" step="0.1" min="0">
+          </div>
+
+          <div class="field">
+            <label for="controlHeight">Height (mm)</label>
+            <input id="controlHeight" type="number" step="0.1" min="0">
+          </div>
+
+          <div class="field">
+            <label for="controlFontSize">Font Size (mm)</label>
+            <input id="controlFontSize" type="number" step="0.05" min="0">
+          </div>
+
+          <div class="field">
+            <label for="controlLetterSpacing">Letter Spacing (em)</label>
+            <input id="controlLetterSpacing" type="number" step="0.005">
+          </div>
+
+          <div class="field">
+            <label for="controlLineHeight">Line Height</label>
+            <input id="controlLineHeight" type="number" step="0.05" min="0.1">
+          </div>
+
+          <div class="field">
+            <label for="controlRotation">Rotation (deg)</label>
+            <input id="controlRotation" type="number" step="1">
+          </div>
+
         </div>
 
-        <span class="segment-label">Text Alignment</span>
+        <!-- =========================
+             NEW FONT CONTROLS
+             ========================= -->
+
+        <div class="field">
+          <label for="controlFontFamily">Font Family</label>
+
+          <select id="controlFontFamily">
+
+            <option value="">
+              Master / Default
+            </option>
+
+            <option value="Arial,Helvetica,sans-serif">
+              Arial
+            </option>
+
+            <option value="Georgia,'Times New Roman',serif">
+              Georgia
+            </option>
+
+            <option value="'Times New Roman',Times,serif">
+              Times New Roman
+            </option>
+
+            <option value="Verdana,Geneva,sans-serif">
+              Verdana
+            </option>
+
+            <option value="Tahoma,Geneva,sans-serif">
+              Tahoma
+            </option>
+
+            <option value="'Trebuchet MS',Arial,sans-serif">
+              Trebuchet MS
+            </option>
+
+            <option value="'Courier New',Courier,monospace">
+              Courier New
+            </option>
+
+            <option value="'Lucida Console',Monaco,monospace">
+              Lucida Console
+            </option>
+
+            <option value="Impact,Haettenschweiler,'Arial Narrow Bold',sans-serif">
+              Impact
+            </option>
+
+            <option value="Garamond,'Times New Roman',serif">
+              Garamond
+            </option>
+
+            <option value="Calibri,Arial,sans-serif">
+              Calibri
+            </option>
+
+            <option value="Cambria,Georgia,serif">
+              Cambria
+            </option>
+
+            <option value="Arial Black,Arial,sans-serif">
+              Arial Black
+            </option>
+
+          </select>
+        </div>
+
+        <span class="segment-label">
+          Font Style
+        </span>
+
+        <div class="segmented two" id="styleButtons">
+
+          <button type="button" data-style="normal">
+            Normal
+          </button>
+
+          <button type="button" data-style="italic">
+            Italic
+          </button>
+
+        </div>
+
+        <!-- =========================
+             TEXT ALIGNMENT
+             ========================= -->
+
+        <span class="segment-label">
+          Text Alignment
+        </span>
+
         <div class="segmented" id="alignButtons">
-          <button type="button" data-align="left">Left</button>
-          <button type="button" data-align="center">Center</button>
-          <button type="button" data-align="right">Right</button>
+
+          <button type="button" data-align="left">
+            Left
+          </button>
+
+          <button type="button" data-align="center">
+            Center
+          </button>
+
+          <button type="button" data-align="right">
+            Right
+          </button>
+
+          <button type="button" data-align="justify">
+            Justify
+          </button>
+
         </div>
 
-        <span class="segment-label">Font Weight</span>
+        <span class="segment-label">
+          Font Weight
+        </span>
+
         <div class="segmented two" id="weightButtons">
-          <button type="button" data-weight="400">Normal</button>
-          <button type="button" data-weight="700">Bold</button>
+
+          <button type="button" data-weight="400">
+            Normal
+          </button>
+
+          <button type="button" data-weight="700">
+            Bold
+          </button>
+
         </div>
 
-        <span class="segment-label">Visibility</span>
+        <span class="segment-label">
+          Visibility
+        </span>
+
         <div class="segmented two" id="visibilityButtons">
-          <button type="button" data-visible="true">Show</button>
-          <button type="button" data-visible="false">Hide</button>
+
+          <button type="button" data-visible="true">
+            Show
+          </button>
+
+          <button type="button" data-visible="false">
+            Hide
+          </button>
+
         </div>
 
-        <button type="button" class="small-action element-reset" id="resetSelectedElement">Reset Selected Element</button>
-        <div class="help">Tip: click or drag an editable element directly in the certificate preview.</div>
+        <button
+          type="button"
+          class="small-action element-reset"
+          id="resetSelectedElement"
+        >
+          Reset Selected Element
+        </button>
+
+        <div class="help">
+          Tip: click or drag an editable element directly in the certificate preview.
+        </div>
+
       </div>
+
     </details>
 
     <details class="panel-section" open>
+
       <summary>Signature</summary>
+
       <div class="section-body">
+
         <div class="field">
-          <label for="signatureUpload">Upload Signature Image</label>
-          <input id="signatureUpload" class="file-input" type="file" accept="image/*">
+
+          <label for="signatureUpload">
+            Upload Signature Image
+          </label>
+
+          <input
+            id="signatureUpload"
+            class="file-input"
+            type="file"
+            accept="image/*"
+          >
+
         </div>
 
         <div class="signature-preview">
-          <img id="signaturePreview" alt="Signature preview">
+
+          <img
+            id="signaturePreview"
+            alt="Signature preview"
+          >
+
         </div>
 
         <div class="action-grid">
-          <button type="button" id="saveSignature">Save Signature</button>
-          <button type="button" id="removeSavedSignature" class="danger">Remove Saved Signature</button>
+
+          <button type="button" id="saveSignature">
+            Save Signature
+          </button>
+
+          <button
+            type="button"
+            id="removeSavedSignature"
+            class="danger"
+          >
+            Remove Saved Signature
+          </button>
+
         </div>
 
-        <div class="help">Saved signature data stays in this browser's localStorage and is reused next time.</div>
+        <div class="help">
+          Saved signature data stays in this browser's localStorage and is reused next time.
+        </div>
+
       </div>
+
     </details>
 
     <details class="panel-section" open>
+
       <summary>Actions</summary>
+
       <div class="section-body">
+
         <div class="action-grid">
-          <button type="button" id="saveDesign" class="primary">Save Design</button>
-          <button type="button" id="resetDesign">Reset Design</button>
-          <button type="button" id="resetCertificate">Reset Certificate</button>
-          <button type="button" id="printCertificate" class="print">Print / Save PDF</button>
+
+          <button
+            type="button"
+            id="saveDesign"
+            class="primary"
+          >
+            Save Design
+          </button>
+
+          <button
+            type="button"
+            id="resetDesign"
+          >
+            Reset Design
+          </button>
+
+          <button
+            type="button"
+            id="resetCertificate"
+          >
+            Reset Certificate
+          </button>
+
+          <button
+            type="button"
+            id="printCertificate"
+            class="print"
+          >
+            Print / Save PDF
+          </button>
+
         </div>
-        <div id="editorStatus" class="editor-status" aria-live="polite"></div>
+
+        <div
+          id="editorStatus"
+          class="editor-status"
+          aria-live="polite"
+        ></div>
+
       </div>
+
     </details>
+
   </aside>
 
   <main class="preview-pane">
+
     <div class="preview-toolbar">
-      <strong>Live Certificate Preview</strong>
+
+      <strong>
+        Live Certificate Preview
+      </strong>
+
       <div class="zoom-control">
-        <span>Preview zoom</span>
+
+        <span>
+          Preview zoom
+        </span>
+
         <select id="previewZoom">
-          <option value="auto">Auto</option>
-          <option value="1">100%</option>
-          <option value="0.9">90%</option>
-          <option value="0.8">80%</option>
-          <option value="0.7">70%</option>
-          <option value="0.6">60%</option>
-          <option value="0.5">50%</option>
+
+          <option value="auto">
+            Auto
+          </option>
+
+          <option value="1">
+            100%
+          </option>
+
+          <option value="0.9">
+            90%
+          </option>
+
+          <option value="0.8">
+            80%
+          </option>
+
+          <option value="0.7">
+            70%
+          </option>
+
+          <option value="0.6">
+            60%
+          </option>
+
+          <option value="0.5">
+            50%
+          </option>
+
         </select>
+
       </div>
+
     </div>
 
-    <div class="preview-scroll" id="previewScroll">
-      <div class="stage-space" id="stageSpace">
-        <div class="preview-stage" id="previewStage">
-          <article class="certificate" id="certificate">
+    <div
+      class="preview-scroll"
+      id="previewScroll"
+    >
 
-            <div class="top-stripes" aria-hidden="true"></div>
+      <div
+        class="stage-space"
+        id="stageSpace"
+      >
+
+        <div
+          class="preview-stage"
+          id="previewStage"
+        >
+
+          <article
+            class="certificate"
+            id="certificate"
+          >
+
+            <div
+              class="top-stripes"
+              aria-hidden="true"
+            ></div>
 
             <section class="main">
 
               <header class="header">
-                <img class="logo" id="logo" data-editor-id="logo" src="https://techresonate.com/logo.png" alt="Tech Resonate">
+
+                <img
+                  class="logo"
+                  id="logo"
+                  data-editor-id="logo"
+                  src="https://techresonate.com/logo.png"
+                  alt="Tech Resonate"
+                >
 
                 <div class="issuer">
-                  <span id="officialCertificate" data-editor-id="officialCertificate">Official Certificate</span>
-                  <strong id="academyText" data-editor-id="academyText">Tech Resonate Academy</strong>
+
+                  <span
+                    id="officialCertificate"
+                    data-editor-id="officialCertificate"
+                  >
+                    Official Certificate
+                  </span>
+
+                  <strong
+                    id="academyText"
+                    data-editor-id="academyText"
+                  >
+                    Tech Resonate Academy
+                  </strong>
+
                 </div>
+
               </header>
 
               <div class="title">
 
-                <div class="eyebrow" id="achievementCompletion" data-editor-id="achievementCompletion">
+                <div
+                  class="eyebrow"
+                  id="achievementCompletion"
+                  data-editor-id="achievementCompletion"
+                >
                   Achievement &amp; Completion
                 </div>
 
-                <h1 id="certificateCompletionGroup" data-editor-id="certificateCompletionGroup">
-                  <span class="heading-main" id="certificateHeading" data-editor-id="certificateHeading">Certificate</span>
-                  <span class="of-completion" id="ofCompletion" data-editor-id="ofCompletion">of Completion</span>
+                <h1
+                  id="certificateCompletionGroup"
+                  data-editor-id="certificateCompletionGroup"
+                >
+
+                  <span
+                    class="heading-main"
+                    id="certificateHeading"
+                    data-editor-id="certificateHeading"
+                  >
+                    Certificate
+                  </span>
+
+                  <span
+                    class="of-completion"
+                    id="ofCompletion"
+                    data-editor-id="ofCompletion"
+                  >
+                    of Completion
+                  </span>
+
                 </h1>
 
               </div>
 
-              <div class="presented" id="presentedTo" data-editor-id="presentedTo">
+              <div
+                class="presented"
+                id="presentedTo"
+                data-editor-id="presentedTo"
+              >
                 This certificate is proudly presented to
               </div>
 
               <div class="name-line">
-                <div id="studentName" data-editor-id="studentName">LOVELYN JOSEPH</div>
-                <div class="name-underline" id="studentUnderline" data-editor-id="studentUnderline"></div>
+
+                <div
+                  id="studentName"
+                  data-editor-id="studentName"
+                >
+                  LOVELYN JOSEPH
+                </div>
+
+                <div
+                  class="name-underline"
+                  id="studentUnderline"
+                  data-editor-id="studentUnderline"
+                ></div>
+
               </div>
 
               <div class="copy">
-                <span class="programme-description" id="programmeDescription" data-editor-id="programmeDescription">
+
+                <span
+                  class="programme-description"
+                  id="programmeDescription"
+                  data-editor-id="programmeDescription"
+                >
                   for successfully completing the prescribed training and practical requirements of the programme
                 </span>
 
-                <span class="programme" id="programme" data-editor-id="programmeName">
+                <span
+                  class="programme"
+                  id="programme"
+                  data-editor-id="programmeName"
+                >
                   Diploma in Data Processing
                 </span>
+
               </div>
 
               <div class="bottom">
@@ -383,23 +817,83 @@ h1 .of-completion{display:block;margin-top:2.6mm;color:var(--b);font:700 7.1mm/1
                 <div class="details">
 
                   <div class="detail">
-                    <span class="label" id="certificateIdLabel" data-editor-id="certificateIdLabel">Certificate ID</span>
-                    <span class="value" id="certificateId" data-editor-id="certificateIdBlock">TR-2026-DDP-001</span>
+
+                    <span
+                      class="label"
+                      id="certificateIdLabel"
+                      data-editor-id="certificateIdLabel"
+                    >
+                      Certificate ID
+                    </span>
+
+                    <span
+                      class="value"
+                      id="certificateId"
+                      data-editor-id="certificateIdBlock"
+                    >
+                      TR-2026-DDP-001
+                    </span>
+
                   </div>
 
                   <div class="detail">
-                    <span class="label" id="issueDateLabel" data-editor-id="issueDateLabel">Issue Date</span>
-                    <span class="value" id="issueDate" data-editor-id="issueDateBlock">27 September 2026</span>
+
+                    <span
+                      class="label"
+                      id="issueDateLabel"
+                      data-editor-id="issueDateLabel"
+                    >
+                      Issue Date
+                    </span>
+
+                    <span
+                      class="value"
+                      id="issueDate"
+                      data-editor-id="issueDateBlock"
+                    >
+                      27 September 2026
+                    </span>
+
                   </div>
 
                   <div class="detail">
-                    <span class="label" id="statusLabel" data-editor-id="statusLabel">Certificate Status</span>
-                    <span class="value status" id="status" data-editor-id="statusBlock">Valid</span>
+
+                    <span
+                      class="label"
+                      id="statusLabel"
+                      data-editor-id="statusLabel"
+                    >
+                      Certificate Status
+                    </span>
+
+                    <span
+                      class="value status"
+                      id="status"
+                      data-editor-id="statusBlock"
+                    >
+                      Valid
+                    </span>
+
                   </div>
 
                   <div class="detail">
-                    <span class="label" id="issuedByLabel" data-editor-id="issuedByLabel">Issued By</span>
-                    <span class="value" id="issuedByValue" data-editor-id="issuedByBlock">Tech Resonate Academy</span>
+
+                    <span
+                      class="label"
+                      id="issuedByLabel"
+                      data-editor-id="issuedByLabel"
+                    >
+                      Issued By
+                    </span>
+
+                    <span
+                      class="value"
+                      id="issuedByValue"
+                      data-editor-id="issuedByBlock"
+                    >
+                      Tech Resonate Academy
+                    </span>
+
                   </div>
 
                 </div>
@@ -407,18 +901,46 @@ h1 .of-completion{display:block;margin-top:2.6mm;color:var(--b);font:700 7.1mm/1
                 <div class="signature">
 
                   <div class="sig-img-box">
-                    <img class="sig-img" id="signature" data-editor-id="signatureImage" src="https://drive.google.com/uc?export=view&amp;id=19jB_ypH8aTv-QPilB3z7xDKMufb98cNn" alt="Authorized signature">
+
+                    <img
+                      class="sig-img"
+                      id="signature"
+                      data-editor-id="signatureImage"
+                      src="https://drive.google.com/uc?export=view&amp;id=19jB_ypH8aTv-QPilB3z7xDKMufb98cNn"
+                      alt="Authorized signature"
+                    >
+
                   </div>
 
                   <div class="sig-line">
-                    <div class="sig-name" id="ceoName" data-editor-id="ceoName">Umar Umar</div>
-                    <div class="sig-title" id="ceoTitle" data-editor-id="ceoTitle">Chief Executive Officer</div>
+
+                    <div
+                      class="sig-name"
+                      id="ceoName"
+                      data-editor-id="ceoName"
+                    >
+                      Umar Umar
+                    </div>
+
+                    <div
+                      class="sig-title"
+                      id="ceoTitle"
+                      data-editor-id="ceoTitle"
+                    >
+                      Chief Executive Officer
+                    </div>
+
                   </div>
 
                 </div>
+
               </div>
 
-              <div class="micro" id="microText" data-editor-id="microText">
+              <div
+                class="micro"
+                id="microText"
+                data-editor-id="microText"
+              >
                 Technology • Practical Skills • Career Readiness
               </div>
 
@@ -426,56 +948,123 @@ h1 .of-completion{display:block;margin-top:2.6mm;color:var(--b);font:700 7.1mm/1
 
             <aside class="side">
 
-              <div class="geo" aria-hidden="true"></div>
+              <div
+                class="geo"
+                aria-hidden="true"
+              ></div>
 
-              <div class="kicker" id="authenticCredential" data-editor-id="authenticCredential">
+              <div
+                class="kicker"
+                id="authenticCredential"
+                data-editor-id="authenticCredential"
+              >
                 Authentic Credential
               </div>
 
-              <div class="verify-title" id="verifyCertificate" data-editor-id="verifyCertificate">
+              <div
+                class="verify-title"
+                id="verifyCertificate"
+                data-editor-id="verifyCertificate"
+              >
                 Verify this<br>certificate
               </div>
 
-              <div class="seal" id="seal" data-editor-id="seal">
+              <div
+                class="seal"
+                id="seal"
+                data-editor-id="seal"
+              >
 
-                <div class="seal-star" id="sealStar"></div>
+                <div
+                  class="seal-star"
+                  id="sealStar"
+                ></div>
 
                 <div class="seal-core">
-                  <div class="seal-label" id="sealLabel" data-editor-id="sealLabel">Certified</div>
-                  <div class="seal-year" id="sealYear" data-editor-id="sealYear">2026</div>
+
+                  <div
+                    class="seal-label"
+                    id="sealLabel"
+                    data-editor-id="sealLabel"
+                  >
+                    Certified
+                  </div>
+
+                  <div
+                    class="seal-year"
+                    id="sealYear"
+                    data-editor-id="sealYear"
+                  >
+                    2026
+                  </div>
+
                   <div class="seal-rule"></div>
+
                 </div>
 
               </div>
 
-              <div class="qr" id="qrCode" data-editor-id="qrCode">
-                <canvas id="qrCanvas" width="320" height="320" aria-label="Verification QR code"></canvas>
+              <div
+                class="qr"
+                id="qrCode"
+                data-editor-id="qrCode"
+              >
+
+                <canvas
+                  id="qrCanvas"
+                  width="320"
+                  height="320"
+                  aria-label="Verification QR code"
+                ></canvas>
+
               </div>
 
-              <div class="scan" id="scanToVerify" data-editor-id="scanToVerify">
+              <div
+                class="scan"
+                id="scanToVerify"
+                data-editor-id="scanToVerify"
+              >
                 Scan to Verify
               </div>
 
-              <div class="domain" id="verificationDomain" data-editor-id="verificationDomain">
+              <div
+                class="domain"
+                id="verificationDomain"
+                data-editor-id="verificationDomain"
+              >
                 verify.techresonate.com
               </div>
 
               <div class="side-id">
-                <span id="certificateReference" data-editor-id="certificateReference">
+
+                <span
+                  id="certificateReference"
+                  data-editor-id="certificateReference"
+                >
                   Certificate Reference
                 </span>
-                <strong id="sideCertificateId" data-editor-id="referenceId">
+
+                <strong
+                  id="sideCertificateId"
+                  data-editor-id="referenceId"
+                >
                   TR-2026-DDP-001
                 </strong>
+
               </div>
 
             </aside>
 
           </article>
+
         </div>
+
       </div>
+
     </div>
+
   </main>
+
 </div>
 
 <script>
@@ -750,6 +1339,7 @@ const previewZoom=document.getElementById("previewZoom");
 
 const controlText=document.getElementById("controlText");
 const controlColor=document.getElementById("controlColor");
+const controlFontFamily=document.getElementById("controlFontFamily");
 
 const controls={
   x:document.getElementById("controlX"),
@@ -770,46 +1360,76 @@ let workingSignature="";
 let qrTimer=null;
 
 function notify(message){
+
   statusEl.textContent=message;
 
   clearTimeout(notify._timer);
 
   notify._timer=setTimeout(()=>{
+
     if(statusEl.textContent===message){
       statusEl.textContent="";
     }
+
   },3200);
+
 }
 
 function extractYear(id){
-  const m=String(id||"").match(/(?:^|[-_])(20\d{2})(?:[-_]|$)/);
-  return m?m[1]:String(new Date().getFullYear());
+
+  const m=
+    String(id||"").match(
+      /(?:^|[-_])(20\d{2})(?:[-_]|$)/
+    );
+
+  return m
+    ?m[1]
+    :String(new Date().getFullYear());
+
 }
 
 function generatedVerificationUrl(){
-  const id=document.getElementById("inputCertificateId").value.trim();
+
+  const id=
+    document
+      .getElementById("inputCertificateId")
+      .value
+      .trim();
+
   return `https://verify.techresonate.com/?id=${encodeURIComponent(id)}`;
+
 }
 
 function activeVerificationUrl(){
-  const auto=document.getElementById("autoQrUrl").checked;
+
+  const auto=
+    document
+      .getElementById("autoQrUrl")
+      .checked;
 
   return auto
-    ? generatedVerificationUrl()
-    : (
-        document.getElementById("inputQrUrl").value.trim()
-        || generatedVerificationUrl()
-      );
+    ?generatedVerificationUrl()
+    :(
+      document
+        .getElementById("inputQrUrl")
+        .value
+        .trim()
+      ||
+      generatedVerificationUrl()
+    );
+
 }
 
 function makeSeal(){
 
-  const p=[],n=64;
+  const p=[];
+  const n=64;
 
   for(let i=0;i<n;i++){
 
     const r=i%2?42:49;
-    const a=(-90+360*i/n)*Math.PI/180;
+    const a=
+      (-90+360*i/n)*Math.PI/180;
 
     p.push(
       `${(50+r*Math.cos(a)).toFixed(3)}% ${(50+r*Math.sin(a)).toFixed(3)}%`
@@ -817,8 +1437,11 @@ function makeSeal(){
 
   }
 
-  document.getElementById("sealStar").style.clipPath=
-    `polygon(${p.join(",")})`;
+  document
+    .getElementById("sealStar")
+    .style.clipPath=
+      `polygon(${p.join(",")})`;
+
 }
 
 function makeQr(url){
@@ -828,8 +1451,13 @@ function makeQr(url){
   qrTimer=setTimeout(async()=>{
 
     if(!window.QRCode?.toCanvas){
-      notify("QR library could not load.");
+
+      notify(
+        "QR library could not load."
+      );
+
       return;
+
     }
 
     try{
@@ -851,18 +1479,25 @@ function makeQr(url){
     }catch(err){
 
       console.error(err);
-      notify("Could not generate QR code.");
+
+      notify(
+        "Could not generate QR code."
+      );
 
     }
 
   },40);
+
 }
 
 function fitName(){
 
-  const el=document.getElementById("studentName");
+  const el=
+    document.getElementById("studentName");
 
-  if(designState.studentName?.fontSize!=null)return;
+  if(
+    designState.studentName?.fontSize!=null
+  )return;
 
   const box=el.parentElement;
 
@@ -876,6 +1511,7 @@ function fitName(){
   ){
 
     s-=.2;
+
     el.style.fontSize=s+"mm";
 
   }
@@ -884,12 +1520,19 @@ function fitName(){
 
 function updateQrUrlField(){
 
-  const auto=document.getElementById("autoQrUrl").checked;
-  const input=document.getElementById("inputQrUrl");
+  const auto=
+    document
+      .getElementById("autoQrUrl")
+      .checked;
+
+  const input=
+    document.getElementById("inputQrUrl");
 
   if(auto){
 
-    input.value=generatedVerificationUrl();
+    input.value=
+      generatedVerificationUrl();
+
     input.readOnly=true;
 
   }else{
@@ -897,7 +1540,10 @@ function updateQrUrlField(){
     input.readOnly=false;
 
     if(!input.value.trim()){
-      input.value=generatedVerificationUrl();
+
+      input.value=
+        generatedVerificationUrl();
+
     }
 
   }
@@ -908,44 +1554,95 @@ function updateVerification(url){
 
   try{
 
-    document.getElementById("verificationDomain").textContent=
-      new URL(url,location.href).host
-      ||"verify.techresonate.com";
+    document
+      .getElementById("verificationDomain")
+      .textContent=
+        new URL(
+          url,
+          location.href
+        ).host ||
+        "verify.techresonate.com";
 
   }catch{
 
-    document.getElementById("verificationDomain").textContent=
-      "verify.techresonate.com";
+    document
+      .getElementById("verificationDomain")
+      .textContent=
+        "verify.techresonate.com";
 
   }
 
   makeQr(url);
+
 }
 
 function renderContentFromInputs(){
 
-  const student=document.getElementById("inputStudentName").value;
-  const programmeValue=document.getElementById("inputProgramme").value;
-  const id=document.getElementById("inputCertificateId").value;
-  const date=document.getElementById("inputIssueDate").value;
-  const certStatus=document.getElementById("inputStatus").value;
-  const ceo=document.getElementById("inputCeoName").value;
-  const ceoTitleValue=document.getElementById("inputCeoTitle").value;
+  const student=
+    document
+      .getElementById("inputStudentName")
+      .value;
+
+  const programmeValue=
+    document
+      .getElementById("inputProgramme")
+      .value;
+
+  const id=
+    document
+      .getElementById("inputCertificateId")
+      .value;
+
+  const date=
+    document
+      .getElementById("inputIssueDate")
+      .value;
+
+  const certStatus=
+    document
+      .getElementById("inputStatus")
+      .value;
+
+  const ceo=
+    document
+      .getElementById("inputCeoName")
+      .value;
+
+  const ceoTitleValue=
+    document
+      .getElementById("inputCeoTitle")
+      .value;
 
   document.getElementById("studentName").textContent=student;
-  document.getElementById("programme").textContent=programmeValue;
+
+  document.getElementById("programme").textContent=
+    programmeValue;
+
   document.getElementById("certificateId").textContent=id;
+
   document.getElementById("sideCertificateId").textContent=id;
+
   document.getElementById("issueDate").textContent=date;
-  document.getElementById("status").textContent=certStatus;
+
+  document.getElementById("status").textContent=
+    certStatus;
+
   document.getElementById("ceoName").textContent=ceo;
-  document.getElementById("ceoTitle").textContent=ceoTitleValue;
-  document.getElementById("sealYear").textContent=extractYear(id);
+
+  document.getElementById("ceoTitle").textContent=
+    ceoTitleValue;
+
+  document.getElementById("sealYear").textContent=
+    extractYear(id);
 
   updateQrUrlField();
-  updateVerification(activeVerificationUrl());
+
+  updateVerification(
+    activeVerificationUrl()
+  );
 
   requestAnimationFrame(fitName);
+
 }
 
 function setInputsFromData(data){
@@ -972,13 +1669,17 @@ function setInputsFromData(data){
     data.ceoTitle||"";
 
   document.getElementById("autoQrUrl").checked=true;
+
   document.getElementById("inputQrUrl").value="";
 
   renderContentFromInputs();
+
 }
 
 function pxToMm(px){
+
   return Number(px)*25.4/96;
+
 }
 
 function round(value,digits=3){
@@ -988,6 +1689,7 @@ function round(value,digits=3){
   return Math.round(
     (Number(value)+Number.EPSILON)*p
   )/p;
+
 }
 
 function elementFor(key){
@@ -997,6 +1699,7 @@ function elementFor(key){
   return certificate.querySelector(
     ELEMENTS[key].selector
   );
+
 }
 
 function getState(key){
@@ -1013,6 +1716,7 @@ function getState(key){
   }
 
   return designState[key];
+
 }
 
 function rgbToHex(rgb){
@@ -1021,13 +1725,23 @@ function rgbToHex(rgb){
 
   if(rgb.startsWith("#"))return rgb;
 
-  const match=rgb.match(/\d+/g);
+  const match=
+    rgb.match(/\d+/g);
 
-  if(!match||match.length<3)return "#0B1A2E";
+  if(!match||match.length<3){
+
+    return "#0B1A2E";
+
+  }
 
   return "#"+
-    match.slice(0,3)
-      .map(v=>Number(v).toString(16).padStart(2,"0"))
+    match
+      .slice(0,3)
+      .map(
+        v=>Number(v)
+          .toString(16)
+          .padStart(2,"0")
+      )
       .join("");
 
 }
@@ -1046,17 +1760,20 @@ function applyElementState(key){
 
   if(key==="seal"){
 
-    const sx=s.width==null
-      ?1
-      :Number(s.width)/44;
+    const sx=
+      s.width==null
+        ?1
+        :Number(s.width)/44;
 
-    const sy=s.height==null
-      ?1
-      :Number(s.height)/44;
+    const sy=
+      s.height==null
+        ?1
+        :Number(s.height)/44;
 
     el.style.width="";
     el.style.height="";
-    el.style.transformOrigin="center center";
+    el.style.transformOrigin=
+      "center center";
 
     el.style.transform=
       `translate(${x}px, ${y}px) rotate(${r}deg) scale(${sx||1}, ${sy||1})`;
@@ -1090,10 +1807,12 @@ function applyElementState(key){
       r!==0;
 
     if(el.parentElement){
+
       el.parentElement.style.overflow=
         edited
           ?"visible"
           :"";
+
     }
 
   }
@@ -1123,6 +1842,14 @@ function applyElementState(key){
         ?""
         :String(s.fontWeight);
 
+    /* NEW: Font Family */
+    el.style.fontFamily=
+      s.fontFamily||"";
+
+    /* NEW: Font Style */
+    el.style.fontStyle=
+      s.fontStyle||"";
+
     if(s.color){
 
       el.style.color=s.color;
@@ -1131,8 +1858,35 @@ function applyElementState(key){
 
     if(typeof s.text==="string"){
 
-      if(el.textContent!==s.text){
-        el.textContent=s.text;
+      /*
+        Keep the line break for the
+        verification heading.
+      */
+
+      if(
+        key==="verifyCertificate" &&
+        s.text==="Verify this\ncertificate"
+      ){
+
+        el.innerHTML=
+          "Verify this<br>certificate";
+
+      }else if(
+        key==="verifyCertificate" &&
+        s.text==="Verify this<br>certificate"
+      ){
+
+        el.innerHTML=
+          "Verify this<br>certificate";
+
+      }else{
+
+        if(el.textContent!==s.text){
+
+          el.textContent=s.text;
+
+        }
+
       }
 
     }
@@ -1143,6 +1897,7 @@ function applyElementState(key){
     s.visible===false
       ?"hidden"
       :"visible";
+
 }
 
 function applyAllDesign(){
@@ -1152,8 +1907,10 @@ function applyAllDesign(){
   );
 
   requestAnimationFrame(()=>{
+
     fitName();
     refreshControls();
+
   });
 
 }
@@ -1174,6 +1931,8 @@ function resetElementInlineStyles(key){
     "lineHeight",
     "textAlign",
     "fontWeight",
+    "fontFamily",
+    "fontStyle",
     "color",
     "visibility"
   ].forEach(
@@ -1189,7 +1948,11 @@ function resetElementInlineStyles(key){
 
   }
 
-  if(key==="studentName")fitName();
+  if(key==="studentName"){
+
+    fitName();
+
+  }
 
 }
 
@@ -1199,16 +1962,22 @@ function resetSelectedElement(){
 
   if(!meta)return;
 
-  resetElementInlineStyles(selectedKey);
+  resetElementInlineStyles(
+    selectedKey
+  );
 
   delete designState[selectedKey];
 
   getState(selectedKey);
 
-  applyElementState(selectedKey);
+  applyElementState(
+    selectedKey
+  );
 
   if(selectedKey==="studentName"){
+
     fitName();
+
   }
 
   refreshControls();
@@ -1227,30 +1996,43 @@ function getZoneElement(key){
   if(!el)return certificate;
 
   if(zone==="parent"){
+
     return el.parentElement||certificate;
+
   }
 
   if(zone==="main"){
+
     return certificate.querySelector(".main");
+
   }
 
   if(zone==="side"){
+
     return certificate.querySelector(".side");
+
   }
 
   if(zone==="details"){
+
     return certificate.querySelector(".details");
+
   }
 
   if(zone==="signature"){
+
     return certificate.querySelector(".signature");
+
   }
 
   if(zone==="sigline"){
+
     return certificate.querySelector(".sig-line");
+
   }
 
   return certificate;
+
 }
 
 function centerSelected(axis){
@@ -1272,27 +2054,32 @@ function centerSelected(axis){
 
   if(axis==="x"){
 
-    s.x=round(
-      (
-        (zr.left+zr.width/2)-
-        (er.left+er.width/2)
-      )/currentScale,
-      1
-    );
+    s.x=
+      round(
+        (
+          (zr.left+zr.width/2)-
+          (er.left+er.width/2)
+        )/currentScale,
+        1
+      );
 
   }else{
 
-    s.y=round(
-      (
-        (zr.top+zr.height/2)-
-        (er.top+er.height/2)
-      )/currentScale,
-      1
-    );
+    s.y=
+      round(
+        (
+          (zr.top+zr.height/2)-
+          (er.top+er.height/2)
+        )/currentScale,
+        1
+      );
 
   }
 
-  applyElementState(selectedKey);
+  applyElementState(
+    selectedKey
+  );
+
   refreshControls();
 
 }
@@ -1302,22 +2089,41 @@ function nudge(direction){
   const s=getState(selectedKey);
 
   if(direction==="left"){
-    s.x=(Number(s.x)||0)-nudgeStep;
+
+    s.x=
+      (Number(s.x)||0)-
+      nudgeStep;
+
   }
 
   if(direction==="right"){
-    s.x=(Number(s.x)||0)+nudgeStep;
+
+    s.x=
+      (Number(s.x)||0)+
+      nudgeStep;
+
   }
 
   if(direction==="up"){
-    s.y=(Number(s.y)||0)-nudgeStep;
+
+    s.y=
+      (Number(s.y)||0)-
+      nudgeStep;
+
   }
 
   if(direction==="down"){
-    s.y=(Number(s.y)||0)+nudgeStep;
+
+    s.y=
+      (Number(s.y)||0)+
+      nudgeStep;
+
   }
 
-  applyElementState(selectedKey);
+  applyElementState(
+    selectedKey
+  );
+
   refreshControls();
 
 }
@@ -1329,6 +2135,7 @@ function getComputedDefaults(key){
   if(!el){
 
     return{
+
       width:0,
       height:0,
       fontSize:0,
@@ -1336,14 +2143,18 @@ function getComputedDefaults(key){
       lineHeight:"",
       textAlign:"",
       fontWeight:400,
+      fontFamily:"",
+      fontStyle:"normal",
       color:"#0B1A2E"
+
     };
 
   }
 
   const cs=getComputedStyle(el);
 
-  const fontPx=parseFloat(cs.fontSize)||0;
+  const fontPx=
+    parseFloat(cs.fontSize)||0;
 
   const letterPx=
     cs.letterSpacing==="normal"
@@ -1357,36 +2168,61 @@ function getComputedDefaults(key){
 
   return{
 
-    width:round(
-      pxToMm(parseFloat(cs.width)||0),
-      2
-    ),
+    width:
+      round(
+        pxToMm(
+          parseFloat(cs.width)||0
+        ),
+        2
+      ),
 
-    height:round(
-      pxToMm(parseFloat(cs.height)||0),
-      2
-    ),
+    height:
+      round(
+        pxToMm(
+          parseFloat(cs.height)||0
+        ),
+        2
+      ),
 
-    fontSize:round(
-      pxToMm(fontPx),
-      2
-    ),
+    fontSize:
+      round(
+        pxToMm(fontPx),
+        2
+      ),
 
-    letterSpacing:fontPx
-      ?round(letterPx/fontPx,3)
-      :0,
+    letterSpacing:
+      fontPx
+        ?round(
+          letterPx/fontPx,
+          3
+        )
+        :0,
 
     lineHeight:
       fontPx&&lhPx
-        ?round(lhPx/fontPx,2)
+        ?round(
+          lhPx/fontPx,
+          2
+        )
         :"",
 
-    textAlign:cs.textAlign||"",
+    textAlign:
+      cs.textAlign||"",
 
     fontWeight:
-      parseInt(cs.fontWeight,10)||400,
+      parseInt(
+        cs.fontWeight,
+        10
+      )||400,
 
-    color:rgbToHex(cs.color)
+    fontFamily:
+      cs.fontFamily||"",
+
+    fontStyle:
+      cs.fontStyle||"normal",
+
+    color:
+      rgbToHex(cs.color)
 
   };
 
@@ -1398,17 +2234,19 @@ function setActiveButton(
   value
 ){
 
-  document.querySelectorAll(
-    groupSelector+" button"
-  ).forEach(btn=>{
+  document
+    .querySelectorAll(
+      groupSelector+" button"
+    )
+    .forEach(btn=>{
 
-    btn.classList.toggle(
-      "active",
-      String(btn.dataset[attr])===
-      String(value)
-    );
+      btn.classList.toggle(
+        "active",
+        String(btn.dataset[attr])===
+        String(value)
+      );
 
-  });
+    });
 
 }
 
@@ -1419,19 +2257,32 @@ function refreshControls(){
   if(!meta)return;
 
   const s=getState(selectedKey);
-  const defaults=getComputedDefaults(selectedKey);
+
+  const defaults=
+    getComputedDefaults(
+      selectedKey
+    );
 
   selectedElementTitle.textContent=
     meta.label;
 
   controls.x.value=
-    round(s.x||0,1);
+    round(
+      s.x||0,
+      1
+    );
 
   controls.y.value=
-    round(s.y||0,1);
+    round(
+      s.y||0,
+      1
+    );
 
   controls.rotation.value=
-    round(s.rotation||0,1);
+    round(
+      s.rotation||0,
+      1
+    );
 
   controls.width.value=
     s.width==null
@@ -1470,25 +2321,40 @@ function refreshControls(){
       )
       :"";
 
-  controls.fontSize.disabled=!meta.text;
-  controls.letterSpacing.disabled=!meta.text;
-  controls.lineHeight.disabled=!meta.text;
+  controls.fontSize.disabled=
+    !meta.text;
 
-  document.querySelectorAll(
-    "#alignButtons button,#weightButtons button"
-  ).forEach(
-    b=>b.disabled=!meta.text
-  );
+  controls.letterSpacing.disabled=
+    !meta.text;
 
-  controlText.disabled=!meta.text;
-  controlColor.disabled=!meta.text;
+  controls.lineHeight.disabled=
+    !meta.text;
+
+  controlFontFamily.disabled=
+    !meta.text;
+
+  document
+    .querySelectorAll(
+      "#alignButtons button,#weightButtons button,#styleButtons button"
+    )
+    .forEach(
+      b=>b.disabled=!meta.text
+    );
+
+  controlText.disabled=
+    !meta.text;
+
+  controlColor.disabled=
+    !meta.text;
 
   if(meta.text){
 
     controlText.value=
       typeof s.text==="string"
         ?s.text
-        :elementFor(selectedKey)?.textContent||"";
+        :elementFor(
+          selectedKey
+        )?.textContent||"";
 
     controlColor.value=
       s.color||
@@ -1498,6 +2364,7 @@ function refreshControls(){
   }else{
 
     controlText.value="";
+
     controlColor.value=
       defaults.color||
       "#0B1A2E";
@@ -1505,12 +2372,22 @@ function refreshControls(){
   }
 
   const currentAlign=
-    s.textAlign||defaults.textAlign;
+    s.textAlign||
+    defaults.textAlign||
+    "left";
 
   const currentWeight=
     s.fontWeight==null
       ?defaults.fontWeight
       :s.fontWeight;
+
+  const currentFontFamily=
+    s.fontFamily||"";
+
+  const currentFontStyle=
+    s.fontStyle||
+    defaults.fontStyle||
+    "normal";
 
   setActiveButton(
     "#alignButtons",
@@ -1518,17 +2395,44 @@ function refreshControls(){
     currentAlign
   );
 
-  document.querySelectorAll(
-    "#weightButtons button"
-  ).forEach(btn=>
-    btn.classList.toggle(
-      "active",
-      Math.abs(
-        Number(btn.dataset.weight)-
-        Number(currentWeight)
-      )<150
+  document
+    .querySelectorAll(
+      "#weightButtons button"
     )
+    .forEach(btn=>
+      btn.classList.toggle(
+        "active",
+        Math.abs(
+          Number(btn.dataset.weight)-
+          Number(currentWeight)
+        )<150
+      )
+    );
+
+  setActiveButton(
+    "#styleButtons",
+    "style",
+    currentFontStyle
   );
+
+  controlFontFamily.value=
+    currentFontFamily;
+
+  /*
+    Some system fonts may return a computed
+    font-family that does not exactly match
+    one of our option values. In that case,
+    keep the selector on Master / Default.
+  */
+
+  if(
+    controlFontFamily.value!==
+    currentFontFamily
+  ){
+
+    controlFontFamily.value="";
+
+  }
 
   setActiveButton(
     "#visibilityButtons",
@@ -1550,15 +2454,24 @@ function selectElement(
   elementSelect.value=key;
 
   certificate
-    .querySelectorAll(".editor-selected")
+    .querySelectorAll(
+      ".editor-selected"
+    )
     .forEach(
-      el=>el.classList.remove("editor-selected")
+      el=>
+        el.classList.remove(
+          "editor-selected"
+        )
     );
 
   const el=elementFor(key);
 
   if(el){
-    el.classList.add("editor-selected");
+
+    el.classList.add(
+      "editor-selected"
+    );
+
   }
 
   refreshControls();
@@ -1581,23 +2494,32 @@ function setNumericState(
 
   const meta=ELEMENTS[selectedKey];
 
-  if(allowTextOnly&&!meta.text)return;
+  if(
+    allowTextOnly &&
+    !meta.text
+  )return;
 
-  const value=parseFloat(input.value);
+  const value=
+    parseFloat(input.value);
 
   if(!Number.isFinite(value))return;
 
-  const s=getState(selectedKey);
+  const s=
+    getState(selectedKey);
 
   s[prop]=value;
 
-  applyElementState(selectedKey);
+  applyElementState(
+    selectedKey
+  );
 
   if(
     selectedKey==="studentName" &&
     prop!=="fontSize"
   ){
+
     fitName();
+
   }
 
   refreshControls();
@@ -1608,19 +2530,26 @@ function populateElementSelect(){
 
   elementSelect.innerHTML="";
 
-  Object.entries(ELEMENTS).forEach(
-    ([key,meta])=>{
+  Object.entries(ELEMENTS)
+    .forEach(
+      ([key,meta])=>{
 
-      const option=
-        document.createElement("option");
+        const option=
+          document.createElement(
+            "option"
+          );
 
-      option.value=key;
-      option.textContent=meta.label;
+        option.value=key;
 
-      elementSelect.appendChild(option);
+        option.textContent=
+          meta.label;
 
-    }
-  );
+        elementSelect.appendChild(
+          option
+        );
+
+      }
+    );
 
 }
 
@@ -1629,11 +2558,14 @@ function loadDesign(){
   try{
 
     const raw=
-      localStorage.getItem(STORAGE.design);
+      localStorage.getItem(
+        STORAGE.design
+      );
 
     if(raw){
 
-      const parsed=JSON.parse(raw);
+      const parsed=
+        JSON.parse(raw);
 
       if(
         parsed &&
@@ -1655,7 +2587,8 @@ function loadDesign(){
 
   }
 
-  Object.keys(ELEMENTS).forEach(getState);
+  Object.keys(ELEMENTS)
+    .forEach(getState);
 
   applyAllDesign();
 
@@ -1666,37 +2599,22 @@ function saveDesign(){
   try{
 
     /*
-      Capture current text and color
-      before saving.
+      The current designState is already
+      updated whenever the user edits text,
+      color, position, font, alignment,
+      weight, style, etc.
+
+      We save it directly.
+
+      This also prevents the verification
+      heading from losing its <br> line break.
     */
-
-    Object.entries(ELEMENTS).forEach(
-      ([key,meta])=>{
-
-        const el=elementFor(key);
-
-        if(!el)return;
-
-        const state=getState(key);
-
-        if(meta.text){
-
-          state.text=el.textContent;
-
-          state.color=
-            state.color||
-            rgbToHex(
-              getComputedStyle(el).color
-            );
-
-        }
-
-      }
-    );
 
     localStorage.setItem(
       STORAGE.design,
-      JSON.stringify(designState)
+      JSON.stringify(
+        designState
+      )
     );
 
     notify(
@@ -1717,9 +2635,10 @@ function saveDesign(){
 
 function resetDesign(){
 
-  Object.keys(ELEMENTS).forEach(
-    resetElementInlineStyles
-  );
+  Object.keys(ELEMENTS)
+    .forEach(
+      resetElementInlineStyles
+    );
 
   /*
     Restore original text for standard
@@ -1728,52 +2647,76 @@ function resetDesign(){
 
   const originalText={
 
-    officialCertificate:"Official Certificate",
-    academyText:"Tech Resonate Academy",
-    achievementCompletion:"Achievement & Completion",
-    certificateHeading:"Certificate",
-    ofCompletion:"of Completion",
-    presentedTo:"This certificate is proudly presented to",
+    officialCertificate:
+      "Official Certificate",
+
+    academyText:
+      "Tech Resonate Academy",
+
+    achievementCompletion:
+      "Achievement & Completion",
+
+    certificateHeading:
+      "Certificate",
+
+    ofCompletion:
+      "of Completion",
+
+    presentedTo:
+      "This certificate is proudly presented to",
+
     programmeDescription:
       "for successfully completing the prescribed training and practical requirements of the programme",
-    certificateIdLabel:"Certificate ID",
-    issueDateLabel:"Issue Date",
-    statusLabel:"Certificate Status",
-    issuedByLabel:"Issued By",
-    ceoTitle:"Chief Executive Officer",
-    microText:"Technology • Practical Skills • Career Readiness",
-    authenticCredential:"Authentic Credential",
-    verifyCertificate:"Verify thiscertificate",
-    sealLabel:"Certified",
-    sealYear:"2026",
-    scanToVerify:"Scan to Verify",
-    verificationDomain:"verify.techresonate.com",
-    certificateReference:"Certificate Reference"
+
+    certificateIdLabel:
+      "Certificate ID",
+
+    issueDateLabel:
+      "Issue Date",
+
+    statusLabel:
+      "Certificate Status",
+
+    issuedByLabel:
+      "Issued By",
+
+    ceoTitle:
+      "Chief Executive Officer",
+
+    microText:
+      "Technology • Practical Skills • Career Readiness",
+
+    authenticCredential:
+      "Authentic Credential",
+
+    sealLabel:
+      "Certified",
+
+    sealYear:
+      "2026",
+
+    scanToVerify:
+      "Scan to Verify",
+
+    verificationDomain:
+      "verify.techresonate.com",
+
+    certificateReference:
+      "Certificate Reference"
+
   };
 
-  Object.entries(originalText).forEach(
+  Object.entries(
+    originalText
+  ).forEach(
     ([key,text])=>{
 
-      const el=elementFor(key);
+      const el=
+        elementFor(key);
 
       if(el){
 
-        /*
-          Restore the original HTML for
-          the verify heading because it
-          contains a line break.
-        */
-
-        if(key==="verifyCertificate"){
-
-          el.innerHTML=
-            "Verify this<br>certificate";
-
-        }else{
-
-          el.textContent=text;
-
-        }
+        el.textContent=text;
 
       }
 
@@ -1781,16 +2724,37 @@ function resetDesign(){
   );
 
   /*
+    Restore the verification heading
+    with its original line break.
+  */
+
+  const verifyEl=
+    elementFor(
+      "verifyCertificate"
+    );
+
+  if(verifyEl){
+
+    verifyEl.innerHTML=
+      "Verify this<br>certificate";
+
+  }
+
+  /*
     Remove custom text elements.
   */
 
   Object.keys(ELEMENTS)
     .filter(
-      key=>key.startsWith("customText_")
+      key=>
+        key.startsWith(
+          "customText_"
+        )
     )
     .forEach(key=>{
 
-      const el=elementFor(key);
+      const el=
+        elementFor(key);
 
       el?.remove();
 
@@ -1800,19 +2764,27 @@ function resetDesign(){
 
   designState={};
 
-  Object.keys(ELEMENTS).forEach(
-    getState
-  );
+  Object.keys(ELEMENTS)
+    .forEach(
+      getState
+    );
 
   try{
-    localStorage.removeItem(STORAGE.design);
+
+    localStorage.removeItem(
+      STORAGE.design
+    );
+
   }catch{}
 
   populateElementSelect();
 
   applyAllDesign();
 
-  selectElement("studentName",false);
+  selectElement(
+    "studentName",
+    false
+  );
 
   notify(
     "Design reset to the original master certificate."
@@ -1829,18 +2801,23 @@ function resizeSignatureDataUrl(
   return new Promise(
     (resolve,reject)=>{
 
-      const img=new Image();
+      const img=
+        new Image();
 
       img.onload=()=>{
 
-        let w=img.naturalWidth;
-        let h=img.naturalHeight;
+        let w=
+          img.naturalWidth;
 
-        const scale=Math.min(
-          1,
-          maxW/w,
-          maxH/h
-        );
+        let h=
+          img.naturalHeight;
+
+        const scale=
+          Math.min(
+            1,
+            maxW/w,
+            maxH/h
+          );
 
         w=Math.max(
           1,
@@ -1853,13 +2830,17 @@ function resizeSignatureDataUrl(
         );
 
         const canvas=
-          document.createElement("canvas");
+          document.createElement(
+            "canvas"
+          );
 
         canvas.width=w;
         canvas.height=h;
 
         const ctx=
-          canvas.getContext("2d");
+          canvas.getContext(
+            "2d"
+          );
 
         ctx.clearRect(
           0,
@@ -1877,12 +2858,15 @@ function resizeSignatureDataUrl(
         );
 
         resolve(
-          canvas.toDataURL("image/png")
+          canvas.toDataURL(
+            "image/png"
+          )
         );
 
       };
 
       img.onerror=reject;
+
       img.src=dataUrl;
 
     }
@@ -1890,7 +2874,9 @@ function resizeSignatureDataUrl(
 
 }
 
-async function handleSignatureFile(file){
+async function handleSignatureFile(
+  file
+){
 
   if(!file)return;
 
@@ -1902,11 +2888,15 @@ async function handleSignatureFile(file){
           new FileReader();
 
         reader.onload=
-          ()=>resolve(reader.result);
+          ()=>resolve(
+            reader.result
+          );
 
         reader.onerror=reject;
 
-        reader.readAsDataURL(file);
+        reader.readAsDataURL(
+          file
+        );
 
       }
     );
@@ -1914,7 +2904,9 @@ async function handleSignatureFile(file){
   try{
 
     workingSignature=
-      await resizeSignatureDataUrl(raw);
+      await resizeSignatureDataUrl(
+        raw
+      );
 
   }catch{
 
@@ -1922,13 +2914,19 @@ async function handleSignatureFile(file){
 
   }
 
-  document.getElementById(
-    "signature"
-  ).src=workingSignature;
+  document
+    .getElementById(
+      "signature"
+    )
+    .src=
+      workingSignature;
 
-  document.getElementById(
-    "signaturePreview"
-  ).src=workingSignature;
+  document
+    .getElementById(
+      "signaturePreview"
+    )
+    .src=
+      workingSignature;
 
   notify(
     "Signature loaded. Use Save Signature to reuse it later."
@@ -1953,13 +2951,19 @@ function loadSignature(){
     saved||
     DEFAULT_CERTIFICATE.signature;
 
-  document.getElementById(
-    "signature"
-  ).src=workingSignature;
+  document
+    .getElementById(
+      "signature"
+    )
+    .src=
+      workingSignature;
 
-  document.getElementById(
-    "signaturePreview"
-  ).src=workingSignature;
+  document
+    .getElementById(
+      "signaturePreview"
+    )
+    .src=
+      workingSignature;
 
 }
 
@@ -2001,25 +3005,35 @@ function saveSignature(){
 function removeSavedSignature(){
 
   try{
+
     localStorage.removeItem(
       STORAGE.signature
     );
+
   }catch{}
 
   workingSignature=
     DEFAULT_CERTIFICATE.signature;
 
-  document.getElementById(
-    "signature"
-  ).src=workingSignature;
+  document
+    .getElementById(
+      "signature"
+    )
+    .src=
+      workingSignature;
 
-  document.getElementById(
-    "signaturePreview"
-  ).src=workingSignature;
+  document
+    .getElementById(
+      "signaturePreview"
+    )
+    .src=
+      workingSignature;
 
-  document.getElementById(
-    "signatureUpload"
-  ).value="";
+  document
+    .getElementById(
+      "signatureUpload"
+    )
+    .value="";
 
   notify(
     "Saved signature removed. Default signature restored."
@@ -2089,13 +3103,14 @@ function attachContentEvents(){
     "inputStatus",
     "inputCeoName",
     "inputCeoTitle"
-  ].forEach(id=>
-    document
-      .getElementById(id)
-      .addEventListener(
-        "input",
-        renderContentFromInputs
-      )
+  ].forEach(
+    id=>
+      document
+        .getElementById(id)
+        .addEventListener(
+          "input",
+          renderContentFromInputs
+        )
   );
 
   document
@@ -2103,10 +3118,13 @@ function attachContentEvents(){
     .addEventListener(
       "change",
       ()=>{
+
         updateQrUrlField();
+
         updateVerification(
           activeVerificationUrl()
         );
+
       }
     );
 
@@ -2115,9 +3133,11 @@ function attachContentEvents(){
     .addEventListener(
       "input",
       ()=>{
+
         updateVerification(
           activeVerificationUrl()
         );
+
       }
     );
 
@@ -2125,20 +3145,45 @@ function attachContentEvents(){
 
 function updateSelectedText(){
 
-  const meta=ELEMENTS[selectedKey];
+  const meta=
+    ELEMENTS[selectedKey];
 
   if(!meta||!meta.text)return;
 
-  const el=elementFor(selectedKey);
+  const el=
+    elementFor(selectedKey);
 
   if(!el)return;
 
-  const state=getState(selectedKey);
+  const state=
+    getState(selectedKey);
 
-  state.text=controlText.value;
-
-  el.textContent=
+  state.text=
     controlText.value;
+
+  /*
+    Keep the verification heading
+    line break when possible.
+  */
+
+  if(
+    selectedKey==="verifyCertificate" &&
+    controlText.value.includes("\n")
+  ){
+
+    el.innerHTML=
+      controlText.value
+        .replace(
+          /\n/g,
+          "<br>"
+        );
+
+  }else{
+
+    el.textContent=
+      controlText.value;
+
+  }
 
   refreshControls();
 
@@ -2146,15 +3191,18 @@ function updateSelectedText(){
 
 function updateSelectedColor(){
 
-  const meta=ELEMENTS[selectedKey];
+  const meta=
+    ELEMENTS[selectedKey];
 
   if(!meta||!meta.text)return;
 
-  const el=elementFor(selectedKey);
+  const el=
+    elementFor(selectedKey);
 
   if(!el)return;
 
-  const state=getState(selectedKey);
+  const state=
+    getState(selectedKey);
 
   state.color=
     controlColor.value;
@@ -2179,34 +3227,57 @@ function createCustomText(){
     id
   );
 
-  newText.textContent="New Text";
+  newText.textContent=
+    "New Text";
 
-  newText.style.position="absolute";
+  newText.style.position=
+    "absolute";
+
   newText.style.left="50%";
+
   newText.style.top="50%";
+
   newText.style.transform=
     "translate(-50%,-50%)";
+
   newText.style.zIndex="50";
+
   newText.style.fontFamily=
     "Arial,Helvetica,sans-serif";
-  newText.style.fontSize="5mm";
-  newText.style.fontWeight="700";
-  newText.style.color="#0B1A2E";
-  newText.style.whiteSpace="nowrap";
-  newText.style.cursor="move";
+
+  newText.style.fontSize=
+    "5mm";
+
+  newText.style.fontWeight=
+    "700";
+
+  newText.style.fontStyle=
+    "normal";
+
+  newText.style.color=
+    "#0B1A2E";
+
+  newText.style.whiteSpace=
+    "nowrap";
+
+  newText.style.cursor=
+    "move";
 
   certificate.appendChild(
     newText
   );
 
   ELEMENTS[id]={
+
     label:"New Text",
     selector:"#"+id,
     text:true,
     zone:"certificate"
+
   };
 
   designState[id]={
+
     x:0,
     y:0,
     rotation:0,
@@ -2219,7 +3290,10 @@ function createCustomText(){
     letterSpacing:0,
     lineHeight:1.2,
     textAlign:"left",
-    fontWeight:700
+    fontWeight:700,
+    fontFamily:"",
+    fontStyle:"normal"
+
   };
 
   populateElementSelect();
@@ -2230,6 +3304,7 @@ function createCustomText(){
   );
 
   controlText.focus();
+
   controlText.select();
 
   notify(
@@ -2262,6 +3337,7 @@ function deleteSelectedText(){
     el.remove();
 
     delete ELEMENTS[selectedKey];
+
     delete designState[selectedKey];
 
     populateElementSelect();
@@ -2292,6 +3368,7 @@ function deleteSelectedText(){
       getState(selectedKey);
 
     state.text="";
+
     state.visible=true;
 
     applyElementState(
@@ -2370,36 +3447,45 @@ function attachDesignerEvents(){
 
   document
     .querySelectorAll("[data-step]")
-    .forEach(btn=>
-      btn.addEventListener(
-        "click",
-        ()=>{
-          nudgeStep=
-            Number(btn.dataset.step)||1;
+    .forEach(
+      btn=>
+        btn.addEventListener(
+          "click",
+          ()=>{
 
-          document
-            .querySelectorAll("[data-step]")
-            .forEach(b=>
-              b.classList.toggle(
-                "active",
-                b===btn
+            nudgeStep=
+              Number(
+                btn.dataset.step
+              )||1;
+
+            document
+              .querySelectorAll(
+                "[data-step]"
               )
-            );
-        }
-      )
+              .forEach(
+                b=>
+                  b.classList.toggle(
+                    "active",
+                    b===btn
+                  )
+              );
+
+          }
+        )
     );
 
   document
     .querySelectorAll("[data-nudge]")
-    .forEach(btn=>
-      btn.addEventListener(
-        "click",
-        ()=>{
-          nudge(
-            btn.dataset.nudge
-          );
-        }
-      )
+    .forEach(
+      btn=>
+        btn.addEventListener(
+          "click",
+          ()=>{
+            nudge(
+              btn.dataset.nudge
+            );
+          }
+        )
     );
 
   document
@@ -2499,86 +3585,163 @@ function attachDesignerEvents(){
     }
   );
 
+  /*
+    NEW: Font Family
+  */
+
+  controlFontFamily.addEventListener(
+    "change",
+    ()=>{
+
+      const meta=
+        ELEMENTS[selectedKey];
+
+      if(!meta||!meta.text)return;
+
+      const state=
+        getState(selectedKey);
+
+      state.fontFamily=
+        controlFontFamily.value;
+
+      applyElementState(
+        selectedKey
+      );
+
+      refreshControls();
+
+    }
+  );
+
+  /*
+    NEW: Font Style
+  */
+
+  document
+    .querySelectorAll(
+      "#styleButtons button"
+    )
+    .forEach(
+      btn=>
+        btn.addEventListener(
+          "click",
+          ()=>{
+
+            if(
+              !ELEMENTS[selectedKey]?.text
+            )return;
+
+            getState(
+              selectedKey
+            ).fontStyle=
+              btn.dataset.style;
+
+            applyElementState(
+              selectedKey
+            );
+
+            refreshControls();
+
+          }
+        )
+    );
+
+  /*
+    Text Alignment:
+    Left / Center / Right / Justify
+  */
+
   document
     .querySelectorAll(
       "#alignButtons button"
     )
-    .forEach(btn=>
-      btn.addEventListener(
-        "click",
-        ()=>{
+    .forEach(
+      btn=>
+        btn.addEventListener(
+          "click",
+          ()=>{
 
-          if(
-            !ELEMENTS[selectedKey].text
-          )return;
+            if(
+              !ELEMENTS[selectedKey]?.text
+            )return;
 
-          getState(
-            selectedKey
-          ).textAlign=
-            btn.dataset.align;
+            getState(
+              selectedKey
+            ).textAlign=
+              btn.dataset.align;
 
-          applyElementState(
-            selectedKey
-          );
+            applyElementState(
+              selectedKey
+            );
 
-          refreshControls();
+            refreshControls();
 
-        }
-      )
+          }
+        )
     );
+
+  /*
+    Font Weight
+  */
 
   document
     .querySelectorAll(
       "#weightButtons button"
     )
-    .forEach(btn=>
-      btn.addEventListener(
-        "click",
-        ()=>{
+    .forEach(
+      btn=>
+        btn.addEventListener(
+          "click",
+          ()=>{
 
-          if(
-            !ELEMENTS[selectedKey].text
-          )return;
+            if(
+              !ELEMENTS[selectedKey]?.text
+            )return;
 
-          getState(
-            selectedKey
-          ).fontWeight=
-            Number(
-              btn.dataset.weight
+            getState(
+              selectedKey
+            ).fontWeight=
+              Number(
+                btn.dataset.weight
+              );
+
+            applyElementState(
+              selectedKey
             );
 
-          applyElementState(
-            selectedKey
-          );
+            refreshControls();
 
-          refreshControls();
-
-        }
-      )
+          }
+        )
     );
+
+  /*
+    Visibility
+  */
 
   document
     .querySelectorAll(
       "#visibilityButtons button"
     )
-    .forEach(btn=>
-      btn.addEventListener(
-        "click",
-        ()=>{
+    .forEach(
+      btn=>
+        btn.addEventListener(
+          "click",
+          ()=>{
 
-          getState(
-            selectedKey
-          ).visible=
-            btn.dataset.visible==="true";
+            getState(
+              selectedKey
+            ).visible=
+              btn.dataset.visible==="true";
 
-          applyElementState(
-            selectedKey
-          );
+            applyElementState(
+              selectedKey
+            );
 
-          refreshControls();
+            refreshControls();
 
-        }
-      )
+          }
+        )
     );
 
   document
@@ -2640,12 +3803,19 @@ function attachDesignerEvents(){
         getState(key);
 
       drag={
+
         pointerId:e.pointerId,
+
         key,
+
         startX:e.clientX,
+
         startY:e.clientY,
+
         x:Number(s.x)||0,
+
         y:Number(s.y)||0
+
       };
 
       target.setPointerCapture?.(
@@ -2667,7 +3837,9 @@ function attachDesignerEvents(){
       )return;
 
       const s=
-        getState(drag.key);
+        getState(
+          drag.key
+        );
 
       s.x=
         round(
@@ -2798,8 +3970,11 @@ function attachActionEvents(){
   addEventListener(
     "resize",
     ()=>{
+
       fitName();
+
       updatePreviewScale();
+
     }
   );
 
@@ -2884,16 +4059,21 @@ init();
 window.TechResonateCertificateBuilder={
 
   resetDesign,
+
   resetCertificate,
+
   saveDesign,
+
   selectElement,
 
   get design(){
+
     return JSON.parse(
       JSON.stringify(
         designState
       )
     );
+
   }
 
 };
