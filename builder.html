@@ -203,6 +203,14 @@ button{
   box-shadow:0 0 0 2px rgba(37,99,235,.1);
 }
 
+.field input:disabled,
+.field textarea:disabled,
+.field select:disabled{
+  background:#F1F5F9;
+  color:#94A3B8;
+  cursor:not-allowed;
+}
+
 .grid-2{
   display:grid;
   grid-template-columns:1fr 1fr;
@@ -280,6 +288,41 @@ button{
 }
 
 /* =========================
+   MOVE BUTTONS
+========================= */
+
+.move-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr;
+  gap:6px;
+}
+
+.move-grid button{
+  border:1px solid #CBD5E1;
+  background:#F8FAFC;
+  color:var(--navy);
+  border-radius:7px;
+  padding:9px 5px;
+  font-size:12px;
+  font-weight:700;
+}
+
+.move-grid button:hover{
+  background:#E8EEF7;
+  border-color:var(--blue);
+}
+
+.move-grid .center-btn{
+  background:var(--blue);
+  color:#fff;
+  border-color:var(--blue);
+}
+
+.move-grid .center-btn:hover{
+  filter:brightness(.95);
+}
+
+/* =========================
    CERTIFICATE
 ========================= */
 
@@ -319,7 +362,9 @@ button{
   pointer-events:none;
 }
 
-/* Decorative corners */
+/* =========================
+   DECORATIVE CORNERS
+========================= */
 
 .corner{
   position:absolute;
@@ -345,10 +390,28 @@ button{
   height:100%;
 }
 
-.corner.tl{top:10mm;left:10mm;}
-.corner.tr{top:10mm;right:10mm;transform:rotate(90deg);}
-.corner.bl{bottom:10mm;left:10mm;transform:rotate(-90deg);}
-.corner.br{bottom:10mm;right:10mm;transform:rotate(180deg);}
+.corner.tl{
+  top:10mm;
+  left:10mm;
+}
+
+.corner.tr{
+  top:10mm;
+  right:10mm;
+  transform:rotate(90deg);
+}
+
+.corner.bl{
+  bottom:10mm;
+  left:10mm;
+  transform:rotate(-90deg);
+}
+
+.corner.br{
+  bottom:10mm;
+  right:10mm;
+  transform:rotate(180deg);
+}
 
 /* =========================
    EDITABLE ELEMENTS
@@ -405,7 +468,6 @@ button{
 }
 
 .heading-line{
-  position:absolute;
   top:55mm;
   left:50%;
   transform:translateX(-50%);
@@ -439,7 +501,6 @@ button{
 }
 
 .name-line{
-  position:absolute;
   top:85mm;
   left:50%;
   transform:translateX(-50%);
@@ -473,7 +534,6 @@ button{
 }
 
 .programme-line{
-  position:absolute;
   top:119mm;
   left:50%;
   transform:translateX(-50%);
@@ -503,35 +563,47 @@ button{
   white-space:nowrap;
 }
 
-.signature{
-  left:28mm;
-  bottom:23mm;
-  width:55mm;
-  text-align:center;
-}
+/* =========================
+   SIGNATURE
+========================= */
 
 .signature-line{
+  top:177mm;
+  left:28mm;
   width:55mm;
   height:.4mm;
   background:var(--navy);
-  margin-bottom:2mm;
 }
 
 .signature-name{
+  top:180mm;
+  left:28mm;
+  width:55mm;
+  text-align:center;
   font-size:3.3mm;
   font-weight:700;
+  white-space:nowrap;
 }
 
 .signature-title{
+  top:184.5mm;
+  left:28mm;
+  width:55mm;
+  text-align:center;
   font-size:2.8mm;
   color:#64748B;
-  margin-top:1mm;
+  white-space:nowrap;
 }
+
+/* =========================
+   QR
+========================= */
 
 .qr-box{
   right:28mm;
-  bottom:20mm;
+  top:161mm;
   width:31mm;
+  height:25mm;
   text-align:center;
 }
 
@@ -539,13 +611,18 @@ button{
   display:block;
   width:25mm !important;
   height:25mm !important;
-  margin:0 auto 2mm;
+  margin:0 auto;
 }
 
 .qr-label{
+  top:188mm;
+  right:28mm;
+  width:31mm;
+  text-align:center;
   font-size:2.6mm;
   color:#64748B;
   line-height:1.3;
+  white-space:nowrap;
 }
 
 /* =========================
@@ -553,6 +630,7 @@ button{
 ========================= */
 
 @media(max-width:1000px){
+
   .main{
     grid-template-columns:1fr;
   }
@@ -564,6 +642,7 @@ button{
   .preview-area{
     justify-content:flex-start;
   }
+
 }
 
 /* =========================
@@ -571,6 +650,7 @@ button{
 ========================= */
 
 @media print{
+
   body{
     background:#fff;
   }
@@ -606,6 +686,7 @@ button{
     size:A4 landscape;
     margin:0;
   }
+
 }
 </style>
 </head>
@@ -614,19 +695,19 @@ button{
 
 <div class="app">
 
-  <!-- =========================
-       TOP BAR
-  ========================== -->
+  <!-- TOP BAR -->
 
   <div class="topbar">
 
     <div class="brand">
+
       <div class="brand-logo">TR</div>
 
       <div class="brand-text">
         <strong>Tech Resonate Academy</strong>
         <span>Certificate Builder</span>
       </div>
+
     </div>
 
     <div class="top-actions">
@@ -638,28 +719,25 @@ button{
 
   </div>
 
-  <!-- =========================
-       MAIN
-  ========================== -->
+
+  <!-- MAIN -->
 
   <div class="main">
 
-    <!-- =========================
-         SIDEBAR
-    ========================== -->
+    <!-- SIDEBAR -->
 
     <aside class="sidebar">
 
-      <div class="panel-title">Certificate Designer</div>
+      <div class="panel-title">
+        Certificate Designer
+      </div>
 
       <div class="panel-subtitle">
-        Select an element, edit its text, color, size and position.
+        Select any certificate element to edit, move, resize or hide it.
       </div>
 
 
-      <!-- =========================
-           CERTIFICATE CONTENT
-      ========================== -->
+      <!-- CERTIFICATE INFORMATION -->
 
       <div class="section">
 
@@ -703,15 +781,15 @@ button{
 
         <div class="field">
           <label>Completion Text</label>
+
           <textarea id="completionInput">for successfully completing the prescribed training and practical requirements of the programme</textarea>
+
         </div>
 
       </div>
 
 
-      <!-- =========================
-           AWARD DATE
-      ========================== -->
+      <!-- AWARD DATE -->
 
       <div class="section">
 
@@ -719,34 +797,40 @@ button{
 
         <div class="field">
           <label>Day</label>
+
           <input
             id="awardDay"
             type="text"
             value="Monday"
             placeholder="e.g. Monday"
           >
+
         </div>
 
         <div class="grid-2">
 
           <div class="field">
             <label>Date</label>
+
             <input
               id="awardDate"
               type="text"
               value="27"
               placeholder="e.g. 27"
             >
+
           </div>
 
           <div class="field">
             <label>Year</label>
+
             <input
               id="awardYear"
               type="text"
               value="2026"
               placeholder="e.g. 2026"
             >
+
           </div>
 
         </div>
@@ -758,9 +842,7 @@ button{
       </div>
 
 
-      <!-- =========================
-           SELECT ELEMENT
-      ========================== -->
+      <!-- ELEMENT DESIGNER -->
 
       <div class="section">
 
@@ -778,28 +860,48 @@ button{
 
             <option value="heading">Certificate of Completion</option>
 
+            <option value="headingLine">Heading Line</option>
+
             <option value="presented">Presented Text</option>
 
             <option value="studentName">Recipient Name</option>
+
+            <option value="nameLine">Name Line</option>
 
             <option value="completion">Completion Text</option>
 
             <option value="programme">Programme</option>
 
+            <option value="programmeLine">Programme Line</option>
+
             <option value="awardLabel">Award Label</option>
 
             <option value="awardDate">Award Date</option>
 
-            <option value="signature">Signature</option>
+            <option value="signatureLine">Signature Line</option>
 
-            <option value="qr">QR Verification</option>
+            <option value="signatureName">Signature Name</option>
+
+            <option value="signatureTitle">Signature Title</option>
+
+            <option value="qr">QR Code</option>
+
+            <option value="qrLabel">QR Label</option>
+
+            <option value="cornerTL">Top Left Decoration</option>
+
+            <option value="cornerTR">Top Right Decoration</option>
+
+            <option value="cornerBL">Bottom Left Decoration</option>
+
+            <option value="cornerBR">Bottom Right Decoration</option>
 
           </select>
 
         </div>
 
 
-        <!-- TEXT CONTENT -->
+        <!-- TEXT -->
 
         <div class="field">
 
@@ -812,7 +914,7 @@ button{
           >
 
           <div class="help">
-            Change the selected text directly here.
+            Select any text element and edit it here.
           </div>
 
         </div>
@@ -857,6 +959,7 @@ button{
         <div class="grid-2">
 
           <div class="field">
+
             <label>Font Size (mm)</label>
 
             <input
@@ -865,9 +968,11 @@ button{
               step="0.1"
               value="6"
             >
+
           </div>
 
           <div class="field">
+
             <label>Font Weight</label>
 
             <select id="fontWeight">
@@ -891,6 +996,7 @@ button{
         <div class="grid-2">
 
           <div class="field">
+
             <label>Horizontal Position (%)</label>
 
             <input
@@ -899,9 +1005,11 @@ button{
               step="0.1"
               value="50"
             >
+
           </div>
 
           <div class="field">
+
             <label>Vertical Position (mm)</label>
 
             <input
@@ -910,6 +1018,67 @@ button{
               step="0.1"
               value="50"
             >
+
+          </div>
+
+        </div>
+
+
+        <!-- MOVE BUTTONS -->
+
+        <div class="field">
+
+          <label>Move Selected Element</label>
+
+          <div class="move-grid">
+
+            <button
+              type="button"
+              onclick="nudgeSelected(-1,0)"
+            >
+              ← Left
+            </button>
+
+            <button
+              type="button"
+              onclick="nudgeSelected(0,-1)"
+            >
+              ↑ Up
+            </button>
+
+            <button
+              type="button"
+              onclick="nudgeSelected(1,0)"
+            >
+              Right →
+            </button>
+
+            <button
+              type="button"
+              onclick="nudgeSelected(0,1)"
+            >
+              ↓ Down
+            </button>
+
+            <button
+              class="center-btn"
+              type="button"
+              onclick="centerSelected()"
+            >
+              Center
+            </button>
+
+            <button
+              type="button"
+              onclick="resetSelected()"
+            >
+              Reset
+            </button>
+
+          </div>
+
+          <div class="help">
+            You can also drag the selected element directly on the certificate or use your keyboard arrow keys.
           </div>
 
         </div>
@@ -1003,7 +1172,10 @@ button{
         </div>
 
 
-        <div class="action-grid" style="margin-top:7px">
+        <div
+          class="action-grid"
+          style="margin-top:7px"
+        >
 
           <button
             class="btn secondary"
@@ -1026,9 +1198,7 @@ button{
       </div>
 
 
-      <!-- =========================
-           QR VERIFICATION
-      ========================== -->
+      <!-- QR VERIFICATION -->
 
       <div class="section">
 
@@ -1058,9 +1228,7 @@ button{
       </div>
 
 
-      <!-- =========================
-           SIGNATURE
-      ========================== -->
+      <!-- SIGNATURE -->
 
       <div class="section">
 
@@ -1108,9 +1276,7 @@ button{
     </aside>
 
 
-    <!-- =========================
-         PREVIEW
-    ========================== -->
+    <!-- PREVIEW -->
 
     <main class="preview-area">
 
@@ -1121,10 +1287,32 @@ button{
           class="certificate"
         >
 
-          <div class="corner tl"></div>
-          <div class="corner tr"></div>
-          <div class="corner bl"></div>
-          <div class="corner br"></div>
+
+          <!-- DECORATIVE CORNERS -->
+
+          <div
+            id="cornerTL"
+            class="editable corner tl"
+            data-key="cornerTL"
+          ></div>
+
+          <div
+            id="cornerTR"
+            class="editable corner tr"
+            data-key="cornerTR"
+          ></div>
+
+          <div
+            id="cornerBL"
+            class="editable corner bl"
+            data-key="cornerBL"
+          ></div>
+
+          <div
+            id="cornerBR"
+            class="editable corner br"
+            data-key="cornerBR"
+          ></div>
 
 
           <!-- ACADEMY -->
@@ -1149,7 +1337,7 @@ button{
           </div>
 
 
-          <!-- SINGLE HEADING ELEMENT -->
+          <!-- HEADING -->
 
           <div
             id="heading"
@@ -1160,7 +1348,13 @@ button{
           </div>
 
 
-          <div class="heading-line"></div>
+          <!-- HEADING LINE -->
+
+          <div
+            id="headingLine"
+            class="editable heading-line"
+            data-key="headingLine"
+          ></div>
 
 
           <!-- PRESENTED -->
@@ -1185,7 +1379,13 @@ button{
           </div>
 
 
-          <div class="name-line"></div>
+          <!-- NAME LINE -->
+
+          <div
+            id="nameLine"
+            class="editable name-line"
+            data-key="nameLine"
+          ></div>
 
 
           <!-- COMPLETION -->
@@ -1210,7 +1410,13 @@ button{
           </div>
 
 
-          <div class="programme-line"></div>
+          <!-- PROGRAMME LINE -->
+
+          <div
+            id="programmeLine"
+            class="editable programme-line"
+            data-key="programmeLine"
+          ></div>
 
 
           <!-- AWARD LABEL -->
@@ -1231,38 +1437,42 @@ button{
             class="editable award-date"
             data-key="awardDate"
           >
-            Monday, 27 — 2026
+            Monday, 27, 2026
           </div>
 
 
-          <!-- SIGNATURE -->
+          <!-- SIGNATURE LINE -->
 
           <div
-            id="signature"
-            class="editable signature"
-            data-key="signature"
+            id="signatureLine"
+            class="editable signature-line"
+            data-key="signatureLine"
+          ></div>
+
+
+          <!-- SIGNATURE NAME -->
+
+          <div
+            id="signatureNameDisplay"
+            class="editable signature-name"
+            data-key="signatureName"
           >
-
-            <div class="signature-line"></div>
-
-            <div
-              id="signatureNameDisplay"
-              class="signature-name"
-            >
-              Authorized Signatory
-            </div>
-
-            <div
-              id="signatureTitleDisplay"
-              class="signature-title"
-            >
-              Tech Resonate Academy
-            </div>
-
+            Authorized Signatory
           </div>
 
 
-          <!-- QR -->
+          <!-- SIGNATURE TITLE -->
+
+          <div
+            id="signatureTitleDisplay"
+            class="editable signature-title"
+            data-key="signatureTitle"
+          >
+            Tech Resonate Academy
+          </div>
+
+
+          <!-- QR CODE -->
 
           <div
             id="qr"
@@ -1272,11 +1482,19 @@ button{
 
             <canvas id="qrCanvas"></canvas>
 
-            <div class="qr-label">
-              Scan to verify certificate
-            </div>
-
           </div>
+
+
+          <!-- QR LABEL -->
+
+          <div
+            id="qrLabel"
+            class="editable qr-label"
+            data-key="qrLabel"
+          >
+            Scan to verify certificate
+          </div>
+
 
         </div>
 
@@ -1290,6 +1508,7 @@ button{
 
 
 <script>
+
 /* =========================================================
    ELEMENT DEFINITIONS
 ========================================================= */
@@ -1298,57 +1517,149 @@ const ELEMENTS = {
 
   academy:{
     text:true,
-    el:"academy"
+    el:"academy",
+    centered:true,
+    baseTransform:"translateX(-50%)"
   },
 
   tagline:{
     text:true,
-    el:"tagline"
+    el:"tagline",
+    centered:true,
+    baseTransform:"translateX(-50%)"
   },
 
   heading:{
     text:true,
-    el:"heading"
+    el:"heading",
+    centered:true,
+    baseTransform:"translateX(-50%)"
+  },
+
+  headingLine:{
+    text:false,
+    el:"headingLine",
+    centered:true,
+    baseTransform:"translateX(-50%)"
   },
 
   presented:{
     text:true,
-    el:"presented"
+    el:"presented",
+    centered:true,
+    baseTransform:"translateX(-50%)"
   },
 
   studentName:{
     text:true,
-    el:"studentName"
+    el:"studentName",
+    centered:true,
+    baseTransform:"translateX(-50%)"
+  },
+
+  nameLine:{
+    text:false,
+    el:"nameLine",
+    centered:true,
+    baseTransform:"translateX(-50%)"
   },
 
   completion:{
     text:true,
-    el:"completion"
+    el:"completion",
+    centered:true,
+    baseTransform:"translateX(-50%)"
   },
 
   programme:{
     text:true,
-    el:"programme"
+    el:"programme",
+    centered:true,
+    baseTransform:"translateX(-50%)"
+  },
+
+  programmeLine:{
+    text:false,
+    el:"programmeLine",
+    centered:true,
+    baseTransform:"translateX(-50%)"
   },
 
   awardLabel:{
     text:true,
-    el:"awardLabel"
+    el:"awardLabel",
+    centered:true,
+    baseTransform:"translateX(-50%)"
   },
 
   awardDate:{
     text:true,
-    el:"awardDateDisplay"
+    el:"awardDateDisplay",
+    centered:true,
+    baseTransform:"translateX(-50%)"
   },
 
-  signature:{
+  signatureLine:{
     text:false,
-    el:"signature"
+    el:"signatureLine",
+    centered:false,
+    baseTransform:""
+  },
+
+  signatureName:{
+    text:true,
+    el:"signatureNameDisplay",
+    centered:false,
+    baseTransform:""
+  },
+
+  signatureTitle:{
+    text:true,
+    el:"signatureTitleDisplay",
+    centered:false,
+    baseTransform:""
   },
 
   qr:{
     text:false,
-    el:"qr"
+    el:"qr",
+    centered:false,
+    baseTransform:""
+  },
+
+  qrLabel:{
+    text:true,
+    el:"qrLabel",
+    centered:false,
+    baseTransform:""
+  },
+
+  cornerTL:{
+    text:false,
+    el:"cornerTL",
+    centered:false,
+    baseTransform:""
+  },
+
+  cornerTR:{
+    text:false,
+    el:"cornerTR",
+    centered:false,
+    baseTransform:"rotate(90deg)"
+  },
+
+  cornerBL:{
+    text:false,
+    el:"cornerBL",
+    centered:false,
+    baseTransform:"rotate(-90deg)"
+  },
+
+  cornerBR:{
+    text:false,
+    el:"cornerBR",
+    centered:false,
+    baseTransform:"rotate(180deg)"
   }
 
 };
@@ -1371,6 +1682,12 @@ let defaultHTML = {};
 
 function elementFor(key){
 
+  if(
+    !ELEMENTS[key]
+  ){
+    return null;
+  }
+
   return document.getElementById(
     ELEMENTS[key].el
   );
@@ -1384,14 +1701,16 @@ function elementFor(key){
 
 Object.keys(ELEMENTS).forEach(key => {
 
-  const el = elementFor(key);
+  const el =
+    elementFor(key);
 
   if(
     el &&
     ELEMENTS[key].text
   ){
 
-    defaultHTML[key] = el.innerHTML;
+    defaultHTML[key] =
+      el.innerHTML;
 
   }
 
@@ -1449,7 +1768,8 @@ function rgbToHex(rgb){
     return "#0B1A2E";
   }
 
-  const values = rgb.match(/\d+/g);
+  const values =
+    rgb.match(/\d+/g);
 
   if(
     !values ||
@@ -1484,17 +1804,52 @@ function normalizeHex(value){
     return null;
   }
 
-  let v = value.trim();
+  let v =
+    value.trim();
 
   if(!v.startsWith("#")){
     v = "#" + v;
   }
 
-  if(/^#[0-9a-fA-F]{6}$/.test(v)){
+  if(
+    /^#[0-9a-fA-F]{6}$/.test(v)
+  ){
+
     return v.toUpperCase();
+
   }
 
   return null;
+
+}
+
+
+/* =========================================================
+   APPLY TRANSFORM
+========================================================= */
+
+function applyTransform(key){
+
+  const el =
+    elementFor(key);
+
+  const s =
+    getState(key);
+
+  if(!el){
+    return;
+  }
+
+  const base =
+    ELEMENTS[key].baseTransform || "";
+
+  const rotation =
+    s.rotation !== null
+      ? ` rotate(${s.rotation}deg)`
+      : "";
+
+  el.style.transform =
+    base + rotation;
 
 }
 
@@ -1505,36 +1860,48 @@ function normalizeHex(value){
 
 function applyElementState(key){
 
-  const el = elementFor(key);
+  const el =
+    elementFor(key);
 
-  const s = getState(key);
+  const s =
+    getState(key);
 
   if(!el){
     return;
   }
 
 
+  /* TEXT */
+
   if(
     ELEMENTS[key].text &&
     s.text !== null
   ){
 
-    el.textContent = s.text;
+    el.textContent =
+      s.text;
 
   }
 
+
+  /* COLOR */
 
   if(
     ELEMENTS[key].text &&
     s.color
   ){
 
-    el.style.color = s.color;
+    el.style.color =
+      s.color;
 
   }
 
 
-  if(s.fontSize !== null){
+  /* FONT SIZE */
+
+  if(
+    s.fontSize !== null
+  ){
 
     el.style.fontSize =
       s.fontSize + "mm";
@@ -1542,7 +1909,11 @@ function applyElementState(key){
   }
 
 
-  if(s.fontWeight !== null){
+  /* FONT WEIGHT */
+
+  if(
+    s.fontWeight !== null
+  ){
 
     el.style.fontWeight =
       s.fontWeight;
@@ -1550,7 +1921,11 @@ function applyElementState(key){
   }
 
 
-  if(s.x !== null){
+  /* X */
+
+  if(
+    s.x !== null
+  ){
 
     el.style.left =
       s.x + "%";
@@ -1558,7 +1933,11 @@ function applyElementState(key){
   }
 
 
-  if(s.y !== null){
+  /* Y */
+
+  if(
+    s.y !== null
+  ){
 
     el.style.top =
       s.y + "mm";
@@ -1566,7 +1945,11 @@ function applyElementState(key){
   }
 
 
-  if(s.width !== null){
+  /* WIDTH */
+
+  if(
+    s.width !== null
+  ){
 
     el.style.width =
       s.width + "mm";
@@ -1574,7 +1957,11 @@ function applyElementState(key){
   }
 
 
-  if(s.align !== null){
+  /* ALIGNMENT */
+
+  if(
+    s.align !== null
+  ){
 
     el.style.textAlign =
       s.align;
@@ -1582,7 +1969,11 @@ function applyElementState(key){
   }
 
 
-  if(s.letterSpacing !== null){
+  /* LETTER SPACING */
+
+  if(
+    s.letterSpacing !== null
+  ){
 
     el.style.letterSpacing =
       s.letterSpacing + "em";
@@ -1590,29 +1981,12 @@ function applyElementState(key){
   }
 
 
-  const baseTransform =
-    key === "academy" ||
-    key === "tagline" ||
-    key === "heading" ||
-    key === "presented" ||
-    key === "studentName" ||
-    key === "completion" ||
-    key === "programme" ||
-    key === "awardLabel" ||
-    key === "awardDate"
+  /* TRANSFORM */
 
-      ? "translateX(-50%)"
+  applyTransform(key);
 
-      : "";
 
-  const rotation =
-    s.rotation !== null
-      ? ` rotate(${s.rotation}deg)`
-      : "";
-
-  el.style.transform =
-    baseTransform + rotation;
-
+  /* VISIBILITY */
 
   el.style.visibility =
     s.visible === false
@@ -1628,27 +2002,42 @@ function applyElementState(key){
 
 function selectElement(key){
 
-  selectedKey = key;
+  if(
+    !ELEMENTS[key]
+  ){
+    return;
+  }
+
+  selectedKey =
+    key;
 
   document
     .querySelectorAll(".editable")
     .forEach(el => {
 
-      el.classList.remove("selected");
+      el.classList.remove(
+        "selected"
+      );
 
     });
 
-  const el = elementFor(key);
+
+  const el =
+    elementFor(key);
 
   if(el){
 
-    el.classList.add("selected");
+    el.classList.add(
+      "selected"
+    );
 
   }
 
+
   document.getElementById(
     "elementSelect"
-  ).value = key;
+  ).value =
+    key;
 
   refreshControls();
 
@@ -1661,15 +2050,22 @@ function selectElement(key){
 
 function refreshControls(){
 
-  const key = selectedKey;
+  const key =
+    selectedKey;
 
-  const el = elementFor(key);
+  const el =
+    elementFor(key);
 
-  const s = getState(key);
+  const s =
+    getState(key);
 
   if(!el){
     return;
   }
+
+
+  const isText =
+    ELEMENTS[key].text;
 
 
   /* TEXT */
@@ -1679,20 +2075,13 @@ function refreshControls(){
       "controlText"
     );
 
-  if(ELEMENTS[key].text){
+  textInput.disabled =
+    !isText;
 
-    textInput.disabled = false;
-
-    textInput.value =
-      el.textContent;
-
-  }else{
-
-    textInput.disabled = true;
-
-    textInput.value = "";
-
-  }
+  textInput.value =
+    isText
+      ? el.textContent
+      : "";
 
 
   /* COLOR */
@@ -1703,13 +2092,27 @@ function refreshControls(){
       getComputedStyle(el).color
     );
 
-  document.getElementById(
-    "controlColor"
-  ).value = color;
+  const colorInput =
+    document.getElementById(
+      "controlColor"
+    );
 
-  document.getElementById(
-    "controlColorHex"
-  ).value = color;
+  const colorHex =
+    document.getElementById(
+      "controlColorHex"
+    );
+
+  colorInput.disabled =
+    !isText;
+
+  colorHex.disabled =
+    !isText;
+
+  colorInput.value =
+    color;
+
+  colorHex.value =
+    color;
 
 
   /* FONT SIZE */
@@ -1719,44 +2122,86 @@ function refreshControls(){
       getComputedStyle(el).fontSize
     ) / 3.7795;
 
-  document.getElementById(
-    "fontSize"
-  ).value =
+  const fontSize =
+    document.getElementById(
+      "fontSize"
+    );
+
+  fontSize.disabled =
+    !isText;
+
+  fontSize.value =
     s.fontSize !== null
       ? s.fontSize
-      : Number(computedSize.toFixed(2));
+      : Number(
+          computedSize.toFixed(2)
+        );
 
 
   /* WEIGHT */
 
-  document.getElementById(
-    "fontWeight"
-  ).value =
+  const fontWeight =
+    document.getElementById(
+      "fontWeight"
+    );
+
+  fontWeight.disabled =
+    !isText;
+
+  fontWeight.value =
     s.fontWeight !== null
       ? s.fontWeight
-      : getComputedStyle(el).fontWeight;
+      : getComputedStyle(
+          el
+        ).fontWeight;
 
 
   /* X */
 
-  if(s.x !== null){
+  let xValue =
+    s.x;
 
-    document.getElementById(
-      "posX"
-    ).value = s.x;
+  if(xValue === null){
+
+    xValue =
+      parseFloat(
+        getComputedStyle(el).left
+      ) /
+      document.getElementById(
+        "certificate"
+      ).clientWidth *
+      100;
 
   }
+
+  document.getElementById(
+    "posX"
+  ).value =
+    Number(
+      xValue.toFixed(2)
+    );
 
 
   /* Y */
 
-  if(s.y !== null){
+  let yValue =
+    s.y;
 
-    document.getElementById(
-      "posY"
-    ).value = s.y;
+  if(yValue === null){
+
+    yValue =
+      parseFloat(
+        getComputedStyle(el).top
+      ) / 3.7795;
 
   }
+
+  document.getElementById(
+    "posY"
+  ).value =
+    Number(
+      yValue.toFixed(2)
+    );
 
 
   /* WIDTH */
@@ -1766,16 +2211,26 @@ function refreshControls(){
   ).value =
     s.width !== null
       ? s.width
-      : parseFloat(
-          getComputedStyle(el).width
-        ) / 3.7795;
+      : Number(
+          (
+            parseFloat(
+              getComputedStyle(el).width
+            ) / 3.7795
+          ).toFixed(2)
+        );
 
 
   /* ALIGN */
 
-  document.getElementById(
-    "textAlign"
-  ).value =
+  const align =
+    document.getElementById(
+      "textAlign"
+    );
+
+  align.disabled =
+    !isText;
+
+  align.value =
     s.align ||
     getComputedStyle(el).textAlign;
 
@@ -1784,19 +2239,30 @@ function refreshControls(){
 
   let spacing =
     parseFloat(
-      getComputedStyle(el).letterSpacing
+      getComputedStyle(el)
+        .letterSpacing
     );
 
   if(isNaN(spacing)){
     spacing = 0;
   }
 
+  const fontPx =
+    parseFloat(
+      getComputedStyle(el)
+        .fontSize
+    );
+
   document.getElementById(
     "letterSpacing"
   ).value =
     s.letterSpacing !== null
       ? s.letterSpacing
-      : Number((spacing / parseFloat(getComputedStyle(el).fontSize)).toFixed(3));
+      : Number(
+          (
+            spacing / fontPx
+          ).toFixed(3)
+        );
 
 
   /* ROTATION */
@@ -1817,24 +2283,97 @@ function refreshControls(){
 
 function setText(value){
 
-  const key = selectedKey;
+  const key =
+    selectedKey;
 
-  if(!ELEMENTS[key].text){
+  if(
+    !ELEMENTS[key].text
+  ){
     return;
   }
 
-  const el = elementFor(key);
+  const el =
+    elementFor(key);
 
-  const s = getState(key);
+  const s =
+    getState(key);
 
-  el.textContent = value;
+  el.textContent =
+    value;
 
-  s.text = value;
+  s.text =
+    value;
+
+
+  /* Keep main form inputs synchronized */
+
+  if(key === "academy"){
+
+    document.getElementById(
+      "academyInput"
+    ).value =
+      value;
+
+  }
+
+  if(key === "tagline"){
+
+    document.getElementById(
+      "taglineInput"
+    ).value =
+      value;
+
+  }
 
   if(key === "studentName"){
 
+    document.getElementById(
+      "nameInput"
+    ).value =
+      value;
+
     fitStudentName();
 
+  }
+
+  if(key === "programme"){
+
+    document.getElementById(
+      "programmeInput"
+    ).value =
+      value;
+
+  }
+
+  if(key === "completion"){
+
+    document.getElementById(
+      "completionInput"
+    ).value =
+      value;
+
+  }
+
+  if(key === "signatureName"){
+
+    document.getElementById(
+      "signatureName"
+    ).value =
+      value;
+
+  }
+
+  if(key === "signatureTitle"){
+
+    document.getElementById(
+      "signatureTitle"
+    ).value =
+      value;
+
+  }
+
+  if(key === "qrLabel"){
+    /* QR label is directly editable */
   }
 
   refreshControls();
@@ -1848,9 +2387,12 @@ function setText(value){
 
 function setColor(value){
 
-  const key = selectedKey;
+  const key =
+    selectedKey;
 
-  if(!ELEMENTS[key].text){
+  if(
+    !ELEMENTS[key].text
+  ){
     return;
   }
 
@@ -1861,19 +2403,25 @@ function setColor(value){
     return;
   }
 
-  const s = getState(key);
+  const s =
+    getState(key);
 
-  s.color = hex;
+  s.color =
+    hex;
 
-  elementFor(key).style.color = hex;
+  elementFor(key)
+    .style.color =
+    hex;
 
   document.getElementById(
     "controlColor"
-  ).value = hex;
+  ).value =
+    hex;
 
   document.getElementById(
     "controlColorHex"
-  ).value = hex;
+  ).value =
+    hex;
 
 }
 
@@ -1884,15 +2432,26 @@ function setColor(value){
 
 function resetColor(){
 
-  const key = selectedKey;
+  const key =
+    selectedKey;
 
-  const el = elementFor(key);
+  if(
+    !ELEMENTS[key].text
+  ){
+    return;
+  }
 
-  const s = getState(key);
+  const el =
+    elementFor(key);
 
-  delete s.color;
+  const s =
+    getState(key);
 
-  el.style.color = "";
+  s.color =
+    null;
+
+  el.style.color =
+    "";
 
   refreshControls();
 
@@ -1905,9 +2464,12 @@ function resetColor(){
 
 function clearSelectedText(){
 
-  const key = selectedKey;
+  const key =
+    selectedKey;
 
-  if(!ELEMENTS[key].text){
+  if(
+    !ELEMENTS[key].text
+  ){
     return;
   }
 
@@ -1922,9 +2484,11 @@ function clearSelectedText(){
 
 function toggleSelectedVisibility(){
 
-  const key = selectedKey;
+  const key =
+    selectedKey;
 
-  const s = getState(key);
+  const s =
+    getState(key);
 
   s.visible =
     s.visible === false
@@ -1942,32 +2506,133 @@ function toggleSelectedVisibility(){
 
 function centerSelected(){
 
-  const key = selectedKey;
+  const key =
+    selectedKey;
 
-  const s = getState(key);
+  const s =
+    getState(key);
 
-  s.x = 50;
+  const el =
+    elementFor(key);
 
-  const el = elementFor(key);
+  if(!el){
+    return;
+  }
 
-  el.style.left = "50%";
+  s.x =
+    50;
+
+  el.style.left =
+    "50%";
+
+  /*
+    For centered text/lines, the center
+    is already the element's center.
+  */
 
   if(
-    key === "academy" ||
-    key === "tagline" ||
-    key === "heading" ||
-    key === "presented" ||
-    key === "studentName" ||
-    key === "completion" ||
-    key === "programme" ||
-    key === "awardLabel" ||
-    key === "awardDate"
+    ELEMENTS[key].centered
   ){
 
+    applyTransform(key);
+
+  }else{
+
+    /*
+      For non-centered elements we add
+      translateX(-50%) when manually
+      centering them so the actual object
+      is centered.
+    */
+
+    const rotation =
+      s.rotation !== null
+        ? ` rotate(${s.rotation}deg)`
+        : "";
+
     el.style.transform =
-      `translateX(-50%)${s.rotation ? ` rotate(${s.rotation}deg)` : ""}`;
+      `translateX(-50%)${rotation}`;
 
   }
+
+  refreshControls();
+
+}
+
+
+/* =========================================================
+   MOVE / NUDGE
+========================================================= */
+
+function nudgeSelected(
+  horizontal,
+  vertical
+){
+
+  const key =
+    selectedKey;
+
+  const el =
+    elementFor(key);
+
+  const s =
+    getState(key);
+
+  if(!el){
+    return;
+  }
+
+
+  /* 1mm movement */
+
+  let x =
+    s.x !== null
+      ? s.x
+      : parseFloat(
+          getComputedStyle(el).left
+        ) /
+        document.getElementById(
+          "certificate"
+        ).clientWidth *
+        100;
+
+
+  let y =
+    s.y !== null
+      ? s.y
+      : parseFloat(
+          getComputedStyle(el).top
+        ) / 3.7795;
+
+
+  /*
+    Horizontal movement:
+    297mm wide certificate.
+  */
+
+  const oneMMPercent =
+    (1 / 297) * 100;
+
+
+  x +=
+    horizontal *
+    oneMMPercent;
+
+  y +=
+    vertical;
+
+
+  s.x =
+    x;
+
+  s.y =
+    y;
+
+  el.style.left =
+    x + "%";
+
+  el.style.top =
+    y + "mm";
 
   refreshControls();
 
@@ -1980,9 +2645,16 @@ function centerSelected(){
 
 function resetSelected(){
 
-  const key = selectedKey;
+  const key =
+    selectedKey;
 
-  const el = elementFor(key);
+  const el =
+    elementFor(key);
+
+  if(!el){
+    return;
+  }
+
 
   if(
     ELEMENTS[key].text &&
@@ -1994,9 +2666,12 @@ function resetSelected(){
 
   }
 
+
   delete designState[key];
 
-  applyElementState(key);
+  el.removeAttribute(
+    "style"
+  );
 
   refreshControls();
 
@@ -2021,11 +2696,16 @@ function resetDesign(){
 
   designState = {};
 
+
   Object.keys(ELEMENTS)
     .forEach(key => {
 
       const el =
         elementFor(key);
+
+      if(!el){
+        return;
+      }
 
       if(
         ELEMENTS[key].text &&
@@ -2037,24 +2717,86 @@ function resetDesign(){
 
       }
 
-      el.removeAttribute("style");
+      el.removeAttribute(
+        "style"
+      );
 
     });
 
 
-  /* restore QR */
+  /* Restore input values */
+
+  document.getElementById(
+    "academyInput"
+  ).value =
+    "Tech Resonate Academy";
+
+  document.getElementById(
+    "taglineInput"
+  ).value =
+    "INNOVATION THAT RESONATES";
+
+  document.getElementById(
+    "nameInput"
+  ).value =
+    "LOVELYN JOSEPH";
+
+  document.getElementById(
+    "programmeInput"
+  ).value =
+    "Diploma in Data Processing";
+
+  document.getElementById(
+    "completionInput"
+  ).value =
+    "for successfully completing the prescribed training and practical requirements of the programme";
+
+  document.getElementById(
+    "awardDay"
+  ).value =
+    "Monday";
+
+  document.getElementById(
+    "awardDate"
+  ).value =
+    "27";
+
+  document.getElementById(
+    "awardYear"
+  ).value =
+    "2026";
+
+  document.getElementById(
+    "qrUrl"
+  ).value =
+    "https://techresonate.com/verify";
+
+  document.getElementById(
+    "signatureName"
+  ).value =
+    "Authorized Signatory";
+
+  document.getElementById(
+    "signatureTitle"
+  ).value =
+    "Tech Resonate Academy";
+
 
   generateQR();
 
   updateCertificateText();
 
-  selectElement("heading");
+  updateAwardDate();
+
+  selectElement(
+    "heading"
+  );
 
 }
 
 
 /* =========================================================
-   INPUT HELPERS
+   INPUT HELPER
 ========================================================= */
 
 function bindInput(
@@ -2080,7 +2822,9 @@ bindInput(
   "controlText",
   function(){
 
-    setText(this.value);
+    setText(
+      this.value
+    );
 
   }
 );
@@ -2094,7 +2838,9 @@ bindInput(
   "controlColor",
   function(){
 
-    setColor(this.value);
+    setColor(
+      this.value
+    );
 
   }
 );
@@ -2105,7 +2851,9 @@ bindInput(
   function(){
 
     const hex =
-      normalizeHex(this.value);
+      normalizeHex(
+        this.value
+      );
 
     if(hex){
 
@@ -2126,20 +2874,31 @@ bindInput(
   function(){
 
     const value =
-      parseFloat(this.value);
+      parseFloat(
+        this.value
+      );
 
     if(isNaN(value)){
       return;
     }
 
+    const key =
+      selectedKey;
+
+    if(
+      !ELEMENTS[key].text
+    ){
+      return;
+    }
+
     const s =
-      getState(selectedKey);
+      getState(key);
 
-    s.fontSize = value;
+    s.fontSize =
+      value;
 
-    elementFor(
-      selectedKey
-    ).style.fontSize =
+    elementFor(key)
+      .style.fontSize =
       value + "mm";
 
   }
@@ -2151,20 +2910,30 @@ bindInput(
 ========================================================= */
 
 document
-  .getElementById("fontWeight")
+  .getElementById(
+    "fontWeight"
+  )
   .addEventListener(
     "change",
     function(){
 
+      const key =
+        selectedKey;
+
+      if(
+        !ELEMENTS[key].text
+      ){
+        return;
+      }
+
       const s =
-        getState(selectedKey);
+        getState(key);
 
       s.fontWeight =
         this.value;
 
-      elementFor(
-        selectedKey
-      ).style.fontWeight =
+      elementFor(key)
+        .style.fontWeight =
         this.value;
 
     }
@@ -2180,7 +2949,9 @@ bindInput(
   function(){
 
     const value =
-      parseFloat(this.value);
+      parseFloat(
+        this.value
+      );
 
     if(isNaN(value)){
       return;
@@ -2189,12 +2960,12 @@ bindInput(
     const s =
       getState(selectedKey);
 
-    s.x = value;
+    s.x =
+      value;
 
-    const el =
-      elementFor(selectedKey);
-
-    el.style.left =
+    elementFor(
+      selectedKey
+    ).style.left =
       value + "%";
 
   }
@@ -2210,7 +2981,9 @@ bindInput(
   function(){
 
     const value =
-      parseFloat(this.value);
+      parseFloat(
+        this.value
+      );
 
     if(isNaN(value)){
       return;
@@ -2219,7 +2992,8 @@ bindInput(
     const s =
       getState(selectedKey);
 
-    s.y = value;
+    s.y =
+      value;
 
     elementFor(
       selectedKey
@@ -2239,7 +3013,9 @@ bindInput(
   function(){
 
     const value =
-      parseFloat(this.value);
+      parseFloat(
+        this.value
+      );
 
     if(isNaN(value)){
       return;
@@ -2248,7 +3024,8 @@ bindInput(
     const s =
       getState(selectedKey);
 
-    s.width = value;
+    s.width =
+      value;
 
     elementFor(
       selectedKey
@@ -2264,20 +3041,30 @@ bindInput(
 ========================================================= */
 
 document
-  .getElementById("textAlign")
+  .getElementById(
+    "textAlign"
+  )
   .addEventListener(
     "change",
     function(){
 
+      const key =
+        selectedKey;
+
+      if(
+        !ELEMENTS[key].text
+      ){
+        return;
+      }
+
       const s =
-        getState(selectedKey);
+        getState(key);
 
       s.align =
         this.value;
 
-      elementFor(
-        selectedKey
-      ).style.textAlign =
+      elementFor(key)
+        .style.textAlign =
         this.value;
 
     }
@@ -2293,7 +3080,9 @@ bindInput(
   function(){
 
     const value =
-      parseFloat(this.value);
+      parseFloat(
+        this.value
+      );
 
     if(isNaN(value)){
       return;
@@ -2323,7 +3112,9 @@ bindInput(
   function(){
 
     const value =
-      parseFloat(this.value);
+      parseFloat(
+        this.value
+      );
 
     if(isNaN(value)){
       return;
@@ -2335,27 +3126,9 @@ bindInput(
     s.rotation =
       value;
 
-    const el =
-      elementFor(selectedKey);
-
-    const centered =
-      [
-        "academy",
-        "tagline",
-        "heading",
-        "presented",
-        "studentName",
-        "completion",
-        "programme",
-        "awardLabel",
-        "awardDate"
-      ].includes(selectedKey);
-
-    el.style.transform =
-      (centered
-        ? "translateX(-50%)"
-        : "") +
-      ` rotate(${value}deg)`;
+    applyTransform(
+      selectedKey
+    );
 
   }
 );
@@ -2366,7 +3139,9 @@ bindInput(
 ========================================================= */
 
 document
-  .getElementById("elementSelect")
+  .getElementById(
+    "elementSelect"
+  )
   .addEventListener(
     "change",
     function(){
@@ -2392,10 +3167,9 @@ bindInput(
     ).textContent =
       this.value;
 
-    const s =
-      getState("academy");
-
-    s.text =
+    getState(
+      "academy"
+    ).text =
       this.value;
 
   }
@@ -2411,7 +3185,9 @@ bindInput(
     ).textContent =
       this.value;
 
-    getState("tagline").text =
+    getState(
+      "tagline"
+    ).text =
       this.value;
 
   }
@@ -2427,7 +3203,9 @@ bindInput(
     ).textContent =
       this.value;
 
-    getState("studentName").text =
+    getState(
+      "studentName"
+    ).text =
       this.value;
 
     fitStudentName();
@@ -2445,7 +3223,9 @@ bindInput(
     ).textContent =
       this.value;
 
-    getState("programme").text =
+    getState(
+      "programme"
+    ).text =
       this.value;
 
   }
@@ -2461,7 +3241,9 @@ bindInput(
     ).textContent =
       this.value;
 
-    getState("completion").text =
+    getState(
+      "completion"
+    ).text =
       this.value;
 
   }
@@ -2489,17 +3271,21 @@ function updateAwardDate(){
       "awardYear"
     ).value.trim();
 
+
   const result =
     [day,date,year]
       .filter(Boolean)
       .join(", ");
+
 
   document.getElementById(
     "awardDateDisplay"
   ).textContent =
     result;
 
-  getState("awardDate").text =
+  getState(
+    "awardDate"
+  ).text =
     result;
 
 }
@@ -2534,6 +3320,11 @@ bindInput(
     ).textContent =
       this.value;
 
+    getState(
+      "signatureName"
+    ).text =
+      this.value;
+
   }
 );
 
@@ -2545,6 +3336,11 @@ bindInput(
     document.getElementById(
       "signatureTitleDisplay"
     ).textContent =
+      this.value;
+
+    getState(
+      "signatureTitle"
+    ).text =
       this.value;
 
   }
@@ -2583,7 +3379,9 @@ function generateQR(){
 
       if(error){
 
-        console.error(error);
+        console.error(
+          error
+        );
 
       }
 
@@ -2610,14 +3408,17 @@ function fitStudentName(){
 
   let size =
     parseFloat(
-      getComputedStyle(el).fontSize
+      getComputedStyle(el)
+        .fontSize
     );
 
   const maxWidth =
     120 * 3.7795;
 
+
   while(
-    el.scrollWidth > maxWidth &&
+    el.scrollWidth >
+      maxWidth &&
     size > 5
   ){
 
@@ -2627,6 +3428,64 @@ function fitStudentName(){
       size + "px";
 
   }
+
+}
+
+
+/* =========================================================
+   UPDATE CERTIFICATE TEXT
+========================================================= */
+
+function updateCertificateText(){
+
+  document.getElementById(
+    "academy"
+  ).textContent =
+    document.getElementById(
+      "academyInput"
+    ).value;
+
+  document.getElementById(
+    "tagline"
+  ).textContent =
+    document.getElementById(
+      "taglineInput"
+    ).value;
+
+  document.getElementById(
+    "studentName"
+  ).textContent =
+    document.getElementById(
+      "nameInput"
+    ).value;
+
+  document.getElementById(
+    "programme"
+  ).textContent =
+    document.getElementById(
+      "programmeInput"
+    ).value;
+
+  document.getElementById(
+    "completion"
+  ).textContent =
+    document.getElementById(
+      "completionInput"
+    ).value;
+
+  document.getElementById(
+    "signatureNameDisplay"
+  ).textContent =
+    document.getElementById(
+      "signatureName"
+    ).value;
+
+  document.getElementById(
+    "signatureTitleDisplay"
+  ).textContent =
+    document.getElementById(
+      "signatureTitle"
+    ).value;
 
 }
 
@@ -2694,14 +3553,21 @@ function saveDesign(){
     signatureTitle:
       document.getElementById(
         "signatureTitle"
-      ).value
+      ).value,
+
+    qrLabel:
+      document.getElementById(
+        "qrLabel"
+      ).textContent
 
   };
+
 
   localStorage.setItem(
     "techResonateCertificate",
     JSON.stringify(data)
   );
+
 
   alert(
     "Certificate design saved."
@@ -2731,6 +3597,7 @@ function loadDesign(){
 
   }
 
+
   try{
 
     const data =
@@ -2740,7 +3607,9 @@ function loadDesign(){
       data.designState || {};
 
 
-    if(data.academy !== undefined){
+    if(
+      data.academy !== undefined
+    ){
 
       document.getElementById(
         "academyInput"
@@ -2755,7 +3624,9 @@ function loadDesign(){
     }
 
 
-    if(data.tagline !== undefined){
+    if(
+      data.tagline !== undefined
+    ){
 
       document.getElementById(
         "taglineInput"
@@ -2770,7 +3641,9 @@ function loadDesign(){
     }
 
 
-    if(data.name !== undefined){
+    if(
+      data.name !== undefined
+    ){
 
       document.getElementById(
         "nameInput"
@@ -2785,7 +3658,9 @@ function loadDesign(){
     }
 
 
-    if(data.programme !== undefined){
+    if(
+      data.programme !== undefined
+    ){
 
       document.getElementById(
         "programmeInput"
@@ -2800,7 +3675,9 @@ function loadDesign(){
     }
 
 
-    if(data.completion !== undefined){
+    if(
+      data.completion !== undefined
+    ){
 
       document.getElementById(
         "completionInput"
@@ -2815,7 +3692,9 @@ function loadDesign(){
     }
 
 
-    if(data.awardDay !== undefined){
+    if(
+      data.awardDay !== undefined
+    ){
 
       document.getElementById(
         "awardDay"
@@ -2825,7 +3704,9 @@ function loadDesign(){
     }
 
 
-    if(data.awardDate !== undefined){
+    if(
+      data.awardDate !== undefined
+    ){
 
       document.getElementById(
         "awardDate"
@@ -2835,7 +3716,9 @@ function loadDesign(){
     }
 
 
-    if(data.awardYear !== undefined){
+    if(
+      data.awardYear !== undefined
+    ){
 
       document.getElementById(
         "awardYear"
@@ -2845,7 +3728,9 @@ function loadDesign(){
     }
 
 
-    if(data.qrUrl !== undefined){
+    if(
+      data.qrUrl !== undefined
+    ){
 
       document.getElementById(
         "qrUrl"
@@ -2855,7 +3740,9 @@ function loadDesign(){
     }
 
 
-    if(data.signatureName !== undefined){
+    if(
+      data.signatureName !== undefined
+    ){
 
       document.getElementById(
         "signatureName"
@@ -2870,7 +3757,9 @@ function loadDesign(){
     }
 
 
-    if(data.signatureTitle !== undefined){
+    if(
+      data.signatureTitle !== undefined
+    ){
 
       document.getElementById(
         "signatureTitle"
@@ -2885,10 +3774,24 @@ function loadDesign(){
     }
 
 
+    if(
+      data.qrLabel !== undefined
+    ){
+
+      document.getElementById(
+        "qrLabel"
+      ).textContent =
+        data.qrLabel;
+
+    }
+
+
     Object.keys(ELEMENTS)
       .forEach(key => {
 
-        applyElementState(key);
+        applyElementState(
+          key
+        );
 
       });
 
@@ -2901,13 +3804,16 @@ function loadDesign(){
 
     refreshControls();
 
+
     alert(
       "Certificate design loaded."
     );
 
   }catch(error){
 
-    console.error(error);
+    console.error(
+      error
+    );
 
     alert(
       "Unable to load saved certificate."
@@ -2923,7 +3829,9 @@ function loadDesign(){
 ========================================================= */
 
 document
-  .querySelectorAll(".editable")
+  .querySelectorAll(
+    ".editable"
+  )
   .forEach(el => {
 
     el.addEventListener(
@@ -2946,63 +3854,123 @@ document
    DRAGGING
 ========================================================= */
 
-let dragging = false;
+let dragging =
+  false;
 
-let dragKey = null;
+let dragKey =
+  null;
 
-let startX = 0;
+let startMouseX =
+  0;
 
-let startY = 0;
+let startMouseY =
+  0;
 
-let originalLeft = 0;
+let originalX =
+  0;
 
-let originalTop = 0;
+let originalY =
+  0;
 
 
 document
-  .querySelectorAll(".editable")
+  .querySelectorAll(
+    ".editable"
+  )
   .forEach(el => {
 
     el.addEventListener(
       "mousedown",
       function(event){
 
-        if(event.button !== 0){
+        if(
+          event.button !== 0
+        ){
           return;
         }
+
 
         const key =
           this.dataset.key;
 
-        selectElement(key);
+        selectElement(
+          key
+        );
 
-        dragging = true;
 
-        dragKey = key;
-
-        startX =
-          event.clientX;
-
-        startY =
-          event.clientY;
-
-        const rect =
-          this.getBoundingClientRect();
+        const cert =
+          document.getElementById(
+            "certificate"
+          );
 
         const certRect =
-          document
-            .getElementById(
-              "certificate"
-            )
-            .getBoundingClientRect();
+          cert.getBoundingClientRect();
 
-        originalLeft =
-          rect.left -
-          certRect.left;
 
-        originalTop =
-          rect.top -
-          certRect.top;
+        const s =
+          getState(key);
+
+
+        /*
+          Use saved CSS left/top when
+          available. This makes dragging
+          accurate even for centered elements.
+        */
+
+        if(
+          s.x !== null
+        ){
+
+          originalX =
+            s.x;
+
+        }else{
+
+          originalX =
+            parseFloat(
+              getComputedStyle(
+                this
+              ).left
+            ) /
+            certRect.width *
+            100;
+
+        }
+
+
+        if(
+          s.y !== null
+        ){
+
+          originalY =
+            s.y;
+
+        }else{
+
+          originalY =
+            parseFloat(
+              getComputedStyle(
+                this
+              ).top
+            ) /
+            certRect.height *
+            210;
+
+        }
+
+
+        startMouseX =
+          event.clientX;
+
+        startMouseY =
+          event.clientY;
+
+        dragging =
+          true;
+
+        dragKey =
+          key;
+
 
         event.preventDefault();
 
@@ -3025,6 +3993,7 @@ document.addEventListener(
 
     }
 
+
     const cert =
       document.getElementById(
         "certificate"
@@ -3033,51 +4002,66 @@ document.addEventListener(
     const rect =
       cert.getBoundingClientRect();
 
-    const scale =
-      rect.width /
-      (297 * 3.779527559);
 
     const dx =
-      (event.clientX - startX) /
-      scale;
+      event.clientX -
+      startMouseX;
 
     const dy =
-      (event.clientY - startY) /
-      scale;
+      event.clientY -
+      startMouseY;
 
-    const newLeft =
-      originalLeft + dx;
 
-    const newTop =
-      originalTop + dy;
-
-    const xPercent =
+    const dxPercent =
       (
-        newLeft /
-        (297 * 3.779527559)
+        dx /
+        rect.width
       ) * 100;
 
-    const yMm =
-      newTop /
-      3.779527559;
+
+    const dyMm =
+      (
+        dy /
+        rect.height
+      ) * 210;
+
+
+    let newX =
+      originalX +
+      dxPercent;
+
+    let newY =
+      originalY +
+      dyMm;
+
 
     const s =
-      getState(dragKey);
+      getState(
+        dragKey
+      );
+
 
     s.x =
-      xPercent;
+      newX;
 
     s.y =
-      yMm;
+      newY;
+
 
     const el =
-      elementFor(dragKey);
+      elementFor(
+        dragKey
+      );
+
 
     el.style.left =
-      xPercent + "%";
+      newX + "%";
 
     el.style.top =
-      yMm + "mm";
+      newY + "mm";
+
+
+    refreshControls();
 
   }
 );
@@ -3087,9 +4071,11 @@ document.addEventListener(
   "mouseup",
   function(){
 
-    dragging = false;
+    dragging =
+      false;
 
-    dragKey = null;
+    dragKey =
+      null;
 
   }
 );
@@ -3104,14 +4090,18 @@ document.addEventListener(
   function(event){
 
     if(
-      event.target.tagName === "INPUT" ||
-      event.target.tagName === "TEXTAREA" ||
-      event.target.tagName === "SELECT"
+      event.target.tagName ===
+        "INPUT" ||
+      event.target.tagName ===
+        "TEXTAREA" ||
+      event.target.tagName ===
+        "SELECT"
     ){
 
       return;
 
     }
+
 
     const key =
       selectedKey;
@@ -3123,44 +4113,69 @@ document.addEventListener(
       return;
     }
 
+
     const s =
       getState(key);
+
 
     let x =
       s.x !== null
         ? s.x
         : parseFloat(
-            getComputedStyle(el).left
+            getComputedStyle(
+              el
+            ).left
           ) /
-          document
-            .getElementById("certificate")
-            .clientWidth *
+          document.getElementById(
+            "certificate"
+          ).clientWidth *
           100;
+
 
     let y =
       s.y !== null
         ? s.y
         : parseFloat(
-            getComputedStyle(el).top
+            getComputedStyle(
+              el
+            ).top
           ) /
           3.7795;
 
 
-    if(event.key === "ArrowLeft"){
+    const oneMMPercent =
+      (1 / 297) * 100;
 
-      x -= .2;
 
-    }else if(event.key === "ArrowRight"){
+    if(
+      event.key ===
+      "ArrowLeft"
+    ){
 
-      x += .2;
+      x -=
+        oneMMPercent;
 
-    }else if(event.key === "ArrowUp"){
+    }else if(
+      event.key ===
+      "ArrowRight"
+    ){
 
-      y -= .5;
+      x +=
+        oneMMPercent;
 
-    }else if(event.key === "ArrowDown"){
+    }else if(
+      event.key ===
+      "ArrowUp"
+    ){
 
-      y += .5;
+      y -= 1;
+
+    }else if(
+      event.key ===
+      "ArrowDown"
+    ){
+
+      y += 1;
 
     }else{
 
@@ -3168,17 +4183,23 @@ document.addEventListener(
 
     }
 
+
     event.preventDefault();
 
-    s.x = x;
 
-    s.y = y;
+    s.x =
+      x;
+
+    s.y =
+      y;
+
 
     el.style.left =
       x + "%";
 
     el.style.top =
       y + "mm";
+
 
     refreshControls();
 
@@ -3191,6 +4212,8 @@ document.addEventListener(
 ========================================================= */
 
 function initialize(){
+
+  updateCertificateText();
 
   updateAwardDate();
 
