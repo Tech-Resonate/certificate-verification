@@ -1,0 +1,593 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<meta name="robots" content="noindex,nofollow,noarchive">
+
+<title>Certificate ID Generator | Tech Resonate</title>
+
+<style>
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: Arial, Helvetica, sans-serif;
+    background: #0B1A2E;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+
+  .container {
+    width: 100%;
+    max-width: 520px;
+  }
+
+  .card {
+    background: #0F1F35;
+    border: 1px solid rgba(96, 165, 250, 0.25);
+    border-radius: 18px;
+    padding: 32px;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.25);
+  }
+
+  .logo {
+    text-align: center;
+    margin-bottom: 26px;
+  }
+
+  .logo-mark {
+    width: 58px;
+    height: 58px;
+    margin: 0 auto 14px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #3B82F6, #60A5FA);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    font-weight: 800;
+    color: #ffffff;
+  }
+
+  .logo h1 {
+    margin: 0;
+    font-size: 24px;
+    font-weight: 700;
+  }
+
+  .logo p {
+    margin: 8px 0 0;
+    color: #BFD7F2;
+    font-size: 14px;
+  }
+
+  .label {
+    display: block;
+    margin-bottom: 9px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #DCEEFF;
+  }
+
+  .id-box {
+    width: 100%;
+    min-height: 64px;
+    border-radius: 12px;
+    border: 1px solid rgba(96, 165, 250, 0.35);
+    background: #0B1A2E;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 15px;
+    margin-bottom: 16px;
+    overflow: hidden;
+  }
+
+  #certificateId {
+    font-size: 20px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    color: #60A5FA;
+    text-align: center;
+    word-break: break-all;
+  }
+
+  .placeholder {
+    color: #7890AA !important;
+    font-size: 15px !important;
+    letter-spacing: 0 !important;
+    font-weight: 400 !important;
+  }
+
+  .status {
+    min-height: 48px;
+    border-radius: 10px;
+    padding: 13px 15px;
+    margin-bottom: 18px;
+    font-size: 14px;
+    line-height: 1.5;
+    display: none;
+  }
+
+  .status.show {
+    display: block;
+  }
+
+  .status.loading {
+    background: rgba(96, 165, 250, 0.10);
+    border: 1px solid rgba(96, 165, 250, 0.25);
+    color: #BFD7F2;
+  }
+
+  .status.success {
+    background: rgba(34, 197, 94, 0.10);
+    border: 1px solid rgba(34, 197, 94, 0.30);
+    color: #86EFAC;
+  }
+
+  .status.error {
+    background: rgba(239, 68, 68, 0.10);
+    border: 1px solid rgba(239, 68, 68, 0.30);
+    color: #FCA5A5;
+  }
+
+  .buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  button {
+    border: 0;
+    border-radius: 10px;
+    min-height: 48px;
+    padding: 12px 16px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.2s ease;
+  }
+
+  .generate-btn {
+    background: #3B82F6;
+    color: #ffffff;
+  }
+
+  .generate-btn:hover {
+    background: #60A5FA;
+  }
+
+  .copy-btn {
+    background: #DCEEFF;
+    color: #0B1A2E;
+  }
+
+  .copy-btn:hover:not(:disabled) {
+    background: #ffffff;
+  }
+
+  button:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+  }
+
+  .info {
+    margin-top: 22px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(96, 165, 250, 0.15);
+    color: #9FB6CF;
+    font-size: 13px;
+    line-height: 1.6;
+    text-align: center;
+  }
+
+  .footer {
+    text-align: center;
+    margin-top: 18px;
+    color: #7890AA;
+    font-size: 12px;
+  }
+
+  @media (max-width: 480px) {
+    .card {
+      padding: 24px 20px;
+    }
+
+    .buttons {
+      grid-template-columns: 1fr;
+    }
+
+    #certificateId {
+      font-size: 17px;
+    }
+  }
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+  <div class="card">
+
+    <div class="logo">
+      <div class="logo-mark">TR</div>
+
+      <h1>Certificate ID Generator</h1>
+
+      <p>Generate and verify a unique certificate ID</p>
+    </div>
+
+    <label class="label">Certificate ID</label>
+
+    <div class="id-box">
+      <div id="certificateId" class="placeholder">
+        Click "Generate ID" to create an ID
+      </div>
+    </div>
+
+    <div id="status" class="status"></div>
+
+    <div class="buttons">
+
+      <button
+        type="button"
+        id="generateBtn"
+        class="generate-btn"
+        onclick="generateCertificateId()">
+        Generate ID
+      </button>
+
+      <button
+        type="button"
+        id="copyBtn"
+        class="copy-btn"
+        onclick="copyCertificateId()"
+        disabled>
+        Copy ID
+      </button>
+
+    </div>
+
+    <div class="info">
+      The generated ID is checked against the Tech Resonate
+      certificate database before it is marked as available.
+      Copy the available ID and manually paste it into your
+      Certificate Builder.
+    </div>
+
+  </div>
+
+  <div class="footer">
+    Tech Resonate — Innovation That Resonates
+  </div>
+
+</div>
+
+
+<script>
+
+/* =========================================================
+   GOOGLE APPS SCRIPT WEB APP
+   ========================================================= */
+
+const API_URL =
+  "https://script.google.com/macros/s/AKfycbwYVlT9WS5ov6i0vZc4wienOAwau2ckKVSKe4uMQwM-QCILz3zSxLt4CjWy82iDRy3F7w/exec";
+
+
+/* =========================================================
+   ID SETTINGS
+   ========================================================= */
+
+const ID_PREFIX = "TR-2026-";
+
+const ALPHABET =
+  "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+
+const RANDOM_LENGTH = 10;
+
+
+/* =========================================================
+   ELEMENTS
+   ========================================================= */
+
+const certificateIdElement =
+  document.getElementById("certificateId");
+
+const statusElement =
+  document.getElementById("status");
+
+const generateButton =
+  document.getElementById("generateBtn");
+
+const copyButton =
+  document.getElementById("copyBtn");
+
+
+/* =========================================================
+   GENERATE SECURE RANDOM CHARACTERS
+   Uses crypto.getRandomValues()
+   NOT Math.random()
+   ========================================================= */
+
+function generateRandomCharacters(length) {
+
+  let result = "";
+
+  /*
+    Alphabet length = 36.
+
+    36 × 7 = 252
+
+    Values 252-255 are rejected so every
+    alphabet character has an equal chance.
+  */
+
+  const maxUnbiasedValue = 252;
+
+  while (result.length < length) {
+
+    const randomBytes =
+      new Uint8Array(length * 2);
+
+    crypto.getRandomValues(randomBytes);
+
+    for (let i = 0; i < randomBytes.length; i++) {
+
+      const value = randomBytes[i];
+
+      if (value >= maxUnbiasedValue) {
+        continue;
+      }
+
+      result +=
+        ALPHABET[value % ALPHABET.length];
+
+      if (result.length === length) {
+        break;
+      }
+    }
+  }
+
+  return result;
+}
+
+
+/* =========================================================
+   CREATE CERTIFICATE ID
+   ========================================================= */
+
+function createCertificateId() {
+
+  const randomPart =
+    generateRandomCharacters(RANDOM_LENGTH);
+
+  return ID_PREFIX + randomPart;
+}
+
+
+/* =========================================================
+   SHOW STATUS
+   ========================================================= */
+
+function showStatus(message, type) {
+
+  statusElement.textContent = message;
+
+  statusElement.className =
+    "status show " + type;
+}
+
+
+/* =========================================================
+   HIDE STATUS
+   ========================================================= */
+
+function hideStatus() {
+
+  statusElement.textContent = "";
+
+  statusElement.className = "status";
+}
+
+
+/* =========================================================
+   GENERATE + CHECK ID
+   ========================================================= */
+
+async function generateCertificateId() {
+
+  generateButton.disabled = true;
+
+  copyButton.disabled = true;
+
+  hideStatus();
+
+  certificateIdElement.textContent =
+    "Generating...";
+
+  certificateIdElement.classList.add("placeholder");
+
+  const certificateId =
+    createCertificateId();
+
+  certificateIdElement.textContent =
+    certificateId;
+
+  certificateIdElement.classList.remove(
+    "placeholder"
+  );
+
+  showStatus(
+    "Checking certificate database...",
+    "loading"
+  );
+
+  try {
+
+    const url =
+      API_URL +
+      "?action=check&id=" +
+      encodeURIComponent(certificateId);
+
+    const response =
+      await fetch(url, {
+        method: "GET",
+        cache: "no-store"
+      });
+
+    if (!response.ok) {
+
+      throw new Error(
+        "Unable to connect to the certificate database."
+      );
+    }
+
+    const data =
+      await response.json();
+
+    if (
+      data.success === true &&
+      data.available === true
+    ) {
+
+      showStatus(
+        "✓ Certificate ID is available and ready to use.",
+        "success"
+      );
+
+      copyButton.disabled = false;
+
+    } else if (
+      data.success === true &&
+      data.available === false
+    ) {
+
+      showStatus(
+        "This ID already exists. Generating another ID...",
+        "error"
+      );
+
+      /*
+        Automatically try another ID if a collision occurs.
+      */
+
+      generateButton.disabled = false;
+
+      setTimeout(() => {
+        generateCertificateId();
+      }, 700);
+
+      return;
+
+    } else {
+
+      throw new Error(
+        data.message ||
+        "The certificate ID could not be verified."
+      );
+    }
+
+  } catch (error) {
+
+    console.error(error);
+
+    showStatus(
+      "Unable to check the certificate database. Please try again.",
+      "error"
+    );
+
+    copyButton.disabled = true;
+  }
+
+  generateButton.disabled = false;
+}
+
+
+/* =========================================================
+   COPY CERTIFICATE ID
+   ========================================================= */
+
+async function copyCertificateId() {
+
+  const certificateId =
+    certificateIdElement.textContent.trim();
+
+  if (
+    !certificateId ||
+    certificateId === "Generating..." ||
+    certificateIdElement.classList.contains("placeholder")
+  ) {
+    return;
+  }
+
+  try {
+
+    await navigator.clipboard.writeText(
+      certificateId
+    );
+
+    showStatus(
+      "✓ Certificate ID copied. You can now paste it into the Certificate Builder.",
+      "success"
+    );
+
+    const originalText =
+      copyButton.textContent;
+
+    copyButton.textContent =
+      "Copied ✓";
+
+    setTimeout(() => {
+
+      copyButton.textContent =
+        originalText;
+
+    }, 1800);
+
+  } catch (error) {
+
+    /*
+      Fallback for browsers where clipboard API
+      is unavailable.
+    */
+
+    const textarea =
+      document.createElement("textarea");
+
+    textarea.value =
+      certificateId;
+
+    textarea.style.position =
+      "fixed";
+
+    textarea.style.left =
+      "-9999px";
+
+    document.body.appendChild(textarea);
+
+    textarea.select();
+
+    document.execCommand("copy");
+
+    textarea.remove();
+
+    showStatus(
+      "✓ Certificate ID copied. You can now paste it into the Certificate Builder.",
+      "success"
+    );
+  }
+}
+
+</script>
+
+</body>
+</html>
