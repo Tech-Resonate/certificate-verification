@@ -5,1119 +5,2290 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="robots" content="noindex,nofollow,noarchive">
 <title>Tech Resonate Certificate Builder</title>
+
 <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.4/build/qrcode.min.js"></script>
 
 <style>
-:root{--n:#0B1A2E;--n2:#0F1F35;--b:#3B82F6;--lb:#60A5FA;--p:#DCEEFF;--w:#FFFFFF;--side:69mm}
+:root{
+  --n:#0B1A2E;
+  --n2:#0F1F35;
+  --b:#3B82F6;
+  --lb:#60A5FA;
+  --p:#DCEEFF;
+  --w:#FFFFFF;
+  --side:69mm
+}
+
 *{box-sizing:border-box}
-html,body{margin:0;min-height:100%;font-family:Arial,Helvetica,sans-serif;-webkit-print-color-adjust:exact;print-color-adjust:exact}
-body{background:#e9eef5;color:var(--n)}
+
+html,body{
+  margin:0;
+  min-height:100%;
+  font-family:Arial,Helvetica,sans-serif;
+  -webkit-print-color-adjust:exact;
+  print-color-adjust:exact
+}
+
+body{
+  background:#e9eef5;
+  color:var(--n)
+}
+
 button,input,select,textarea{font:inherit}
 button{cursor:pointer}
 
-/* =========================
-   PRIVATE BUILDER UI ONLY
-   ========================= */
-.builder-shell{min-height:100vh;display:grid;grid-template-columns:360px minmax(0,1fr)}
-.editor-panel{position:sticky;top:0;height:100vh;overflow:auto;background:#fff;border-right:1px solid #d7e0eb;padding:18px;z-index:1000}
-.editor-head{padding-bottom:14px;border-bottom:1px solid #e6ebf2;margin-bottom:14px}
-.editor-head h2{margin:0;color:var(--n);font-size:20px;line-height:1.2}
-.editor-head p{margin:7px 0 0;color:#5d6b7d;font-size:12px;line-height:1.45}
-.private-badge{display:inline-flex;margin-top:10px;padding:5px 8px;border-radius:999px;background:#eef5ff;color:#245db7;font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase}
-.panel-section{border:1px solid #dfe6ef;border-radius:12px;margin:0 0 12px;overflow:hidden;background:#fff}
-.panel-section summary{list-style:none;padding:12px 13px;background:#f7f9fc;color:var(--n);font-size:13px;font-weight:800;cursor:pointer;border-bottom:1px solid transparent}
-.panel-section[open] summary{border-bottom-color:#e4e9f0}
-.panel-section summary::-webkit-details-marker{display:none}
-.section-body{padding:12px}
-.field{margin-bottom:10px}
-.field:last-child{margin-bottom:0}
-.field label{display:block;margin-bottom:5px;color:#455468;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.06em}
-.field input[type="text"],.field input[type="date"],.field input[type="number"],.field input[type="url"],.field input[type="color"],.field select,.field textarea{width:100%;border:1px solid #cdd6e2;border-radius:8px;background:#fff;color:#162538;padding:8px 10px;outline:none}
-.field input[type="text"],.field input[type="date"],.field input[type="number"],.field input[type="url"],.field select{height:36px;padding:0 10px}
-.field input[type="color"]{height:38px;padding:3px}
-.field textarea{min-height:82px;resize:vertical;line-height:1.4}
-.field input:focus,.field select:focus,.field textarea:focus{border-color:#3B82F6;box-shadow:0 0 0 3px rgba(59,130,246,.12)}
-.field-row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.check-row{display:flex;align-items:center;gap:8px;color:#455468;font-size:12px;margin:7px 0 8px}
-.check-row input{width:16px;height:16px}
-.help{margin-top:5px;color:#7a8798;font-size:10.5px;line-height:1.35}
-.element-select{width:100%;height:38px;border:1px solid #cdd6e2;border-radius:8px;background:#fff;padding:0 10px;color:#15253a;font-weight:700}
-.selected-element-title{margin:11px 0 8px;font-size:13px;font-weight:800;color:var(--b)}
-.nudge-wrap{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:8px}
-.nudge-wrap button,.center-row button,.segmented button,.action-grid button,.small-action{min-height:34px;border:1px solid #cbd5e1;border-radius:8px;background:#fff;color:#243447;font-weight:700}
-.nudge-wrap button:hover,.center-row button:hover,.segmented button:hover,.action-grid button:hover,.small-action:hover{border-color:#3B82F6;background:#f5f9ff}
-.nudge-wrap .empty{visibility:hidden}
-.center-row{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:10px}
-.increment-row{display:flex;align-items:center;gap:6px;margin:0 0 10px}
-.increment-row span{color:#66758a;font-size:11px;font-weight:800;margin-right:3px}
-.increment-row button{min-width:42px;height:30px;border:1px solid #cbd5e1;border-radius:7px;background:#fff;font-size:11px;font-weight:800;color:#334155}
-.increment-row button.active{background:var(--n);border-color:var(--n);color:#fff}
-.control-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.control-grid .field{margin:0}
-.control-grid input,.control-grid select{height:34px!important}
-.segment-label{display:block;margin:11px 0 5px;color:#455468;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.06em}
-.segmented{display:grid;grid-template-columns:repeat(4,1fr);gap:5px}
-.segmented.two{grid-template-columns:repeat(2,1fr)}
-.segmented button.active{background:var(--n);border-color:var(--n);color:#fff}
-.segmented button:disabled,.field select:disabled,.field input:disabled,.field textarea:disabled{opacity:.55;cursor:not-allowed}
-.element-reset{width:100%;margin-top:10px}
-.signature-preview{height:72px;border:1px dashed #bbc7d6;border-radius:10px;background:#f8fafc;display:grid;place-items:center;overflow:hidden;margin:8px 0 10px}
-.signature-preview img{max-width:95%;max-height:64px;object-fit:contain}
-.file-input{width:100%;font-size:11px}
-.action-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px}
-.action-grid button.primary{background:var(--b);border-color:var(--b);color:#fff}
-.action-grid button.danger{color:#a61b1b}
-.action-grid button.print{grid-column:1/-1;background:var(--n);border-color:var(--n);color:#fff}
-.editor-status{min-height:18px;margin-top:10px;font-size:11px;color:#58708d;line-height:1.4}
+/* =========================================================
+   PRIVATE BUILDER UI
+   ========================================================= */
 
-.preview-pane{min-width:0;min-height:100vh;padding:18px;overflow:auto}
-.preview-toolbar{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:12px;padding:10px 12px;background:#fff;border:1px solid #dfe6ef;border-radius:10px;box-shadow:0 4px 16px rgba(11,26,46,.05)}
-.preview-toolbar strong{font-size:13px}
-.zoom-control{display:flex;align-items:center;gap:7px;color:#5a687b;font-size:11px;font-weight:700}
-.zoom-control select{height:32px;border:1px solid #cbd5e1;border-radius:7px;background:#fff;padding:0 8px}
-.preview-scroll{min-width:100%;overflow:auto;padding:4px}
-.preview-stage{position:relative;transform-origin:top left;width:297mm;height:210mm}
-.stage-space{position:relative;margin:0 auto}
-
-/* =========================
-   MASTER CERTIFICATE DESIGN
-   Preserved from certificate.html/index.html
-   ========================= */
-.certificate{position:relative;width:297mm;height:210mm;background:var(--w);overflow:hidden;box-shadow:0 22px 60px rgba(11,26,46,.18)}
-.certificate:before{content:"";position:absolute;inset:5mm;border:.65mm solid var(--n);z-index:20;pointer-events:none}
-.main{position:absolute;inset:0 var(--side) 0 0;padding:15mm 16mm 13mm 19mm;display:flex;flex-direction:column;z-index:3}
-.main:before{content:"";position:absolute;inset:7mm 6mm 7mm 7mm;border:.25mm solid var(--lb);z-index:-1}
-.main:after{content:"";position:absolute;width:112mm;height:112mm;border:12mm solid var(--p);border-radius:50%;left:-67mm;top:-60mm;z-index:-2}
-.top-stripes{position:absolute;left:-10mm;top:2mm;width:84mm;height:12mm;transform:rotate(-8deg);background:linear-gradient(to bottom,var(--n) 0 52%,transparent 52% 68%,var(--b) 68% 88%,transparent 88%);z-index:1}
-.header{display:flex;justify-content:space-between;align-items:flex-start;gap:10mm;min-height:27mm}
-.logo{width:56mm;height:18mm;object-fit:contain;object-position:left center}
-.issuer{text-align:right;text-transform:uppercase;color:var(--b);font-weight:700;font-size:2.45mm;letter-spacing:.16em}
-.issuer > span{display:inline-block}.issuer strong{display:block;color:var(--n);font-size:3.15mm;letter-spacing:.08em;margin-top:1.4mm}
-.title{margin-top:5mm}
-.eyebrow{display:flex;align-items:center;gap:3mm;color:var(--b);font-size:2.5mm;font-weight:700;letter-spacing:.22em;text-transform:uppercase}
-.eyebrow:before{content:"";width:11mm;height:.65mm;background:var(--b)}
-h1{margin:2.2mm 0 0;font:700 13mm/.96 Georgia,"Times New Roman",serif;letter-spacing:.035em;color:var(--n)}
-h1 .heading-main{display:inline-block;color:inherit;font:inherit;letter-spacing:inherit;text-transform:none}
-h1 .of-completion{display:block;margin-top:2.6mm;color:var(--b);font:700 7.1mm/1 Arial,Helvetica,sans-serif;letter-spacing:.29em;text-transform:uppercase}
-.presented{margin-top:9mm;font:italic 3.7mm/1.3 Georgia,"Times New Roman",serif;color:var(--n2)}
-.name-line{position:relative;width:168mm;margin-top:2.2mm;padding-bottom:2.4mm}
-.name-underline{position:absolute;left:0;right:0;bottom:0;height:0;border-bottom:.7mm solid var(--b)}
-#studentName{display:inline-block;max-width:100%;white-space:nowrap;text-transform:uppercase;color:var(--n);font:700 10.7mm/1 Georgia,"Times New Roman",serif;letter-spacing:.035em}
-.copy{max-width:164mm;margin-top:4.5mm;color:var(--n2);font:3.6mm/1.55 Georgia,"Times New Roman",serif}
-.programme-description{display:inline-block;max-width:100%}
-.programme{display:block;margin-top:1.3mm;color:var(--b);font:700 6mm/1.2 Arial,Helvetica,sans-serif;letter-spacing:.02em}
-.bottom{margin-top:auto;padding:0 1mm 2.5mm 0;display:grid;grid-template-columns:1.15fr .9fr;gap:13mm;align-items:end}
-.details{display:grid;grid-template-columns:1fr 1fr;gap:4.3mm 8mm}
-.detail{padding-top:2.1mm;border-top:.25mm solid var(--p)}
-.label{display:block;margin-bottom:1.1mm;color:var(--b);font-size:2.1mm;font-weight:700;letter-spacing:.16em;text-transform:uppercase}
-.value{display:block;color:var(--n);font-size:3.2mm;font-weight:700;line-height:1.2;overflow-wrap:anywhere}
-.status{display:inline-flex;align-items:center;gap:1.5mm;text-transform:uppercase;letter-spacing:.08em}
-.status:before{content:"";width:2.1mm;height:2.1mm;background:var(--b);border-radius:50%;box-shadow:0 0 0 .8mm var(--p)}
-.signature{text-align:center;align-self:end}
-.sig-img-box{width:46mm;height:16mm;display:flex;align-items:flex-end;justify-content:center;overflow:hidden;margin:0 auto -1.4mm}
-.sig-img{width:45mm;height:19mm;object-fit:contain;object-position:center bottom;mix-blend-mode:multiply;filter:contrast(1.14) saturate(.7)}
-.sig-line{width:49mm;margin:auto;border-top:.45mm solid var(--n);padding-top:1.8mm}
-.sig-name{font:700 3.7mm/1.1 Georgia,"Times New Roman",serif}
-.sig-title{margin-top:.7mm;color:var(--b);font-size:2.2mm;font-weight:700;letter-spacing:.12em;text-transform:uppercase}
-.micro{position:absolute;left:20mm;bottom:8mm;color:var(--n2);font-size:1.75mm;letter-spacing:.1em;text-transform:uppercase;opacity:.7}
-.side{position:absolute;right:0;top:0;width:var(--side);height:100%;padding:13mm 9mm 10mm;display:flex;flex-direction:column;align-items:center;overflow:hidden;background:var(--n);color:var(--w);z-index:10}
-.side:before{content:"";position:absolute;width:76mm;height:92mm;left:-22mm;top:-22mm;background:var(--b);transform:rotate(24deg);z-index:-3}
-.side:after{content:"";position:absolute;width:85mm;height:85mm;border:10mm solid var(--lb);border-radius:50%;left:-18mm;bottom:-32mm;opacity:.2;z-index:-2}
-.geo{position:absolute;inset:0;z-index:-1;background:linear-gradient(45deg,transparent 0 44%,rgba(255,255,255,.12) 44% 45%,transparent 45% 100%)}
-.geo:before,.geo:after{content:"";position:absolute;border:.6mm solid rgba(255,255,255,.24);transform:rotate(45deg)}
-.geo:before{width:34mm;height:34mm;right:-23mm;top:33mm}
-.geo:after{width:21mm;height:21mm;left:-13mm;top:80mm}
-.kicker{font-size:2.15mm;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--p)}
-.verify-title{margin-top:1.5mm;text-align:center;font:700 5.3mm/1.08 Georgia,"Times New Roman",serif}
-.seal{position:relative;width:44mm;height:44mm;margin-top:8.5mm;display:grid;place-items:center}
-.seal-star{position:absolute;inset:0;background:var(--p);clip-path:polygon(50% 0)}
-.seal-core{position:relative;width:31mm;height:31mm;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;background:var(--n);border:.7mm solid var(--w);box-shadow:0 0 0 1.2mm var(--b)}
-.seal-label{color:var(--p);font-size:1.9mm;font-weight:700;letter-spacing:.17em;text-transform:uppercase}
-.seal-year{margin-top:.9mm;color:var(--w);font:700 7.3mm/1 Georgia,"Times New Roman",serif}
-.seal-rule{width:11mm;height:.45mm;margin-top:1mm;background:var(--lb)}
-.qr{width:35mm;height:35mm;margin-top:8.4mm;padding:2.3mm;background:var(--w);border:.55mm solid var(--p);box-shadow:0 1.5mm 4mm rgba(11,26,46,.25);display:grid;place-items:center}
-.qr canvas{width:100%!important;height:100%!important;display:block}
-.qr img{width:100%;height:100%;object-fit:contain;display:block}
-.scan{margin-top:4.1mm;font-size:2.75mm;font-weight:800;letter-spacing:.18em;text-transform:uppercase}
-.domain{margin-top:1.6mm;color:var(--p);font-size:2.3mm;text-align:center}
-.side-id{width:100%;margin-top:auto;padding-top:4mm;border-top:.25mm solid rgba(255,255,255,.28);text-align:center;color:var(--p);font-size:1.95mm;line-height:1.5;letter-spacing:.12em;text-transform:uppercase}
-.side-id > span{display:inline-block}.side-id strong{display:block;margin-top:.7mm;color:var(--w);font-size:2.35mm;letter-spacing:.08em}
-
-/* Editor-only target affordances do not change layout and never print. */
-@media screen{
-  .certificate [data-editor-id]{cursor:move}
-  .certificate [data-editor-id]:hover{outline:1px dotted rgba(59,130,246,.72);outline-offset:2px}
-  .certificate [data-editor-id].editor-selected{outline:2px dashed #f59e0b;outline-offset:2px}
+.builder-shell{
+  min-height:100vh;
+  display:grid;
+  grid-template-columns:360px minmax(0,1fr)
 }
 
-@page{size:A4 landscape;margin:0}
+.editor-panel{
+  position:sticky;
+  top:0;
+  height:100vh;
+  overflow:auto;
+  background:#fff;
+  border-right:1px solid #d7e0eb;
+  padding:18px;
+  z-index:1000
+}
+
+.editor-head{
+  padding-bottom:14px;
+  border-bottom:1px solid #e6ebf2;
+  margin-bottom:14px
+}
+
+.editor-head h2{
+  margin:0;
+  color:var(--n);
+  font-size:20px;
+  line-height:1.2
+}
+
+.editor-head p{
+  margin:7px 0 0;
+  color:#5d6b7d;
+  font-size:12px;
+  line-height:1.45
+}
+
+.private-badge{
+  display:inline-flex;
+  margin-top:10px;
+  padding:5px 8px;
+  border-radius:999px;
+  background:#eef5ff;
+  color:#245db7;
+  font-size:11px;
+  font-weight:800;
+  letter-spacing:.06em;
+  text-transform:uppercase
+}
+
+.panel-section{
+  border:1px solid #dfe6ef;
+  border-radius:12px;
+  margin:0 0 12px;
+  overflow:hidden;
+  background:#fff
+}
+
+.panel-section summary{
+  list-style:none;
+  padding:12px 13px;
+  background:#f7f9fc;
+  color:var(--n);
+  font-size:13px;
+  font-weight:800;
+  cursor:pointer;
+  border-bottom:1px solid transparent
+}
+
+.panel-section[open] summary{
+  border-bottom-color:#e4e9f0
+}
+
+.panel-section summary::-webkit-details-marker{
+  display:none
+}
+
+.section-body{
+  padding:12px
+}
+
+.field{
+  margin-bottom:10px
+}
+
+.field:last-child{
+  margin-bottom:0
+}
+
+.field label{
+  display:block;
+  margin-bottom:5px;
+  color:#455468;
+  font-size:11px;
+  font-weight:800;
+  text-transform:uppercase;
+  letter-spacing:.06em
+}
+
+.field input[type="text"],
+.field input[type="date"],
+.field input[type="number"],
+.field input[type="url"],
+.field input[type="color"],
+.field select,
+.field textarea{
+  width:100%;
+  border:1px solid #cdd6e2;
+  border-radius:8px;
+  background:#fff;
+  color:#162538;
+  padding:8px 10px;
+  outline:none
+}
+
+.field input[type="text"],
+.field input[type="date"],
+.field input[type="number"],
+.field input[type="url"],
+.field select{
+  height:36px;
+  padding:0 10px
+}
+
+.field input[type="color"]{
+  height:38px;
+  padding:3px
+}
+
+.field textarea{
+  min-height:82px;
+  resize:vertical;
+  line-height:1.4
+}
+
+.field input:focus,
+.field select:focus,
+.field textarea:focus{
+  border-color:#3B82F6;
+  box-shadow:0 0 0 3px rgba(59,130,246,.12)
+}
+
+.field-row{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px
+}
+
+.check-row{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  color:#455468;
+  font-size:12px;
+  margin:7px 0 8px
+}
+
+.check-row input{
+  width:16px;
+  height:16px
+}
+
+.help{
+  margin-top:5px;
+  color:#7a8798;
+  font-size:10.5px;
+  line-height:1.35
+}
+
+.element-select{
+  width:100%;
+  height:38px;
+  border:1px solid #cdd6e2;
+  border-radius:8px;
+  background:#fff;
+  padding:0 10px;
+  color:#15253a;
+  font-weight:700
+}
+
+.selected-element-title{
+  margin:11px 0 8px;
+  font-size:13px;
+  font-weight:800;
+  color:var(--b)
+}
+
+.nudge-wrap{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:6px;
+  margin-bottom:8px
+}
+
+.nudge-wrap button,
+.center-row button,
+.segmented button,
+.action-grid button,
+.small-action{
+  min-height:34px;
+  border:1px solid #cbd5e1;
+  border-radius:8px;
+  background:#fff;
+  color:#243447;
+  font-weight:700
+}
+
+.nudge-wrap button:hover,
+.center-row button:hover,
+.segmented button:hover,
+.action-grid button:hover,
+.small-action:hover{
+  border-color:#3B82F6;
+  background:#f5f9ff
+}
+
+.nudge-wrap .empty{
+  visibility:hidden
+}
+
+.center-row{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:6px;
+  margin-bottom:10px
+}
+
+.increment-row{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  margin:0 0 10px
+}
+
+.increment-row span{
+  color:#66758a;
+  font-size:11px;
+  font-weight:800;
+  margin-right:3px
+}
+
+.increment-row button{
+  min-width:42px;
+  height:30px;
+  border:1px solid #cbd5e1;
+  border-radius:7px;
+  background:#fff;
+  font-size:11px;
+  font-weight:800;
+  color:#334155
+}
+
+.increment-row button.active{
+  background:var(--n);
+  border-color:var(--n);
+  color:#fff
+}
+
+.control-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:8px
+}
+
+.control-grid .field{
+  margin:0
+}
+
+.control-grid input,
+.control-grid select{
+  height:34px!important
+}
+
+.segment-label{
+  display:block;
+  margin:11px 0 5px;
+  color:#455468;
+  font-size:11px;
+  font-weight:800;
+  text-transform:uppercase;
+  letter-spacing:.06em
+}
+
+.segmented{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:5px
+}
+
+.segmented.two{
+  grid-template-columns:repeat(2,1fr)
+}
+
+.segmented button.active{
+  background:var(--n);
+  border-color:var(--n);
+  color:#fff
+}
+
+.segmented button:disabled,
+.field select:disabled,
+.field input:disabled,
+.field textarea:disabled{
+  opacity:.55;
+  cursor:not-allowed
+}
+
+.element-reset{
+  width:100%;
+  margin-top:10px
+}
+
+.signature-preview{
+  height:72px;
+  border:1px dashed #bbc7d6;
+  border-radius:10px;
+  background:#f8fafc;
+  display:grid;
+  place-items:center;
+  overflow:hidden;
+  margin:8px 0 10px
+}
+
+.signature-preview img{
+  max-width:95%;
+  max-height:64px;
+  object-fit:contain
+}
+
+.file-input{
+  width:100%;
+  font-size:11px
+}
+
+.action-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:7px
+}
+
+.action-grid button.primary{
+  background:var(--b);
+  border-color:var(--b);
+  color:#fff
+}
+
+.action-grid button.danger{
+  color:#a61b1b
+}
+
+.action-grid button.print{
+  grid-column:1/-1;
+  background:var(--n);
+  border-color:var(--n);
+  color:#fff
+}
+
+.editor-status{
+  min-height:18px;
+  margin-top:10px;
+  font-size:11px;
+  color:#58708d;
+  line-height:1.4
+}
+
+/* =========================================================
+   PREVIEW
+   ========================================================= */
+
+.preview-pane{
+  min-width:0;
+  min-height:100vh;
+  padding:18px;
+  overflow:auto
+}
+
+.preview-toolbar{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  margin-bottom:12px;
+  padding:10px 12px;
+  background:#fff;
+  border:1px solid #dfe6ef;
+  border-radius:10px;
+  box-shadow:0 4px 16px rgba(11,26,46,.05)
+}
+
+.preview-toolbar strong{
+  font-size:13px
+}
+
+.zoom-control{
+  display:flex;
+  align-items:center;
+  gap:7px;
+  color:#5a687b;
+  font-size:11px;
+  font-weight:700
+}
+
+.zoom-control select{
+  height:32px;
+  border:1px solid #cbd5e1;
+  border-radius:7px;
+  background:#fff;
+  padding:0 8px
+}
+
+.preview-scroll{
+  min-width:100%;
+  overflow:auto;
+  padding:4px
+}
+
+.preview-stage{
+  position:relative;
+  transform-origin:top left;
+  width:297mm;
+  height:210mm
+}
+
+.stage-space{
+  position:relative;
+  margin:0 auto
+}
+
+/* =========================================================
+   MASTER CERTIFICATE DESIGN
+   ========================================================= */
+
+.certificate{
+  position:relative;
+  width:297mm;
+  height:210mm;
+  background:var(--w);
+  overflow:hidden;
+  box-shadow:0 22px 60px rgba(11,26,46,.18)
+}
+
+/* Real editable border */
+.certificate-border-shape{
+  position:absolute;
+  inset:5mm;
+  border:.65mm solid var(--n);
+  z-index:20;
+  pointer-events:auto
+}
+
+/* =========================================================
+   EDITABLE BACKGROUND SHAPES
+   ========================================================= */
+
+.background-shape{
+  position:absolute;
+  pointer-events:auto;
+  cursor:move;
+  user-select:none;
+  touch-action:none
+}
+
+/* Main inner frame */
+.main-frame-shape{
+  inset:7mm 6mm 7mm 7mm;
+  border:.25mm solid var(--lb);
+  z-index:1
+}
+
+/* Main large circle */
+.main-circle-shape{
+  width:112mm;
+  height:112mm;
+  border:12mm solid var(--p);
+  border-radius:50%;
+  left:-67mm;
+  top:-60mm;
+  z-index:0
+}
+
+/* Top stripes */
+.top-stripes{
+  position:absolute;
+  left:-10mm;
+  top:2mm;
+  width:84mm;
+  height:12mm;
+  transform:rotate(-8deg);
+  background:
+    linear-gradient(
+      to bottom,
+      var(--n) 0 52%,
+      transparent 52% 68%,
+      var(--b) 68% 88%,
+      transparent 88%
+    );
+  z-index:4;
+  pointer-events:auto;
+  cursor:move;
+  touch-action:none
+}
+
+/* Right blue geometric shape */
+.side-blue-shape{
+  position:absolute;
+  width:76mm;
+  height:92mm;
+  left:-22mm;
+  top:-22mm;
+  background:var(--b);
+  transform:rotate(24deg);
+  z-index:-3;
+  pointer-events:auto;
+  cursor:move
+}
+
+/* Right circle */
+.side-circle-shape{
+  position:absolute;
+  width:85mm;
+  height:85mm;
+  border:10mm solid var(--lb);
+  border-radius:50%;
+  left:-18mm;
+  bottom:-32mm;
+  opacity:.2;
+  z-index:-2;
+  pointer-events:auto;
+  cursor:move
+}
+
+/* Geometric diagonal line shapes */
+.side-geo-line-one,
+.side-geo-line-two{
+  position:absolute;
+  border:.6mm solid rgba(255,255,255,.24);
+  transform:rotate(45deg);
+  pointer-events:auto;
+  cursor:move
+}
+
+.side-geo-line-one{
+  width:34mm;
+  height:34mm;
+  right:-23mm;
+  top:33mm
+}
+
+.side-geo-line-two{
+  width:21mm;
+  height:21mm;
+  left:-13mm;
+  top:80mm
+}
+
+/* Editor affordances */
+@media screen{
+
+  .certificate [data-editor-id]{
+    cursor:move
+  }
+
+  .certificate [data-editor-id]:hover{
+    outline:1px dotted rgba(59,130,246,.72);
+    outline-offset:2px
+  }
+
+  .certificate [data-editor-id].editor-selected{
+    outline:2px dashed #f59e0b;
+    outline-offset:2px
+  }
+
+  .certificate .background-shape.editor-selected{
+    outline:2px dashed #f59e0b;
+    outline-offset:2px
+  }
+}
+
+/* =========================================================
+   MAIN CONTENT
+   ========================================================= */
+
+.main{
+  position:absolute;
+  inset:0 var(--side) 0 0;
+  padding:15mm 16mm 13mm 19mm;
+  display:flex;
+  flex-direction:column;
+  z-index:3
+}
+
+.header{
+  display:flex;
+  justify-content:space-between;
+  align-items:flex-start;
+  gap:10mm;
+  min-height:27mm
+}
+
+.logo{
+  width:56mm;
+  height:18mm;
+  object-fit:contain;
+  object-position:left center
+}
+
+.issuer{
+  text-align:right;
+  text-transform:uppercase;
+  color:var(--b);
+  font-weight:700;
+  font-size:2.45mm;
+  letter-spacing:.16em
+}
+
+.issuer>span{
+  display:inline-block
+}
+
+.issuer strong{
+  display:block;
+  color:var(--n);
+  font-size:3.15mm;
+  letter-spacing:.08em;
+  margin-top:1.4mm
+}
+
+.title{
+  margin-top:5mm
+}
+
+.eyebrow{
+  display:flex;
+  align-items:center;
+  gap:3mm;
+  color:var(--b);
+  font-size:2.5mm;
+  font-weight:700;
+  letter-spacing:.22em;
+  text-transform:uppercase
+}
+
+.eyebrow:before{
+  content:"";
+  width:11mm;
+  height:.65mm;
+  background:var(--b)
+}
+
+h1{
+  margin:2.2mm 0 0;
+  font:700 13mm/.96 Georgia,"Times New Roman",serif;
+  letter-spacing:.035em;
+  color:var(--n)
+}
+
+h1 .heading-main{
+  display:inline-block;
+  color:inherit;
+  font:inherit;
+  letter-spacing:inherit;
+  text-transform:none
+}
+
+h1 .of-completion{
+  display:block;
+  margin-top:2.6mm;
+  color:var(--b);
+  font:700 7.1mm/1 Arial,Helvetica,sans-serif;
+  letter-spacing:.29em;
+  text-transform:uppercase
+}
+
+.presented{
+  margin-top:9mm;
+  font:italic 3.7mm/1.3 Georgia,"Times New Roman",serif;
+  color:var(--n2)
+}
+
+.name-line{
+  position:relative;
+  width:168mm;
+  margin-top:2.2mm;
+  padding-bottom:2.4mm
+}
+
+.name-underline{
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:0;
+  height:0;
+  border-bottom:.7mm solid var(--b)
+}
+
+#studentName{
+  display:inline-block;
+  max-width:100%;
+  white-space:nowrap;
+  text-transform:uppercase;
+  color:var(--n);
+  font:700 10.7mm/1 Georgia,"Times New Roman",serif;
+  letter-spacing:.035em
+}
+
+.copy{
+  max-width:164mm;
+  margin-top:4.5mm;
+  color:var(--n2);
+  font:3.6mm/1.55 Georgia,"Times New Roman",serif
+}
+
+.programme-description{
+  display:inline-block;
+  max-width:100%
+}
+
+.programme{
+  display:block;
+  margin-top:1.3mm;
+  color:var(--b);
+  font:700 6mm/1.2 Arial,Helvetica,sans-serif;
+  letter-spacing:.02em
+}
+
+.bottom{
+  margin-top:auto;
+  padding:0 1mm 2.5mm 0;
+  display:grid;
+  grid-template-columns:1.15fr .9fr;
+  gap:13mm;
+  align-items:end
+}
+
+.details{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:4.3mm 8mm
+}
+
+.detail{
+  padding-top:2.1mm;
+  border-top:.25mm solid var(--p)
+}
+
+.label{
+  display:block;
+  margin-bottom:1.1mm;
+  color:var(--b);
+  font-size:2.1mm;
+  font-weight:700;
+  letter-spacing:.16em;
+  text-transform:uppercase
+}
+
+.value{
+  display:block;
+  color:var(--n);
+  font-size:3.2mm;
+  font-weight:700;
+  line-height:1.2;
+  overflow-wrap:anywhere
+}
+
+.status{
+  display:inline-flex;
+  align-items:center;
+  gap:1.5mm;
+  text-transform:uppercase;
+  letter-spacing:.08em
+}
+
+.status:before{
+  content:"";
+  width:2.1mm;
+  height:2.1mm;
+  background:var(--b);
+  border-radius:50%;
+  box-shadow:0 0 0 .8mm var(--p)
+}
+
+.signature{
+  text-align:center;
+  align-self:end
+}
+
+.sig-img-box{
+  width:46mm;
+  height:16mm;
+  display:flex;
+  align-items:flex-end;
+  justify-content:center;
+  overflow:hidden;
+  margin:0 auto -1.4mm
+}
+
+.sig-img{
+  width:45mm;
+  height:19mm;
+  object-fit:contain;
+  object-position:center bottom;
+  mix-blend-mode:multiply;
+  filter:contrast(1.14) saturate(.7)
+}
+
+.sig-line{
+  width:49mm;
+  margin:auto;
+  border-top:.45mm solid var(--n);
+  padding-top:1.8mm
+}
+
+.sig-name{
+  font:700 3.7mm/1.1 Georgia,"Times New Roman",serif
+}
+
+.sig-title{
+  margin-top:.7mm;
+  color:var(--b);
+  font-size:2.2mm;
+  font-weight:700;
+  letter-spacing:.12em;
+  text-transform:uppercase
+}
+
+.micro{
+  position:absolute;
+  left:20mm;
+  bottom:8mm;
+  color:var(--n2);
+  font-size:1.75mm;
+  letter-spacing:.1em;
+  text-transform:uppercase;
+  opacity:.7
+}
+
+/* =========================================================
+   SIDE
+   ========================================================= */
+
+.side{
+  position:absolute;
+  right:0;
+  top:0;
+  width:var(--side);
+  height:100%;
+  padding:13mm 9mm 10mm;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  overflow:hidden;
+  background:var(--n);
+  color:var(--w);
+  z-index:10
+}
+
+.geo{
+  position:absolute;
+  inset:0;
+  z-index:-1;
+  background:
+    linear-gradient(
+      45deg,
+      transparent 0 44%,
+      rgba(255,255,255,.12) 44% 45%,
+      transparent 45% 100%
+    )
+}
+
+.kicker{
+  font-size:2.15mm;
+  font-weight:700;
+  letter-spacing:.22em;
+  text-transform:uppercase;
+  color:var(--p)
+}
+
+.verify-title{
+  margin-top:1.5mm;
+  text-align:center;
+  font:700 5.3mm/1.08 Georgia,"Times New Roman",serif
+}
+
+.seal{
+  position:relative;
+  width:44mm;
+  height:44mm;
+  margin-top:8.5mm;
+  display:grid;
+  place-items:center
+}
+
+.seal-star{
+  position:absolute;
+  inset:0;
+  background:var(--p);
+  clip-path:polygon(50% 0);
+  cursor:move
+}
+
+.seal-core{
+  position:relative;
+  width:31mm;
+  height:31mm;
+  border-radius:50%;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  background:var(--n);
+  border:.7mm solid var(--w);
+  box-shadow:0 0 0 1.2mm var(--b)
+}
+
+.seal-label{
+  color:var(--p);
+  font-size:1.9mm;
+  font-weight:700;
+  letter-spacing:.17em;
+  text-transform:uppercase
+}
+
+.seal-year{
+  margin-top:.9mm;
+  color:var(--w);
+  font:700 7.3mm/1 Georgia,"Times New Roman",serif
+}
+
+.seal-rule{
+  width:11mm;
+  height:.45mm;
+  margin-top:1mm;
+  background:var(--lb)
+}
+
+.qr{
+  width:35mm;
+  height:35mm;
+  margin-top:8.4mm;
+  padding:2.3mm;
+  background:var(--w);
+  border:.55mm solid var(--p);
+  box-shadow:0 1.5mm 4mm rgba(11,26,46,.25);
+  display:grid;
+  place-items:center
+}
+
+.qr canvas{
+  width:100%!important;
+  height:100%!important;
+  display:block
+}
+
+.qr img{
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  display:block
+}
+
+.scan{
+  margin-top:4.1mm;
+  font-size:2.75mm;
+  font-weight:800;
+  letter-spacing:.18em;
+  text-transform:uppercase
+}
+
+.domain{
+  margin-top:1.6mm;
+  color:var(--p);
+  font-size:2.3mm;
+  text-align:center
+}
+
+.side-id{
+  width:100%;
+  margin-top:auto;
+  padding-top:4mm;
+  border-top:.25mm solid rgba(255,255,255,.28);
+  text-align:center;
+  color:var(--p);
+  font-size:1.95mm;
+  line-height:1.5;
+  letter-spacing:.12em;
+  text-transform:uppercase
+}
+
+.side-id>span{
+  display:inline-block
+}
+
+.side-id strong{
+  display:block;
+  margin-top:.7mm;
+  color:var(--w);
+  font-size:2.35mm;
+  letter-spacing:.08em
+}
+
+/* =========================================================
+   PRINT
+   ========================================================= */
+
+@page{
+  size:A4 landscape;
+  margin:0
+}
+
 @media print{
-  html,body{width:297mm;height:210mm;background:var(--w);margin:0;padding:0;overflow:hidden}
-  .editor-panel,.preview-toolbar{display:none!important}
-  .builder-shell,.preview-pane,.preview-scroll,.stage-space{display:block!important;width:297mm!important;height:210mm!important;margin:0!important;padding:0!important;overflow:visible!important;background:#fff!important}
-  .preview-stage{width:297mm!important;height:210mm!important;transform:none!important;transform-origin:top left!important}
-  .certificate{width:297mm!important;height:210mm!important;box-shadow:none!important;margin:0!important}
-  .certificate [data-editor-id],.certificate [data-editor-id]:hover,.certificate [data-editor-id].editor-selected{outline:none!important}
+
+  html,body{
+    width:297mm;
+    height:210mm;
+    background:var(--w);
+    margin:0;
+    padding:0;
+    overflow:hidden
+  }
+
+  .editor-panel,
+  .preview-toolbar{
+    display:none!important
+  }
+
+  .builder-shell,
+  .preview-pane,
+  .preview-scroll,
+  .stage-space{
+    display:block!important;
+    width:297mm!important;
+    height:210mm!important;
+    margin:0!important;
+    padding:0!important;
+    overflow:visible!important;
+    background:#fff!important
+  }
+
+  .preview-stage{
+    width:297mm!important;
+    height:210mm!important;
+    transform:none!important;
+    transform-origin:top left!important
+  }
+
+  .certificate{
+    width:297mm!important;
+    height:210mm!important;
+    box-shadow:none!important;
+    margin:0!important
+  }
+
+  .certificate [data-editor-id],
+  .certificate [data-editor-id]:hover,
+  .certificate [data-editor-id].editor-selected{
+    outline:none!important
+  }
 }
 
 @media(max-width:980px){
-  .builder-shell{grid-template-columns:1fr}
-  .editor-panel{position:relative;height:auto;border-right:0;border-bottom:1px solid #d7e0eb}
-  .preview-pane{min-height:auto}
+
+  .builder-shell{
+    grid-template-columns:1fr
+  }
+
+  .editor-panel{
+    position:relative;
+    height:auto;
+    border-right:0;
+    border-bottom:1px solid #d7e0eb
+  }
+
+  .preview-pane{
+    min-height:auto
+  }
 }
 </style>
 </head>
 
 <body>
+
 <div class="builder-shell">
 
-  <aside class="editor-panel" id="editorPanel">
+<!-- =====================================================
+     EDITOR PANEL
+     ===================================================== -->
 
-    <div class="editor-head">
-      <h2>Tech Resonate Certificate Builder</h2>
-      <p>Private creation/design tool. Changes here affect only this builder preview and the printed certificate.</p>
-      <span class="private-badge">Private Builder</span>
-    </div>
+<aside class="editor-panel" id="editorPanel">
 
-    <details class="panel-section" open>
-      <summary>Certificate Content</summary>
+<div class="editor-head">
+<h2>Tech Resonate Certificate Builder</h2>
 
-      <div class="section-body">
+<p>
+Private creation/design tool. Changes here affect only this
+builder preview and the printed certificate.
+</p>
 
-        <div class="field">
-          <label for="inputStudentName">Student Name</label>
-          <input id="inputStudentName" type="text">
-        </div>
+<span class="private-badge">Private Builder</span>
+</div>
 
-        <div class="field">
-          <label for="inputProgramme">Programme</label>
-          <input id="inputProgramme" type="text">
-        </div>
 
-        <div class="field">
-          <label for="inputCertificateId">Certificate ID</label>
-          <input id="inputCertificateId" type="text">
-        </div>
+<!-- CERTIFICATE CONTENT -->
 
-        <div class="field">
-          <label for="inputIssueDate">Issue Date</label>
-          <input id="inputIssueDate" type="text">
-        </div>
+<details class="panel-section" open>
 
-        <div class="field">
-          <label for="inputStatus">Certificate Status</label>
-          <input id="inputStatus" type="text">
-        </div>
+<summary>Certificate Content</summary>
 
-        <div class="field">
-          <label for="inputCeoName">Authorized Person / CEO Name</label>
-          <input id="inputCeoName" type="text">
-        </div>
+<div class="section-body">
 
-        <div class="field">
-          <label for="inputCeoTitle">Authorized Person / CEO Title</label>
-          <input id="inputCeoTitle" type="text">
-        </div>
+<div class="field">
+<label for="inputStudentName">Student Name</label>
+<input id="inputStudentName" type="text">
+</div>
 
-        <div class="field">
-          <label for="inputQrUrl">QR Verification URL</label>
+<div class="field">
+<label for="inputProgramme">Programme</label>
+<input id="inputProgramme" type="text">
+</div>
 
-          <div class="check-row">
-            <input id="autoQrUrl" type="checkbox" checked>
-            <span>Automatically build URL from Certificate ID</span>
-          </div>
+<div class="field">
+<label for="inputCertificateId">Certificate ID</label>
+<input id="inputCertificateId" type="text">
+</div>
 
-          <input id="inputQrUrl" type="url" readonly>
+<div class="field">
+<label for="inputIssueDate">Issue Date</label>
+<input id="inputIssueDate" type="text">
+</div>
 
-          <div class="help">
-            Default: https://tech-resonate.github.io/certificate-verification/?id=CERTIFICATE_ID
-          </div>
-        </div>
+<div class="field">
+<label for="inputStatus">Certificate Status</label>
+<input id="inputStatus" type="text">
+</div>
 
-      </div>
-    </details>
+<div class="field">
+<label for="inputCeoName">Authorized Person / CEO Name</label>
+<input id="inputCeoName" type="text">
+</div>
 
-    <details class="panel-section" open>
+<div class="field">
+<label for="inputCeoTitle">Authorized Person / CEO Title</label>
+<input id="inputCeoTitle" type="text">
+</div>
 
-      <summary>Element Designer</summary>
+<div class="field">
 
-      <div class="section-body">
+<label for="inputQrUrl">
+QR Verification URL
+</label>
 
-        <label class="segment-label" style="margin-top:0" for="elementSelect">
-          Editable Element
-        </label>
+<div class="check-row">
 
-        <select id="elementSelect" class="element-select"></select>
+<input id="autoQrUrl" type="checkbox" checked>
 
-        <div id="selectedElementTitle" class="selected-element-title"></div>
-
-        <div class="field">
-          <label for="controlText">Text Content</label>
-          <textarea id="controlText" placeholder="Select a text element to edit it"></textarea>
-        </div>
-
-        <div class="field">
-          <label for="controlColor">Text Color</label>
-          <input id="controlColor" type="color" value="#0B1A2E">
-        </div>
-
-        <div class="action-grid" style="margin-bottom:10px">
-
-          <button type="button" id="addNewText">
-            + Add New Text
-          </button>
-
-          <button type="button" id="deleteSelectedText" class="danger">
-            Clear / Delete
-          </button>
-
-        </div>
-
-        <div class="increment-row">
-          <span>Nudge</span>
-          <button type="button" data-step="1" class="active">1 px</button>
-          <button type="button" data-step="5">5 px</button>
-          <button type="button" data-step="10">10 px</button>
-        </div>
-
-        <div class="nudge-wrap">
-
-          <span class="empty"></span>
-
-          <button type="button" data-nudge="up">
-            ↑ Up
-          </button>
-
-          <span class="empty"></span>
-
-          <button type="button" data-nudge="left">
-            ← Left
-          </button>
-
-          <button type="button" data-nudge="down">
-            ↓ Down
-          </button>
-
-          <button type="button" data-nudge="right">
-            Right →
-          </button>
-
-        </div>
-
-        <div class="center-row">
-
-          <button type="button" id="centerH">
-            Center Horizontally
-          </button>
-
-          <button type="button" id="centerV">
-            Center Vertically
-          </button>
-
-        </div>
-
-        <div class="control-grid">
-
-          <div class="field">
-            <label for="controlX">X Offset (px)</label>
-            <input id="controlX" type="number" step="1">
-          </div>
-
-          <div class="field">
-            <label for="controlY">Y Offset (px)</label>
-            <input id="controlY" type="number" step="1">
-          </div>
-
-          <div class="field">
-            <label for="controlWidth">Width (mm)</label>
-            <input id="controlWidth" type="number" step="0.1" min="0">
-          </div>
-
-          <div class="field">
-            <label for="controlHeight">Height (mm)</label>
-            <input id="controlHeight" type="number" step="0.1" min="0">
-          </div>
-
-          <div class="field">
-            <label for="controlFontSize">Font Size (mm)</label>
-            <input id="controlFontSize" type="number" step="0.05" min="0">
-          </div>
-
-          <div class="field">
-            <label for="controlLetterSpacing">Letter Spacing (em)</label>
-            <input id="controlLetterSpacing" type="number" step="0.005">
-          </div>
-
-          <div class="field">
-            <label for="controlLineHeight">Line Height</label>
-            <input id="controlLineHeight" type="number" step="0.05" min="0.1">
-          </div>
-
-          <div class="field">
-            <label for="controlRotation">Rotation (deg)</label>
-            <input id="controlRotation" type="number" step="1">
-          </div>
-
-        </div>
-
-        <div class="field">
-          <label for="controlFontFamily">Font Family</label>
-
-          <select id="controlFontFamily">
-
-            <option value="">
-              Master / Default
-            </option>
-
-            <option value="Arial,Helvetica,sans-serif">
-              Arial
-            </option>
-
-            <option value="Georgia,'Times New Roman',serif">
-              Georgia
-            </option>
-
-            <option value="'Times New Roman',Times,serif">
-              Times New Roman
-            </option>
-
-            <option value="Verdana,Geneva,sans-serif">
-              Verdana
-            </option>
-
-            <option value="Tahoma,Geneva,sans-serif">
-              Tahoma
-            </option>
-
-            <option value="'Trebuchet MS',Arial,sans-serif">
-              Trebuchet MS
-            </option>
-
-            <option value="'Courier New',Courier,monospace">
-              Courier New
-            </option>
-
-            <option value="'Lucida Console',Monaco,monospace">
-              Lucida Console
-            </option>
-
-            <option value="Impact,Haettenschweiler,'Arial Narrow Bold',sans-serif">
-              Impact
-            </option>
-
-            <option value="Garamond,'Times New Roman',serif">
-              Garamond
-            </option>
-
-            <option value="Calibri,Arial,sans-serif">
-              Calibri
-            </option>
-
-            <option value="Cambria,Georgia,serif">
-              Cambria
-            </option>
-
-            <option value="Arial Black,Arial,sans-serif">
-              Arial Black
-            </option>
-
-          </select>
-        </div>
-
-        <span class="segment-label">
-          Font Style
-        </span>
-
-        <div class="segmented two" id="styleButtons">
-
-          <button type="button" data-style="normal">
-            Normal
-          </button>
-
-          <button type="button" data-style="italic">
-            Italic
-          </button>
-
-        </div>
-
-        <span class="segment-label">
-          Text Alignment
-        </span>
-
-        <div class="segmented" id="alignButtons">
-
-          <button type="button" data-align="left">
-            Left
-          </button>
-
-          <button type="button" data-align="center">
-            Center
-          </button>
-
-          <button type="button" data-align="right">
-            Right
-          </button>
-
-          <button type="button" data-align="justify">
-            Justify
-          </button>
-
-        </div>
-
-        <span class="segment-label">
-          Font Weight
-        </span>
-
-        <div class="segmented two" id="weightButtons">
-
-          <button type="button" data-weight="400">
-            Normal
-          </button>
-
-          <button type="button" data-weight="700">
-            Bold
-          </button>
-
-        </div>
-
-        <span class="segment-label">
-          Visibility
-        </span>
-
-        <div class="segmented two" id="visibilityButtons">
-
-          <button type="button" data-visible="true">
-            Show
-          </button>
-
-          <button type="button" data-visible="false">
-            Hide
-          </button>
-
-        </div>
-
-        <button
-          type="button"
-          class="small-action element-reset"
-          id="resetSelectedElement"
-        >
-          Reset Selected Element
-        </button>
-
-        <div class="help">
-          Tip: click or drag an editable element directly in the certificate preview.
-        </div>
-
-      </div>
-
-    </details>
-
-    <details class="panel-section" open>
-
-      <summary>Signature</summary>
-
-      <div class="section-body">
-
-        <div class="field">
-
-          <label for="signatureUpload">
-            Upload Signature Image
-          </label>
-
-          <input
-            id="signatureUpload"
-            class="file-input"
-            type="file"
-            accept="image/*"
-          >
-
-        </div>
-
-        <div class="signature-preview">
-
-          <img
-            id="signaturePreview"
-            alt="Signature preview"
-          >
-
-        </div>
-
-        <div class="action-grid">
-
-          <button type="button" id="saveSignature">
-            Save Signature
-          </button>
-
-          <button
-            type="button"
-            id="removeSavedSignature"
-            class="danger"
-          >
-            Remove Saved Signature
-          </button>
-
-        </div>
-
-        <div class="help">
-          Saved signature data stays in this browser's localStorage and is reused next time.
-        </div>
-
-      </div>
-
-    </details>
-
-    <!-- =========================
-         QR CODE UPLOAD
-         ========================= -->
-
-    <details class="panel-section" open>
-
-      <summary>QR Code</summary>
-
-      <div class="section-body">
-
-        <div class="field">
-
-          <label for="qrUpload">
-            Upload QR Code Image
-          </label>
-
-          <input
-            id="qrUpload"
-            class="file-input"
-            type="file"
-            accept="image/png,image/jpeg,image/webp"
-          >
-
-          <div class="help">
-            Upload a PNG, JPG, JPEG, or WebP QR code. The uploaded QR will replace the automatic verification QR.
-          </div>
-
-        </div>
-
-        <div class="action-grid">
-
-          <button
-            type="button"
-            id="removeUploadedQr"
-            class="danger"
-          >
-            Remove Uploaded QR
-          </button>
-
-        </div>
-
-        <div class="help">
-          Removing the uploaded QR restores the automatic QR generated from the verification URL.
-        </div>
-
-      </div>
-
-    </details>
-
-    <details class="panel-section" open>
-
-      <summary>Actions</summary>
-
-      <div class="section-body">
-
-        <div class="action-grid">
-
-          <button
-            type="button"
-            id="saveDesign"
-            class="primary"
-          >
-            Save Design
-          </button>
-
-          <button
-            type="button"
-            id="addCertificateToDatabase"
-            class="primary"
-          >
-            Add Certificate to Database
-          </button>
-
-          <button
-            type="button"
-            id="resetDesign"
-          >
-            Reset Design
-          </button>
-
-          <button
-            type="button"
-            id="resetCertificate"
-          >
-            Reset Certificate
-          </button>
-
-          <button
-            type="button"
-            id="printCertificate"
-            class="print"
-          >
-            Print / Save PDF
-          </button>
-
-        </div>
-
-        <div
-          id="editorStatus"
-          class="editor-status"
-          aria-live="polite"
-        ></div>
-
-      </div>
-
-    </details>
-
-  </aside>
-
-  <main class="preview-pane">
-
-    <div class="preview-toolbar">
-
-      <strong>
-        Live Certificate Preview
-      </strong>
-
-      <div class="zoom-control">
-
-        <span>
-          Preview zoom
-        </span>
-
-        <select id="previewZoom">
-
-          <option value="auto">
-            Auto
-          </option>
-
-          <option value="1">
-            100%
-          </option>
-
-          <option value="0.9">
-            90%
-          </option>
-
-          <option value="0.8">
-            80%
-          </option>
-
-          <option value="0.7">
-            70%
-          </option>
-
-          <option value="0.6">
-            60%
-          </option>
-
-          <option value="0.5">
-            50%
-          </option>
-
-        </select>
-
-      </div>
-
-    </div>
-
-    <div
-      class="preview-scroll"
-      id="previewScroll"
-    >
-
-      <div
-        class="stage-space"
-        id="stageSpace"
-      >
-
-        <div
-          class="preview-stage"
-          id="previewStage"
-        >
-
-          <article
-            class="certificate"
-            id="certificate"
-          >
-
-            <div
-              class="top-stripes"
-              aria-hidden="true"
-            ></div>
-
-            <section class="main">
-
-              <header class="header">
-
-                <img
-                  class="logo"
-                  id="logo"
-                  data-editor-id="logo"
-                  src="https://techresonate.com/logo.png"
-                  alt="Tech Resonate"
-                >
-
-                <div class="issuer">
-
-                  <span
-                    id="officialCertificate"
-                    data-editor-id="officialCertificate"
-                  >
-                    Official Certificate
-                  </span>
-
-                  <strong
-                    id="academyText"
-                    data-editor-id="academyText"
-                  >
-                    Tech Resonate Academy
-                  </strong>
-
-                </div>
-
-              </header>
-
-              <div class="title">
-
-                <div
-                  class="eyebrow"
-                  id="achievementCompletion"
-                  data-editor-id="achievementCompletion"
-                >
-                  Achievement &amp; Completion
-                </div>
-
-                <h1
-                  id="certificateCompletionGroup"
-                  data-editor-id="certificateCompletionGroup"
-                >
-
-                  <span
-                    class="heading-main"
-                    id="certificateHeading"
-                    data-editor-id="certificateHeading"
-                  >
-                    Certificate
-                  </span>
-
-                  <span
-                    class="of-completion"
-                    id="ofCompletion"
-                    data-editor-id="ofCompletion"
-                  >
-                    of Completion
-                  </span>
-
-                </h1>
-
-              </div>
-
-              <div
-                class="presented"
-                id="presentedTo"
-                data-editor-id="presentedTo"
-              >
-                This certificate is proudly presented to
-              </div>
-
-              <div class="name-line">
-
-                <div
-                  id="studentName"
-                  data-editor-id="studentName"
-                >
-                  LOVELYN JOSEPH
-                </div>
-
-                <div
-                  class="name-underline"
-                  id="studentUnderline"
-                  data-editor-id="studentUnderline"
-                ></div>
-
-              </div>
-
-              <div class="copy">
-
-                <span
-                  class="programme-description"
-                  id="programmeDescription"
-                  data-editor-id="programmeDescription"
-                >
-                  for successfully completing the prescribed training and practical requirements of the programme
-                </span>
-
-                <span
-                  class="programme"
-                  id="programme"
-                  data-editor-id="programmeName"
-                >
-                  Diploma in Data Processing
-                </span>
-
-              </div>
-
-              <div class="bottom">
-
-                <div class="details">
-
-                  <div class="detail">
-
-                    <span
-                      class="label"
-                      id="certificateIdLabel"
-                      data-editor-id="certificateIdLabel"
-                    >
-                      Certificate ID
-                    </span>
-
-                    <span
-                      class="value"
-                      id="certificateId"
-                      data-editor-id="certificateIdBlock"
-                    >
-                      TR-2026-DDP-001
-                    </span>
-
-                  </div>
-
-                  <div class="detail">
-
-                    <span
-                      class="label"
-                      id="issueDateLabel"
-                      data-editor-id="issueDateLabel"
-                    >
-                      Issue Date
-                    </span>
-
-                    <span
-                      class="value"
-                      id="issueDate"
-                      data-editor-id="issueDateBlock"
-                    >
-                      27 September 2026
-                    </span>
-
-                  </div>
-
-                  <div class="detail">
-
-                    <span
-                      class="label"
-                      id="statusLabel"
-                      data-editor-id="statusLabel"
-                    >
-                      Certificate Status
-                    </span>
-
-                    <span
-                      class="value status"
-                      id="status"
-                      data-editor-id="statusBlock"
-                    >
-                      Valid
-                    </span>
-
-                  </div>
-
-                  <div class="detail">
-
-                    <span
-                      class="label"
-                      id="issuedByLabel"
-                      data-editor-id="issuedByLabel"
-                    >
-                      Issued By
-                    </span>
-
-                    <span
-                      class="value"
-                      id="issuedByValue"
-                      data-editor-id="issuedByBlock"
-                    >
-                      Tech Resonate Academy
-                    </span>
-
-                  </div>
-
-                </div>
-
-                <div class="signature">
-
-                  <div class="sig-img-box">
-
-                    <img
-                      class="sig-img"
-                      id="signature"
-                      data-editor-id="signatureImage"
-                      src="https://drive.google.com/uc?export=view&amp;id=19jB_ypH8aTv-QPilB3z7xDKMufb98cNn"
-                      alt="Authorized signature"
-                    >
-
-                  </div>
-
-                  <div class="sig-line">
-
-                    <div
-                      class="sig-name"
-                      id="ceoName"
-                      data-editor-id="ceoName"
-                    >
-                      Umar Umar
-                    </div>
-
-                    <div
-                      class="sig-title"
-                      id="ceoTitle"
-                      data-editor-id="ceoTitle"
-                    >
-                      Chief Executive Officer
-                    </div>
-
-                  </div>
-
-                </div>
-
-              </div>
-
-              <div
-                class="micro"
-                id="microText"
-                data-editor-id="microText"
-              >
-                Technology • Practical Skills • Career Readiness
-              </div>
-
-            </section>
-
-            <aside class="side">
-
-              <div
-                class="geo"
-                aria-hidden="true"
-              ></div>
-
-              <div
-                class="kicker"
-                id="authenticCredential"
-                data-editor-id="authenticCredential"
-              >
-                Authentic Credential
-              </div>
-
-              <div
-                class="verify-title"
-                id="verifyCertificate"
-                data-editor-id="verifyCertificate"
-              >
-                Verify this<br>certificate
-              </div>
-
-              <div
-                class="seal"
-                id="seal"
-                data-editor-id="seal"
-              >
-
-                <div
-                  class="seal-star"
-                  id="sealStar"
-                ></div>
-
-                <div class="seal-core">
-
-                  <div
-                    class="seal-label"
-                    id="sealLabel"
-                    data-editor-id="sealLabel"
-                  >
-                    TECH RESONATE
-                  </div>
-
-                  <div
-                    class="seal-year"
-                    id="sealYear"
-                    data-editor-id="sealYear"
-                  >
-                    2026
-                  </div>
-
-                  <div class="seal-rule"></div>
-
-                </div>
-
-              </div>
-
-              <div
-                class="qr"
-                id="qrCode"
-                data-editor-id="qrCode"
-              >
-
-                <canvas
-                  id="qrCanvas"
-                  width="320"
-                  height="320"
-                  aria-label="Verification QR code"
-                ></canvas>
-
-              </div>
-
-              <div
-                class="scan"
-                id="scanToVerify"
-                data-editor-id="scanToVerify"
-              >
-                Scan to Verify
-              </div>
-
-              <div
-                class="domain"
-                id="verificationDomain"
-                data-editor-id="verificationDomain"
-              >
-                tech-resonate.github.io
-              </div>
-
-              <div class="side-id">
-
-                <span
-                  id="certificateReference"
-                  data-editor-id="certificateReference"
-                >
-                  Certificate Reference
-                </span>
-
-                <strong
-                  id="sideCertificateId"
-                  data-editor-id="referenceId"
-                >
-                  TR-2026-DDP-001
-                </strong>
-
-              </div>
-
-            </aside>
-
-          </article>
-
-        </div>
-
-      </div>
-
-    </div>
-
-  </main>
+<span>
+Automatically build URL from Certificate ID
+</span>
 
 </div>
 
+<input id="inputQrUrl" type="url" readonly>
+
+<div class="help">
+Default:
+https://tech-resonate.github.io/certificate-verification/?id=CERTIFICATE_ID
+</div>
+
+</div>
+
+</div>
+</details>
+
+
+<!-- ELEMENT DESIGNER -->
+
+<details class="panel-section" open>
+
+<summary>Element Designer</summary>
+
+<div class="section-body">
+
+<label
+class="segment-label"
+style="margin-top:0"
+for="elementSelect"
+>
+Editable Element
+</label>
+
+<select id="elementSelect" class="element-select"></select>
+
+<div
+id="selectedElementTitle"
+class="selected-element-title"
+></div>
+
+
+<div class="field">
+
+<label for="controlText">
+Text Content
+</label>
+
+<textarea
+id="controlText"
+placeholder="Select a text element to edit it"
+></textarea>
+
+</div>
+
+
+<div class="field">
+
+<label for="controlColor">
+Text / Shape Color
+</label>
+
+<input
+id="controlColor"
+type="color"
+value="#0B1A2E"
+>
+
+</div>
+
+
+<div
+class="action-grid"
+style="margin-bottom:10px"
+>
+
+<button
+type="button"
+id="addNewText"
+>
++ Add New Text
+</button>
+
+<button
+type="button"
+id="deleteSelectedText"
+class="danger"
+>
+Clear / Delete
+</button>
+
+</div>
+
+
+<div class="increment-row">
+
+<span>Nudge</span>
+
+<button
+type="button"
+data-step="1"
+class="active"
+>
+1 px
+</button>
+
+<button
+type="button"
+data-step="5"
+>
+5 px
+</button>
+
+<button
+type="button"
+data-step="10"
+>
+10 px
+</button>
+
+</div>
+
+
+<div class="nudge-wrap">
+
+<span class="empty"></span>
+
+<button type="button" data-nudge="up">
+↑ Up
+</button>
+
+<span class="empty"></span>
+
+<button type="button" data-nudge="left">
+← Left
+</button>
+
+<button type="button" data-nudge="down">
+↓ Down
+</button>
+
+<button type="button" data-nudge="right">
+Right →
+</button>
+
+</div>
+
+
+<div class="center-row">
+
+<button
+type="button"
+id="centerH"
+>
+Center Horizontally
+</button>
+
+<button
+type="button"
+id="centerV"
+>
+Center Vertically
+</button>
+
+</div>
+
+
+<div class="control-grid">
+
+<div class="field">
+<label for="controlX">X Offset (px)</label>
+<input id="controlX" type="number" step="1">
+</div>
+
+<div class="field">
+<label for="controlY">Y Offset (px)</label>
+<input id="controlY" type="number" step="1">
+</div>
+
+<div class="field">
+<label for="controlWidth">Width (mm)</label>
+<input id="controlWidth" type="number" step="0.1" min="0">
+</div>
+
+<div class="field">
+<label for="controlHeight">Height (mm)</label>
+<input id="controlHeight" type="number" step="0.1" min="0">
+</div>
+
+<div class="field">
+<label for="controlFontSize">Font Size (mm)</label>
+<input id="controlFontSize" type="number" step="0.05" min="0">
+</div>
+
+<div class="field">
+<label for="controlLetterSpacing">Letter Spacing (em)</label>
+<input id="controlLetterSpacing" type="number" step="0.005">
+</div>
+
+<div class="field">
+<label for="controlLineHeight">Line Height</label>
+<input id="controlLineHeight" type="number" step="0.05" min="0.1">
+</div>
+
+<div class="field">
+<label for="controlRotation">Rotation (deg)</label>
+<input id="controlRotation" type="number" step="1">
+</div>
+
+</div>
+
+
+<div class="field">
+
+<label for="controlFontFamily">
+Font Family
+</label>
+
+<select id="controlFontFamily">
+
+<option value="">Master / Default</option>
+
+<option value="Arial,Helvetica,sans-serif">
+Arial
+</option>
+
+<option value="Georgia,'Times New Roman',serif">
+Georgia
+</option>
+
+<option value="'Times New Roman',Times,serif">
+Times New Roman
+</option>
+
+<option value="Verdana,Geneva,sans-serif">
+Verdana
+</option>
+
+<option value="Tahoma,Geneva,sans-serif">
+Tahoma
+</option>
+
+<option value="'Trebuchet MS',Arial,sans-serif">
+Trebuchet MS
+</option>
+
+<option value="'Courier New',Courier,monospace">
+Courier New
+</option>
+
+<option value="'Lucida Console',Monaco,monospace">
+Lucida Console
+</option>
+
+<option value="Impact,Haettenschweiler,'Arial Narrow Bold',sans-serif">
+Impact
+</option>
+
+<option value="Garamond,'Times New Roman',serif">
+Garamond
+</option>
+
+<option value="Calibri,Arial,sans-serif">
+Calibri
+</option>
+
+<option value="Cambria,Georgia,serif">
+Cambria
+</option>
+
+<option value="Arial Black,Arial,sans-serif">
+Arial Black
+</option>
+
+</select>
+
+</div>
+
+
+<span class="segment-label">
+Font Style
+</span>
+
+<div
+class="segmented two"
+id="styleButtons"
+>
+
+<button
+type="button"
+data-style="normal"
+>
+Normal
+</button>
+
+<button
+type="button"
+data-style="italic"
+>
+Italic
+</button>
+
+</div>
+
+
+<span class="segment-label">
+Text Alignment
+</span>
+
+<div
+class="segmented"
+id="alignButtons"
+>
+
+<button
+type="button"
+data-align="left"
+>
+Left
+</button>
+
+<button
+type="button"
+data-align="center"
+>
+Center
+</button>
+
+<button
+type="button"
+data-align="right"
+>
+Right
+</button>
+
+<button
+type="button"
+data-align="justify"
+>
+Justify
+</button>
+
+</div>
+
+
+<span class="segment-label">
+Font Weight
+</span>
+
+<div
+class="segmented two"
+id="weightButtons"
+>
+
+<button
+type="button"
+data-weight="400"
+>
+Normal
+</button>
+
+<button
+type="button"
+data-weight="700"
+>
+Bold
+</button>
+
+</div>
+
+
+<span class="segment-label">
+Visibility
+</span>
+
+<div
+class="segmented two"
+id="visibilityButtons"
+>
+
+<button
+type="button"
+data-visible="true"
+>
+Show
+</button>
+
+<button
+type="button"
+data-visible="false"
+>
+Hide
+</button>
+
+</div>
+
+
+<button
+type="button"
+class="small-action element-reset"
+id="resetSelectedElement"
+>
+Reset Selected Element
+</button>
+
+<div class="help">
+Tip: click or drag any editable text, image, QR,
+seal or background shape directly in the certificate preview.
+</div>
+
+</div>
+</details>
+
+
+<!-- SIGNATURE -->
+
+<details class="panel-section" open>
+
+<summary>Signature</summary>
+
+<div class="section-body">
+
+<div class="field">
+
+<label for="signatureUpload">
+Upload Signature Image
+</label>
+
+<input
+id="signatureUpload"
+class="file-input"
+type="file"
+accept="image/*"
+>
+
+</div>
+
+<div class="signature-preview">
+
+<img
+id="signaturePreview"
+alt="Signature preview"
+>
+
+</div>
+
+<div class="action-grid">
+
+<button
+type="button"
+id="saveSignature"
+>
+Save Signature
+</button>
+
+<button
+type="button"
+id="removeSavedSignature"
+class="danger"
+>
+Remove Saved Signature
+</button>
+
+</div>
+
+<div class="help">
+Saved signature data stays in this browser's localStorage
+and is reused next time.
+</div>
+
+</div>
+</details>
+
+
+<!-- QR -->
+
+<details class="panel-section" open>
+
+<summary>QR Code</summary>
+
+<div class="section-body">
+
+<div class="field">
+
+<label for="qrUpload">
+Upload QR Code Image
+</label>
+
+<input
+id="qrUpload"
+class="file-input"
+type="file"
+accept="image/png,image/jpeg,image/webp"
+>
+
+<div class="help">
+Upload a PNG, JPG, JPEG, or WebP QR code.
+The uploaded QR will replace the automatic verification QR.
+</div>
+
+</div>
+
+<div class="action-grid">
+
+<button
+type="button"
+id="removeUploadedQr"
+class="danger"
+>
+Remove Uploaded QR
+</button>
+
+</div>
+
+<div class="help">
+Removing the uploaded QR restores the automatic verification QR.
+</div>
+
+</div>
+</details>
+
+
+<!-- ACTIONS -->
+
+<details class="panel-section" open>
+
+<summary>Actions</summary>
+
+<div class="section-body">
+
+<div class="action-grid">
+
+<button
+type="button"
+id="saveDesign"
+class="primary"
+>
+Save Design
+</button>
+
+<button
+type="button"
+id="addCertificateToDatabase"
+class="primary"
+>
+Add Certificate to Database
+</button>
+
+<button
+type="button"
+id="resetDesign"
+>
+Reset Design
+</button>
+
+<button
+type="button"
+id="resetCertificate"
+>
+Reset Certificate
+</button>
+
+<button
+type="button"
+id="printCertificate"
+class="print"
+>
+Print / Save PDF
+</button>
+
+</div>
+
+<div
+id="editorStatus"
+class="editor-status"
+aria-live="polite"
+></div>
+
+</div>
+</details>
+
+</aside>
+
+
+<!-- =====================================================
+     PREVIEW
+     ===================================================== -->
+
+<main class="preview-pane">
+
+<div class="preview-toolbar">
+
+<strong>
+Live Certificate Preview
+</strong>
+
+<div class="zoom-control">
+
+<span>Preview zoom</span>
+
+<select id="previewZoom">
+
+<option value="auto">Auto</option>
+<option value="1">100%</option>
+<option value="0.9">90%</option>
+<option value="0.8">80%</option>
+<option value="0.7">70%</option>
+<option value="0.6">60%</option>
+<option value="0.5">50%</option>
+
+</select>
+
+</div>
+
+</div>
+
+
+<div
+class="preview-scroll"
+id="previewScroll"
+>
+
+<div
+class="stage-space"
+id="stageSpace"
+>
+
+<div
+class="preview-stage"
+id="previewStage"
+>
+
+<article
+class="certificate"
+id="certificate"
+>
+
+<!-- =================================================
+     EDITABLE BACKGROUND SHAPES
+     ================================================= -->
+
+<div
+class="certificate-border-shape background-shape"
+id="certificateBorder"
+data-editor-id="certificateBorder"
+></div>
+
+
+<div
+class="main-frame-shape background-shape"
+id="mainFrame"
+data-editor-id="mainFrame"
+></div>
+
+
+<div
+class="main-circle-shape background-shape"
+id="mainCircle"
+data-editor-id="mainCircle"
+></div>
+
+
+<div
+class="top-stripes background-shape"
+id="topStripes"
+data-editor-id="topStripes"
+></div>
+
+
+<!-- MAIN CONTENT -->
+
+<section class="main">
+
+<header class="header">
+
+<img
+class="logo"
+id="logo"
+data-editor-id="logo"
+src="https://techresonate.com/logo.png"
+alt="Tech Resonate"
+>
+
+<div class="issuer">
+
+<span
+id="officialCertificate"
+data-editor-id="officialCertificate"
+>
+Official Certificate
+</span>
+
+<strong
+id="academyText"
+data-editor-id="academyText"
+>
+Tech Resonate Academy
+</strong>
+
+</div>
+
+</header>
+
+
+<div class="title">
+
+<div
+class="eyebrow"
+id="achievementCompletion"
+data-editor-id="achievementCompletion"
+>
+Achievement &amp; Completion
+</div>
+
+
+<h1
+id="certificateCompletionGroup"
+data-editor-id="certificateCompletionGroup"
+>
+
+<span
+class="heading-main"
+id="certificateHeading"
+data-editor-id="certificateHeading"
+>
+Certificate
+</span>
+
+<span
+class="of-completion"
+id="ofCompletion"
+data-editor-id="ofCompletion"
+>
+of Completion
+</span>
+
+</h1>
+
+</div>
+
+
+<div
+class="presented"
+id="presentedTo"
+data-editor-id="presentedTo"
+>
+This certificate is proudly presented to
+</div>
+
+
+<div class="name-line">
+
+<div
+id="studentName"
+data-editor-id="studentName"
+>
+LOVELYN JOSEPH
+</div>
+
+<div
+class="name-underline"
+id="studentUnderline"
+data-editor-id="studentUnderline"
+></div>
+
+</div>
+
+
+<div class="copy">
+
+<span
+class="programme-description"
+id="programmeDescription"
+data-editor-id="programmeDescription"
+>
+for successfully completing the prescribed training and practical requirements of the programme
+</span>
+
+<span
+class="programme"
+id="programme"
+data-editor-id="programmeName"
+>
+Diploma in Data Processing
+</span>
+
+</div>
+
+
+<div class="bottom">
+
+<div class="details">
+
+<div class="detail">
+
+<span
+class="label"
+id="certificateIdLabel"
+data-editor-id="certificateIdLabel"
+>
+Certificate ID
+</span>
+
+<span
+class="value"
+id="certificateId"
+data-editor-id="certificateIdBlock"
+>
+TR-2026-DDP-001
+</span>
+
+</div>
+
+
+<div class="detail">
+
+<span
+class="label"
+id="issueDateLabel"
+data-editor-id="issueDateLabel"
+>
+Issue Date
+</span>
+
+<span
+class="value"
+id="issueDate"
+data-editor-id="issueDateBlock"
+>
+27 September 2026
+</span>
+
+</div>
+
+
+<div class="detail">
+
+<span
+class="label"
+id="statusLabel"
+data-editor-id="statusLabel"
+>
+Certificate Status
+</span>
+
+<span
+class="value status"
+id="status"
+data-editor-id="statusBlock"
+>
+Valid
+</span>
+
+</div>
+
+
+<div class="detail">
+
+<span
+class="label"
+id="issuedByLabel"
+data-editor-id="issuedByLabel"
+>
+Issued By
+</span>
+
+<span
+class="value"
+id="issuedByValue"
+data-editor-id="issuedByBlock"
+>
+Tech Resonate Academy
+</span>
+
+</div>
+
+</div>
+
+
+<div class="signature">
+
+<div class="sig-img-box">
+
+<img
+class="sig-img"
+id="signature"
+data-editor-id="signatureImage"
+src="https://drive.google.com/uc?export=view&amp;id=19jB_ypH8aTv-QPilB3z7xDKMufb98cNn"
+alt="Authorized signature"
+>
+
+</div>
+
+
+<div class="sig-line">
+
+<div
+class="sig-name"
+id="ceoName"
+data-editor-id="ceoName"
+>
+Umar Umar
+</div>
+
+<div
+class="sig-title"
+id="ceoTitle"
+data-editor-id="ceoTitle"
+>
+Chief Executive Officer
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+
+<div
+class="micro"
+id="microText"
+data-editor-id="microText"
+>
+Technology • Practical Skills • Career Readiness
+</div>
+
+</section>
+
+
+<!-- =================================================
+     SIDE PANEL
+     ================================================= -->
+
+<aside class="side">
+
+<!-- Editable side background shapes -->
+
+<div
+class="side-blue-shape background-shape"
+id="sideBlueShape"
+data-editor-id="sideBlueShape"
+></div>
+
+<div
+class="side-circle-shape background-shape"
+id="sideCircleShape"
+data-editor-id="sideCircleShape"
+></div>
+
+<div
+class="side-geo-line-one background-shape"
+id="sideGeoLineOne"
+data-editor-id="sideGeoLineOne"
+></div>
+
+<div
+class="side-geo-line-two background-shape"
+id="sideGeoLineTwo"
+data-editor-id="sideGeoLineTwo"
+></div>
+
+
+<div
+class="geo"
+aria-hidden="true"
+></div>
+
+
+<div
+class="kicker"
+id="authenticCredential"
+data-editor-id="authenticCredential"
+>
+Authentic Credential
+</div>
+
+
+<div
+class="verify-title"
+id="verifyCertificate"
+data-editor-id="verifyCertificate"
+>
+Verify this<br>certificate
+</div>
+
+
+<div
+class="seal"
+id="seal"
+data-editor-id="seal"
+>
+
+<div
+class="seal-star"
+id="sealStar"
+data-editor-id="sealStar"
+></div>
+
+<div class="seal-core">
+
+<div
+class="seal-label"
+id="sealLabel"
+data-editor-id="sealLabel"
+>
+Certified
+</div>
+
+<div
+class="seal-year"
+id="sealYear"
+data-editor-id="sealYear"
+>
+2026
+</div>
+
+<div class="seal-rule"></div>
+
+</div>
+</div>
+
+
+<div
+class="qr"
+id="qrCode"
+data-editor-id="qrCode"
+>
+
+<canvas
+id="qrCanvas"
+width="320"
+height="320"
+aria-label="Verification QR code"
+></canvas>
+
+</div>
+
+
+<div
+class="scan"
+id="scanToVerify"
+data-editor-id="scanToVerify"
+>
+Scan to Verify
+</div>
+
+
+<div
+class="domain"
+id="verificationDomain"
+data-editor-id="verificationDomain"
+>
+tech-resonate.github.io
+</div>
+
+
+<div class="side-id">
+
+<span
+id="certificateReference"
+data-editor-id="certificateReference"
+>
+Certificate Reference
+</span>
+
+<strong
+id="sideCertificateId"
+data-editor-id="referenceId"
+>
+TR-2026-DDP-001
+</strong>
+
+</div>
+
+</aside>
+
+</article>
+
+</div>
+</div>
+</div>
+
+</main>
+
+</div>
+
+
 <script>
+
+/* =========================================================
+   DEFAULT DATA
+   ========================================================= */
 
 const DEFAULT_CERTIFICATE={
   studentName:"LOVELYN JOSEPH",
@@ -1131,252 +2302,343 @@ const DEFAULT_CERTIFICATE={
   verificationBaseUrl:"https://tech-resonate.github.io/certificate-verification/"
 };
 
-const GOOGLE_APPS_SCRIPT_URL =
-  "https://script.google.com/macros/s/AKfycbwYVlT9WS5ov6i0vZc4wienOAwau2ckKVSKe4uMQwM-QCILz3zSxLt4CjWy82iDRy3F7w/exec";
 
-const GITHUB_VERIFICATION_BASE =
-  "https://tech-resonate.github.io/certificate-verification/";
+const GOOGLE_APPS_SCRIPT_URL=
+"https://script.google.com/macros/s/AKfycbwYVlT9WS5ov6i0vZc4wienOAwau2ckKVSKe4uMQwM-QCILz3zSxLt4CjWy82iDRy3F7w/exec";
+
+
+const GITHUB_VERIFICATION_BASE=
+"https://tech-resonate.github.io/certificate-verification/";
+
 
 const STORAGE={
-  design:"techResonateCertificateBuilder.design.v2",
+  design:"techResonateCertificateBuilder.design.v3",
   signature:"techResonateCertificateBuilder.signature.v1"
 };
 
+
+/* =========================================================
+   EDITABLE ELEMENT LIST
+   ========================================================= */
+
 const ELEMENTS={
 
+  certificateBorder:{
+    label:"1. Main Outer Border",
+    selector:"#certificateBorder",
+    zone:"certificate",
+    text:false,
+    shape:true,
+    defaultColor:"#0B1A2E"
+  },
+
+  mainFrame:{
+    label:"2. Main Inner Border",
+    selector:"#mainFrame",
+    zone:"certificate",
+    text:false,
+    shape:true,
+    defaultColor:"#60A5FA"
+  },
+
+  mainCircle:{
+    label:"3. Main Light Blue Circle",
+    selector:"#mainCircle",
+    zone:"certificate",
+    text:false,
+    shape:true,
+    defaultColor:"#DCEEFF"
+  },
+
+  topStripes:{
+    label:"4. Top Diagonal Stripes",
+    selector:"#topStripes",
+    zone:"certificate",
+    text:false,
+    shape:true,
+    defaultColor:"#3B82F6"
+  },
+
   logo:{
-    label:"1. Logo",
+    label:"5. Logo",
     selector:"#logo",
     zone:"main",
     text:false
   },
 
   officialCertificate:{
-    label:"2. Official Certificate text",
+    label:"6. Official Certificate text",
     selector:"#officialCertificate",
     zone:"parent",
     text:true
   },
 
   academyText:{
-    label:"3. Tech Resonate Academy text",
+    label:"7. Tech Resonate Academy text",
     selector:"#academyText",
     zone:"parent",
     text:true
   },
 
   achievementCompletion:{
-    label:"4. Achievement & Completion",
+    label:"8. Achievement & Completion",
     selector:"#achievementCompletion",
     zone:"main",
     text:true
   },
 
   certificateCompletionGroup:{
-    label:"5. Certificate + of Completion",
+    label:"9. Certificate + of Completion",
     selector:"#certificateCompletionGroup",
     zone:"main",
     text:false
   },
 
   certificateHeading:{
-    label:"6. Certificate heading",
+    label:"10. Certificate heading",
     selector:"#certificateHeading",
     zone:"main",
     text:true
   },
 
   ofCompletion:{
-    label:"7. Of Completion text",
+    label:"11. Of Completion text",
     selector:"#ofCompletion",
     zone:"main",
     text:true
   },
 
   presentedTo:{
-    label:"8. Presented-to text",
+    label:"12. Presented-to text",
     selector:"#presentedTo",
     zone:"main",
     text:true
   },
 
   studentName:{
-    label:"9. Student name",
+    label:"13. Student name",
     selector:"#studentName",
     zone:"parent",
     text:true
   },
 
   studentUnderline:{
-    label:"10. Student name underline",
+    label:"14. Student name underline",
     selector:"#studentUnderline",
     zone:"parent",
-    text:false
+    text:false,
+    shape:true,
+    defaultColor:"#3B82F6"
   },
 
   programmeDescription:{
-    label:"11. Programme description",
+    label:"15. Programme description",
     selector:"#programmeDescription",
     zone:"parent",
     text:true
   },
 
   programmeName:{
-    label:"12. Programme name",
+    label:"16. Programme name",
     selector:"#programme",
     zone:"parent",
     text:true
   },
 
   certificateIdLabel:{
-    label:"13. Certificate ID label",
+    label:"17. Certificate ID label",
     selector:"#certificateIdLabel",
     zone:"parent",
     text:true
   },
 
   certificateIdBlock:{
-    label:"14. Certificate ID",
+    label:"18. Certificate ID",
     selector:"#certificateId",
     zone:"parent",
     text:true
   },
 
   issueDateLabel:{
-    label:"15. Issue Date label",
+    label:"19. Issue Date label",
     selector:"#issueDateLabel",
     zone:"parent",
     text:true
   },
 
   issueDateBlock:{
-    label:"16. Issue Date",
+    label:"20. Issue Date",
     selector:"#issueDate",
     zone:"parent",
     text:true
   },
 
   statusLabel:{
-    label:"17. Certificate Status label",
+    label:"21. Certificate Status label",
     selector:"#statusLabel",
     zone:"parent",
     text:true
   },
 
   statusBlock:{
-    label:"18. Certificate Status",
+    label:"22. Certificate Status",
     selector:"#status",
     zone:"parent",
     text:true
   },
 
   issuedByLabel:{
-    label:"19. Issued By label",
+    label:"23. Issued By label",
     selector:"#issuedByLabel",
     zone:"parent",
     text:true
   },
 
   issuedByBlock:{
-    label:"20. Issued By",
+    label:"24. Issued By",
     selector:"#issuedByValue",
     zone:"parent",
     text:true
   },
 
   signatureImage:{
-    label:"21. Signature image",
+    label:"25. Signature image",
     selector:"#signature",
     zone:"signature",
     text:false
   },
 
   ceoName:{
-    label:"22. CEO / authorized name",
+    label:"26. CEO / authorized name",
     selector:"#ceoName",
     zone:"sigline",
     text:true
   },
 
   ceoTitle:{
-    label:"23. CEO / authorized title",
+    label:"27. CEO / authorized title",
     selector:"#ceoTitle",
     zone:"sigline",
     text:true
   },
 
   microText:{
-    label:"24. Micro text at bottom",
+    label:"28. Micro text at bottom",
     selector:"#microText",
     zone:"main",
     text:true
   },
 
+  sideBlueShape:{
+    label:"29. Side Blue Background Shape",
+    selector:"#sideBlueShape",
+    zone:"side",
+    text:false,
+    shape:true,
+    defaultColor:"#3B82F6"
+  },
+
+  sideCircleShape:{
+    label:"30. Side Circular Background Shape",
+    selector:"#sideCircleShape",
+    zone:"side",
+    text:false,
+    shape:true,
+    defaultColor:"#60A5FA"
+  },
+
+  sideGeoLineOne:{
+    label:"31. Side Geometric Line 1",
+    selector:"#sideGeoLineOne",
+    zone:"side",
+    text:false,
+    shape:true,
+    defaultColor:"#60A5FA"
+  },
+
+  sideGeoLineTwo:{
+    label:"32. Side Geometric Line 2",
+    selector:"#sideGeoLineTwo",
+    zone:"side",
+    text:false,
+    shape:true,
+    defaultColor:"#60A5FA"
+  },
+
   authenticCredential:{
-    label:"25. Authentic Credential",
+    label:"33. Authentic Credential",
     selector:"#authenticCredential",
     zone:"side",
     text:true
   },
 
   verifyCertificate:{
-    label:"26. Verify this certificate",
+    label:"34. Verify this certificate",
     selector:"#verifyCertificate",
     zone:"side",
     text:true
   },
 
   seal:{
-    label:"27. Seal",
+    label:"35. Seal",
     selector:"#seal",
     zone:"side",
     text:false
   },
 
+  sealStar:{
+    label:"36. Seal Star / Background",
+    selector:"#sealStar",
+    zone:"side",
+    text:false,
+    shape:true,
+    defaultColor:"#DCEEFF"
+  },
+
   sealLabel:{
-    label:"28. Seal Certified text",
+    label:"37. Seal Certified text",
     selector:"#sealLabel",
     zone:"side",
     text:true
   },
 
   sealYear:{
-    label:"29. Seal year",
+    label:"38. Seal year",
     selector:"#sealYear",
     zone:"side",
     text:true
   },
 
   qrCode:{
-    label:"30. QR code",
+    label:"39. QR code",
     selector:"#qrCode",
     zone:"side",
     text:false
   },
 
   scanToVerify:{
-    label:"31. Scan to Verify",
+    label:"40. Scan to Verify",
     selector:"#scanToVerify",
     zone:"side",
     text:true
   },
 
   verificationDomain:{
-    label:"32. Verification domain",
+    label:"41. Verification domain",
     selector:"#verificationDomain",
     zone:"side",
     text:true
   },
 
   certificateReference:{
-    label:"33. Certificate Reference",
+    label:"42. Certificate Reference",
     selector:"#certificateReference",
     zone:"parent",
     text:true
   },
 
   referenceId:{
-    label:"34. Certificate reference ID",
+    label:"43. Certificate reference ID",
     selector:"#sideCertificateId",
     zone:"parent",
     text:true
@@ -1384,18 +2646,44 @@ const ELEMENTS={
 
 };
 
-const certificate=document.getElementById("certificate");
-const elementSelect=document.getElementById("elementSelect");
-const selectedElementTitle=document.getElementById("selectedElementTitle");
-const statusEl=document.getElementById("editorStatus");
-const previewStage=document.getElementById("previewStage");
-const stageSpace=document.getElementById("stageSpace");
-const previewScroll=document.getElementById("previewScroll");
-const previewZoom=document.getElementById("previewZoom");
 
-const controlText=document.getElementById("controlText");
-const controlColor=document.getElementById("controlColor");
-const controlFontFamily=document.getElementById("controlFontFamily");
+/* =========================================================
+   REFERENCES
+   ========================================================= */
+
+const certificate=
+document.getElementById("certificate");
+
+const elementSelect=
+document.getElementById("elementSelect");
+
+const selectedElementTitle=
+document.getElementById("selectedElementTitle");
+
+const statusEl=
+document.getElementById("editorStatus");
+
+const previewStage=
+document.getElementById("previewStage");
+
+const stageSpace=
+document.getElementById("stageSpace");
+
+const previewScroll=
+document.getElementById("previewScroll");
+
+const previewZoom=
+document.getElementById("previewZoom");
+
+const controlText=
+document.getElementById("controlText");
+
+const controlColor=
+document.getElementById("controlColor");
+
+const controlFontFamily=
+document.getElementById("controlFontFamily");
+
 
 const controls={
   x:document.getElementById("controlX"),
@@ -1408,12 +2696,18 @@ const controls={
   rotation:document.getElementById("controlRotation")
 };
 
+
 let selectedKey="studentName";
 let nudgeStep=1;
 let currentScale=1;
 let designState={};
 let workingSignature="";
 let qrTimer=null;
+
+
+/* =========================================================
+   BASIC HELPERS
+   ========================================================= */
 
 function notify(message){
 
@@ -1431,6 +2725,7 @@ function notify(message){
 
 }
 
+
 function extractYear(id){
 
   const m=
@@ -1444,49 +2739,6 @@ function extractYear(id){
 
 }
 
-/* =========================
-   CERTIFICATE ID GENERATION
-   ========================= */
-
-const ID_ALPHABET =
-  "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-
-function generateCertificateId(){
-
-  const bytes =
-    new Uint8Array(10);
-
-  crypto.getRandomValues(bytes);
-
-  let randomPart="";
-
-  for(let i=0;i<10;i++){
-
-    randomPart +=
-      ID_ALPHABET[
-        bytes[i] % ID_ALPHABET.length
-      ];
-
-  }
-
-  return "TR-2026-" + randomPart;
-
-}
-
-function applyNewCertificateId(){
-
-  const newId =
-    generateCertificateId();
-
-  document
-    .getElementById("inputCertificateId")
-    .value = newId;
-
-  renderContentFromInputs();
-
-  return newId;
-
-}
 
 function generatedVerificationUrl(){
 
@@ -1499,6 +2751,7 @@ function generatedVerificationUrl(){
   return `${GITHUB_VERIFICATION_BASE}?id=${encodeURIComponent(id)}`;
 
 }
+
 
 function activeVerificationUrl(){
 
@@ -1520,6 +2773,32 @@ function activeVerificationUrl(){
 
 }
 
+
+function pxToMm(px){
+  return Number(px)*25.4/96;
+}
+
+
+function mmToPx(mm){
+  return Number(mm)*96/25.4;
+}
+
+
+function round(value,digits=3){
+
+  const p=10**digits;
+
+  return Math.round(
+    (Number(value)+Number.EPSILON)*p
+  )/p;
+
+}
+
+
+/* =========================================================
+   SEAL
+   ========================================================= */
+
 function makeSeal(){
 
   const p=[];
@@ -1528,6 +2807,7 @@ function makeSeal(){
   for(let i=0;i<n;i++){
 
     const r=i%2?42:49;
+
     const a=
       (-90+360*i/n)*Math.PI/180;
 
@@ -1544,9 +2824,10 @@ function makeSeal(){
 
 }
 
-/* =========================
-   QR UPLOAD FUNCTIONS
-   ========================= */
+
+/* =========================================================
+   QR UPLOAD
+   ========================================================= */
 
 function renderUploadedQr(dataUrl){
 
@@ -1556,20 +2837,18 @@ function renderUploadedQr(dataUrl){
   const canvas=
     document.getElementById("qrCanvas");
 
-  if(!qrBox || !canvas)return;
+  if(!qrBox||!canvas)return;
 
   let img=
     document.getElementById("uploadedQrImage");
 
   if(!img){
 
-    img=
-      document.createElement("img");
+    img=document.createElement("img");
 
     img.id="uploadedQrImage";
 
-    img.alt=
-      "Uploaded verification QR code";
+    img.alt="Uploaded verification QR code";
 
     qrBox.appendChild(img);
 
@@ -1583,6 +2862,7 @@ function renderUploadedQr(dataUrl){
 
 }
 
+
 function restoreAutomaticQr(){
 
   const canvas=
@@ -1591,11 +2871,7 @@ function restoreAutomaticQr(){
   const img=
     document.getElementById("uploadedQrImage");
 
-  if(img){
-
-    img.remove();
-
-  }
+  if(img)img.remove();
 
   canvas.style.display="block";
 
@@ -1604,6 +2880,7 @@ function restoreAutomaticQr(){
   );
 
 }
+
 
 async function handleQrFile(file){
 
@@ -1622,7 +2899,6 @@ async function handleQrFile(file){
     );
 
     return;
-
   }
 
   if(file.size>2*1024*1024){
@@ -1632,7 +2908,6 @@ async function handleQrFile(file){
     );
 
     return;
-
   }
 
   try{
@@ -1645,25 +2920,18 @@ async function handleQrFile(file){
             new FileReader();
 
           reader.onload=
-            ()=>resolve(
-              reader.result
-            );
+            ()=>resolve(reader.result);
 
           reader.onerror=reject;
 
-          reader.readAsDataURL(
-            file
-          );
+          reader.readAsDataURL(file);
 
         }
       );
 
-    designState.qrUpload=
-      dataUrl;
+    designState.qrUpload=dataUrl;
 
-    renderUploadedQr(
-      dataUrl
-    );
+    renderUploadedQr(dataUrl);
 
     notify(
       "Uploaded QR code added. Click Save Design to keep it."
@@ -1681,20 +2949,15 @@ async function handleQrFile(file){
 
 }
 
+
 function removeUploadedQr(){
 
   delete designState.qrUpload;
 
   const input=
-    document.getElementById(
-      "qrUpload"
-    );
+    document.getElementById("qrUpload");
 
-  if(input){
-
-    input.value="";
-
-  }
+  if(input)input.value="";
 
   restoreAutomaticQr();
 
@@ -1704,9 +2967,10 @@ function removeUploadedQr(){
 
 }
 
-/* =========================
+
+/* =========================================================
    QR GENERATION
-   ========================= */
+   ========================================================= */
 
 function makeQr(url){
 
@@ -1721,7 +2985,6 @@ function makeQr(url){
       );
 
       return;
-
     }
 
     if(!window.QRCode?.toCanvas){
@@ -1731,26 +2994,17 @@ function makeQr(url){
       );
 
       return;
-
     }
 
     try{
 
       const canvas=
-        document.getElementById(
-          "qrCanvas"
-        );
+        document.getElementById("qrCanvas");
 
       const uploaded=
-        document.getElementById(
-          "uploadedQrImage"
-        );
+        document.getElementById("uploadedQrImage");
 
-      if(uploaded){
-
-        uploaded.remove();
-
-      }
+      if(uploaded)uploaded.remove();
 
       canvas.style.display="block";
 
@@ -1782,14 +3036,17 @@ function makeQr(url){
 
 }
 
+
+/* =========================================================
+   CONTENT
+   ========================================================= */
+
 function fitName(){
 
   const el=
     document.getElementById("studentName");
 
-  if(
-    designState.studentName?.fontSize!=null
-  )return;
+  if(designState.studentName?.fontSize!=null)return;
 
   const box=el.parentElement;
 
@@ -1809,6 +3066,7 @@ function fitName(){
   }
 
 }
+
 
 function updateQrUrlField(){
 
@@ -1843,6 +3101,7 @@ function updateQrUrlField(){
 
 }
 
+
 function updateVerification(url){
 
   try{
@@ -1869,42 +3128,29 @@ function updateVerification(url){
 
 }
 
+
 function renderContentFromInputs(){
 
   const student=
-    document
-      .getElementById("inputStudentName")
-      .value;
+    document.getElementById("inputStudentName").value;
 
   const programmeValue=
-    document
-      .getElementById("inputProgramme")
-      .value;
+    document.getElementById("inputProgramme").value;
 
   const id=
-    document
-      .getElementById("inputCertificateId")
-      .value;
+    document.getElementById("inputCertificateId").value;
 
   const date=
-    document
-      .getElementById("inputIssueDate")
-      .value;
+    document.getElementById("inputIssueDate").value;
 
   const certStatus=
-    document
-      .getElementById("inputStatus")
-      .value;
+    document.getElementById("inputStatus").value;
 
   const ceo=
-    document
-      .getElementById("inputCeoName")
-      .value;
+    document.getElementById("inputCeoName").value;
 
   const ceoTitleValue=
-    document
-      .getElementById("inputCeoTitle")
-      .value;
+    document.getElementById("inputCeoTitle").value;
 
   document.getElementById("studentName").textContent=student;
 
@@ -1938,6 +3184,7 @@ function renderContentFromInputs(){
 
 }
 
+
 function setInputsFromData(data){
 
   document.getElementById("inputStudentName").value=
@@ -1969,21 +3216,10 @@ function setInputsFromData(data){
 
 }
 
-function pxToMm(px){
 
-  return Number(px)*25.4/96;
-
-}
-
-function round(value,digits=3){
-
-  const p=10**digits;
-
-  return Math.round(
-    (Number(value)+Number.EPSILON)*p
-  )/p;
-
-}
+/* =========================================================
+   ELEMENT STATE
+   ========================================================= */
 
 function elementFor(key){
 
@@ -1994,6 +3230,7 @@ function elementFor(key){
   );
 
 }
+
 
 function getState(key){
 
@@ -2012,6 +3249,7 @@ function getState(key){
 
 }
 
+
 function rgbToHex(rgb){
 
   if(!rgb)return "#0B1A2E";
@@ -2022,9 +3260,7 @@ function rgbToHex(rgb){
     rgb.match(/\d+/g);
 
   if(!match||match.length<3){
-
     return "#0B1A2E";
-
   }
 
   return "#"+
@@ -2039,6 +3275,71 @@ function rgbToHex(rgb){
 
 }
 
+
+/* =========================================================
+   SHAPE COLOR
+   ========================================================= */
+
+function applyShapeColor(key,color){
+
+  const el=elementFor(key);
+
+  if(!el)return;
+
+  switch(key){
+
+    case "certificateBorder":
+      el.style.borderColor=color;
+      break;
+
+    case "mainFrame":
+      el.style.borderColor=color;
+      break;
+
+    case "mainCircle":
+      el.style.borderColor=color;
+      break;
+
+    case "topStripes":
+      el.style.background=
+        `linear-gradient(
+          to bottom,
+          var(--n) 0 52%,
+          transparent 52% 68%,
+          ${color} 68% 88%,
+          transparent 88%
+        )`;
+      break;
+
+    case "sideBlueShape":
+      el.style.background=color;
+      break;
+
+    case "sideCircleShape":
+      el.style.borderColor=color;
+      break;
+
+    case "sideGeoLineOne":
+    case "sideGeoLineTwo":
+      el.style.borderColor=color;
+      break;
+
+    case "sealStar":
+      el.style.background=color;
+      break;
+
+    case "studentUnderline":
+      el.style.borderBottomColor=color;
+      break;
+  }
+
+}
+
+
+/* =========================================================
+   APPLY ELEMENT STATE
+   ========================================================= */
+
 function applyElementState(key){
 
   const el=elementFor(key);
@@ -2051,6 +3352,56 @@ function applyElementState(key){
   const y=Number(s.y)||0;
   const r=Number(s.rotation)||0;
 
+
+  /* Shape elements */
+  if(meta.shape){
+
+    el.style.transform=
+      `translate(${x}px,${y}px) rotate(${r}deg)`;
+
+    if(
+      s.width!=null &&
+      key!=="certificateBorder" &&
+      key!=="mainFrame" &&
+      key!=="studentUnderline"
+    ){
+
+      el.style.width=
+        `${s.width}mm`;
+
+    }
+
+    if(
+      s.height!=null &&
+      key!=="certificateBorder" &&
+      key!=="mainFrame" &&
+      key!=="studentUnderline"
+    ){
+
+      el.style.height=
+        `${s.height}mm`;
+
+    }
+
+    if(s.color){
+
+      applyShapeColor(
+        key,
+        s.color
+      );
+
+    }
+
+    el.style.visibility=
+      s.visible===false
+        ?"hidden"
+        :"visible";
+
+    return;
+  }
+
+
+  /* Seal */
   if(key==="seal"){
 
     const sx=
@@ -2065,18 +3416,22 @@ function applyElementState(key){
 
     el.style.width="";
     el.style.height="";
+
     el.style.transformOrigin=
       "center center";
 
     el.style.transform=
-      `translate(${x}px, ${y}px) rotate(${r}deg) scale(${sx||1}, ${sy||1})`;
+      `translate(${x}px,${y}px)
+       rotate(${r}deg)
+       scale(${sx||1},${sy||1})`;
 
   }else{
 
     el.style.transformOrigin="";
 
     el.style.transform=
-      `translate(${x}px, ${y}px) rotate(${r}deg)`;
+      `translate(${x}px,${y}px)
+       rotate(${r}deg)`;
 
     el.style.width=
       s.width==null
@@ -2089,6 +3444,7 @@ function applyElementState(key){
         :`${s.height}mm`;
 
   }
+
 
   if(key==="signatureImage"){
 
@@ -2109,6 +3465,7 @@ function applyElementState(key){
     }
 
   }
+
 
   if(meta.text){
 
@@ -2142,36 +3499,25 @@ function applyElementState(key){
       s.fontStyle||"";
 
     if(s.color){
-
       el.style.color=s.color;
-
     }
 
     if(typeof s.text==="string"){
 
       if(
         key==="verifyCertificate" &&
-        s.text==="Verify this\ncertificate"
+        s.text.includes("\n")
       ){
 
         el.innerHTML=
-          "Verify this<br>certificate";
-
-      }else if(
-        key==="verifyCertificate" &&
-        s.text==="Verify this<br>certificate"
-      ){
-
-        el.innerHTML=
-          "Verify this<br>certificate";
+          s.text.replace(
+            /\n/g,
+            "<br>"
+          );
 
       }else{
 
-        if(el.textContent!==s.text){
-
-          el.textContent=s.text;
-
-        }
+        el.textContent=s.text;
 
       }
 
@@ -2186,6 +3532,7 @@ function applyElementState(key){
 
 }
 
+
 function applyAllDesign(){
 
   Object.keys(ELEMENTS).forEach(
@@ -2195,11 +3542,17 @@ function applyAllDesign(){
   requestAnimationFrame(()=>{
 
     fitName();
+
     refreshControls();
 
   });
 
 }
+
+
+/* =========================================================
+   RESET
+   ========================================================= */
 
 function resetElementInlineStyles(key){
 
@@ -2220,7 +3573,9 @@ function resetElementInlineStyles(key){
     "fontFamily",
     "fontStyle",
     "color",
-    "visibility"
+    "visibility",
+    "borderColor",
+    "background"
   ].forEach(
     p=>el.style[p]=""
   );
@@ -2234,13 +3589,8 @@ function resetElementInlineStyles(key){
 
   }
 
-  if(key==="studentName"){
-
-    fitName();
-
-  }
-
 }
+
 
 function resetSelectedElement(){
 
@@ -2261,9 +3611,7 @@ function resetSelectedElement(){
   );
 
   if(selectedKey==="studentName"){
-
     fitName();
-
   }
 
   refreshControls();
@@ -2274,52 +3622,47 @@ function resetSelectedElement(){
 
 }
 
+
+/* =========================================================
+   ZONE
+   ========================================================= */
+
 function getZoneElement(key){
 
   const el=elementFor(key);
+
   const zone=ELEMENTS[key]?.zone;
 
   if(!el)return certificate;
 
   if(zone==="parent"){
-
     return el.parentElement||certificate;
-
   }
 
   if(zone==="main"){
-
     return certificate.querySelector(".main");
-
   }
 
   if(zone==="side"){
-
     return certificate.querySelector(".side");
-
-  }
-
-  if(zone==="details"){
-
-    return certificate.querySelector(".details");
-
   }
 
   if(zone==="signature"){
-
     return certificate.querySelector(".signature");
-
   }
 
   if(zone==="sigline"){
-
     return certificate.querySelector(".sig-line");
-
   }
 
   return certificate;
 
 }
+
+
+/* =========================================================
+   CENTER
+   ========================================================= */
 
 function centerSelected(axis){
 
@@ -2362,57 +3705,47 @@ function centerSelected(axis){
 
   }
 
-  applyElementState(
-    selectedKey
-  );
+  applyElementState(selectedKey);
 
   refreshControls();
 
 }
+
+
+/* =========================================================
+   NUDGE
+   ========================================================= */
 
 function nudge(direction){
 
   const s=getState(selectedKey);
 
   if(direction==="left"){
-
-    s.x=
-      (Number(s.x)||0)-
-      nudgeStep;
-
+    s.x=(Number(s.x)||0)-nudgeStep;
   }
 
   if(direction==="right"){
-
-    s.x=
-      (Number(s.x)||0)+
-      nudgeStep;
-
+    s.x=(Number(s.x)||0)+nudgeStep;
   }
 
   if(direction==="up"){
-
-    s.y=
-      (Number(s.y)||0)-
-      nudgeStep;
-
+    s.y=(Number(s.y)||0)-nudgeStep;
   }
 
   if(direction==="down"){
-
-    s.y=
-      (Number(s.y)||0)+
-      nudgeStep;
-
+    s.y=(Number(s.y)||0)+nudgeStep;
   }
 
-  applyElementState(
-    selectedKey
-  );
+  applyElementState(selectedKey);
 
   refreshControls();
 
 }
+
+
+/* =========================================================
+   COMPUTED DEFAULTS
+   ========================================================= */
 
 function getComputedDefaults(key){
 
@@ -2421,7 +3754,6 @@ function getComputedDefaults(key){
   if(!el){
 
     return{
-
       width:0,
       height:0,
       fontSize:0,
@@ -2432,7 +3764,6 @@ function getComputedDefaults(key){
       fontFamily:"",
       fontStyle:"normal",
       color:"#0B1A2E"
-
     };
 
   }
@@ -2492,8 +3823,7 @@ function getComputedDefaults(key){
         )
         :"",
 
-    textAlign:
-      cs.textAlign||"",
+    textAlign:cs.textAlign||"",
 
     fontWeight:
       parseInt(
@@ -2513,6 +3843,11 @@ function getComputedDefaults(key){
   };
 
 }
+
+
+/* =========================================================
+   ACTIVE BUTTON
+   ========================================================= */
 
 function setActiveButton(
   groupSelector,
@@ -2536,6 +3871,11 @@ function setActiveButton(
 
 }
 
+
+/* =========================================================
+   REFRESH CONTROLS
+   ========================================================= */
+
 function refreshControls(){
 
   const meta=ELEMENTS[selectedKey];
@@ -2545,30 +3885,21 @@ function refreshControls(){
   const s=getState(selectedKey);
 
   const defaults=
-    getComputedDefaults(
-      selectedKey
-    );
+    getComputedDefaults(selectedKey);
 
   selectedElementTitle.textContent=
     meta.label;
 
+
   controls.x.value=
-    round(
-      s.x||0,
-      1
-    );
+    round(s.x||0,1);
 
   controls.y.value=
-    round(
-      s.y||0,
-      1
-    );
+    round(s.y||0,1);
 
   controls.rotation.value=
-    round(
-      s.rotation||0,
-      1
-    );
+    round(s.rotation||0,1);
+
 
   controls.width.value=
     s.width==null
@@ -2580,6 +3911,7 @@ function refreshControls(){
       ?defaults.height
       :s.height;
 
+
   controls.fontSize.value=
     meta.text
       ?(
@@ -2588,6 +3920,7 @@ function refreshControls(){
           :s.fontSize
       )
       :"";
+
 
   controls.letterSpacing.value=
     meta.text
@@ -2598,6 +3931,7 @@ function refreshControls(){
       )
       :"";
 
+
   controls.lineHeight.value=
     meta.text
       ?(
@@ -2606,6 +3940,7 @@ function refreshControls(){
           :s.lineHeight
       )
       :"";
+
 
   controls.fontSize.disabled=
     !meta.text;
@@ -2627,20 +3962,20 @@ function refreshControls(){
       b=>b.disabled=!meta.text
     );
 
+
   controlText.disabled=
     !meta.text;
 
   controlColor.disabled=
-    !meta.text;
+    !(meta.text||meta.shape);
+
 
   if(meta.text){
 
     controlText.value=
       typeof s.text==="string"
         ?s.text
-        :elementFor(
-          selectedKey
-        )?.textContent||"";
+        :elementFor(selectedKey)?.textContent||"";
 
     controlColor.value=
       s.color||
@@ -2652,10 +3987,13 @@ function refreshControls(){
     controlText.value="";
 
     controlColor.value=
+      s.color||
+      meta.defaultColor||
       defaults.color||
       "#0B1A2E";
 
   }
+
 
   const currentAlign=
     s.textAlign||
@@ -2675,11 +4013,13 @@ function refreshControls(){
     defaults.fontStyle||
     "normal";
 
+
   setActiveButton(
     "#alignButtons",
     "align",
     currentAlign
   );
+
 
   document
     .querySelectorAll(
@@ -2695,11 +4035,13 @@ function refreshControls(){
       )
     );
 
+
   setActiveButton(
     "#styleButtons",
     "style",
     currentFontStyle
   );
+
 
   controlFontFamily.value=
     currentFontFamily;
@@ -2708,10 +4050,9 @@ function refreshControls(){
     controlFontFamily.value!==
     currentFontFamily
   ){
-
     controlFontFamily.value="";
-
   }
+
 
   setActiveButton(
     "#visibilityButtons",
@@ -2720,6 +4061,11 @@ function refreshControls(){
   );
 
 }
+
+
+/* =========================================================
+   SELECT ELEMENT
+   ========================================================= */
 
 function selectElement(
   key,
@@ -2732,6 +4078,7 @@ function selectElement(
 
   elementSelect.value=key;
 
+
   certificate
     .querySelectorAll(
       ".editor-selected"
@@ -2743,6 +4090,7 @@ function selectElement(
         )
     );
 
+
   const el=elementFor(key);
 
   if(el){
@@ -2752,6 +4100,7 @@ function selectElement(
     );
 
   }
+
 
   refreshControls();
 
@@ -2764,6 +4113,11 @@ function selectElement(
   }
 
 }
+
+
+/* =========================================================
+   NUMERIC CONTROLS
+   ========================================================= */
 
 function setNumericState(
   prop,
@@ -2788,22 +4142,23 @@ function setNumericState(
 
   s[prop]=value;
 
-  applyElementState(
-    selectedKey
-  );
+  applyElementState(selectedKey);
 
   if(
     selectedKey==="studentName" &&
     prop!=="fontSize"
   ){
-
     fitName();
-
   }
 
   refreshControls();
 
 }
+
+
+/* =========================================================
+   ELEMENT DROPDOWN
+   ========================================================= */
 
 function populateElementSelect(){
 
@@ -2814,23 +4169,24 @@ function populateElementSelect(){
       ([key,meta])=>{
 
         const option=
-          document.createElement(
-            "option"
-          );
+          document.createElement("option");
 
         option.value=key;
 
         option.textContent=
           meta.label;
 
-        elementSelect.appendChild(
-          option
-        );
+        elementSelect.appendChild(option);
 
       }
     );
 
 }
+
+
+/* =========================================================
+   DESIGN STORAGE
+   ========================================================= */
 
 function loadDesign(){
 
@@ -2866,10 +4222,12 @@ function loadDesign(){
 
   }
 
+
   Object.keys(ELEMENTS)
     .forEach(getState);
 
   applyAllDesign();
+
 
   if(designState.qrUpload){
 
@@ -2881,15 +4239,14 @@ function loadDesign(){
 
 }
 
+
 function saveDesign(){
 
   try{
 
     localStorage.setItem(
       STORAGE.design,
-      JSON.stringify(
-        designState
-      )
+      JSON.stringify(designState)
     );
 
     notify(
@@ -2908,29 +4265,24 @@ function saveDesign(){
 
 }
 
-function resetDesign(){
 
-  Object.keys(ELEMENTS)
-    .forEach(
-      resetElementInlineStyles
-    );
+/* =========================================================
+   RESET WHOLE DESIGN
+   ========================================================= */
+
+function resetDesign(){
 
   const originalText={
 
-    officialCertificate:
-      "Official Certificate",
+    officialCertificate:"Official Certificate",
 
-    academyText:
-      "Tech Resonate Academy",
+    academyText:"Tech Resonate Academy",
 
-    achievementCompletion:
-      "Achievement & Completion",
+    achievementCompletion:"Achievement & Completion",
 
-    certificateHeading:
-      "Certificate",
+    certificateHeading:"Certificate",
 
-    ofCompletion:
-      "of Completion",
+    ofCompletion:"of Completion",
 
     presentedTo:
       "This certificate is proudly presented to",
@@ -2938,35 +4290,26 @@ function resetDesign(){
     programmeDescription:
       "for successfully completing the prescribed training and practical requirements of the programme",
 
-    certificateIdLabel:
-      "Certificate ID",
+    certificateIdLabel:"Certificate ID",
 
-    issueDateLabel:
-      "Issue Date",
+    issueDateLabel:"Issue Date",
 
-    statusLabel:
-      "Certificate Status",
+    statusLabel:"Certificate Status",
 
-    issuedByLabel:
-      "Issued By",
+    issuedByLabel:"Issued By",
 
-    ceoTitle:
-      "Chief Executive Officer",
+    ceoTitle:"Chief Executive Officer",
 
     microText:
       "Technology • Practical Skills • Career Readiness",
 
-    authenticCredential:
-      "Authentic Credential",
+    authenticCredential:"Authentic Credential",
 
-    sealLabel:
-      "TECH RESONATE",
+    sealLabel:"Certified",
 
-    sealYear:
-      "2026",
+    sealYear:"2026",
 
-    scanToVerify:
-      "Scan to Verify",
+    scanToVerify:"Scan to Verify",
 
     verificationDomain:
       "tech-resonate.github.io",
@@ -2976,27 +4319,30 @@ function resetDesign(){
 
   };
 
-  Object.entries(
-    originalText
-  ).forEach(
-    ([key,text])=>{
 
-      const el=
-        elementFor(key);
+  Object.keys(ELEMENTS)
+    .forEach(
+      resetElementInlineStyles
+    );
 
-      if(el){
 
-        el.textContent=text;
+  Object.entries(originalText)
+    .forEach(
+      ([key,text])=>{
+
+        const el=
+          elementFor(key);
+
+        if(el){
+          el.textContent=text;
+        }
 
       }
+    );
 
-    }
-  );
 
   const verifyEl=
-    elementFor(
-      "verifyCertificate"
-    );
+    elementFor("verifyCertificate");
 
   if(verifyEl){
 
@@ -3005,17 +4351,15 @@ function resetDesign(){
 
   }
 
+
   Object.keys(ELEMENTS)
     .filter(
       key=>
-        key.startsWith(
-          "customText_"
-        )
+        key.startsWith("customText_")
     )
     .forEach(key=>{
 
-      const el=
-        elementFor(key);
+      const el=elementFor(key);
 
       el?.remove();
 
@@ -3023,25 +4367,24 @@ function resetDesign(){
 
     });
 
+
   designState={};
 
+
   const qrUpload=
-    document.getElementById(
-      "qrUpload"
-    );
+    document.getElementById("qrUpload");
 
   if(qrUpload){
-
     qrUpload.value="";
-
   }
+
 
   restoreAutomaticQr();
 
+
   Object.keys(ELEMENTS)
-    .forEach(
-      getState
-    );
+    .forEach(getState);
+
 
   try{
 
@@ -3050,6 +4393,7 @@ function resetDesign(){
     );
 
   }catch{}
+
 
   populateElementSelect();
 
@@ -3060,11 +4404,755 @@ function resetDesign(){
     false
   );
 
+
   notify(
     "Design reset to the original master certificate."
   );
 
 }
+
+
+/* =========================================================
+   CUSTOM TEXT
+   ========================================================= */
+
+function createCustomText(){
+
+  const id=
+    "customText_"+Date.now();
+
+  const newText=
+    document.createElement("div");
+
+  newText.id=id;
+
+  newText.setAttribute(
+    "data-editor-id",
+    id
+  );
+
+  newText.textContent="New Text";
+
+  newText.style.position="absolute";
+
+  newText.style.left="50%";
+
+  newText.style.top="50%";
+
+  newText.style.transform=
+    "translate(-50%,-50%)";
+
+  newText.style.zIndex="50";
+
+  newText.style.fontFamily=
+    "Arial,Helvetica,sans-serif";
+
+  newText.style.fontSize="5mm";
+
+  newText.style.fontWeight="700";
+
+  newText.style.fontStyle="normal";
+
+  newText.style.color="#0B1A2E";
+
+  newText.style.whiteSpace="nowrap";
+
+  newText.style.cursor="move";
+
+  certificate.appendChild(newText);
+
+
+  ELEMENTS[id]={
+
+    label:"New Text",
+
+    selector:"#"+id,
+
+    text:true,
+
+    zone:"certificate"
+
+  };
+
+
+  designState[id]={
+
+    x:0,
+    y:0,
+    rotation:0,
+    visible:true,
+    text:"New Text",
+    color:"#0B1A2E",
+    width:null,
+    height:null,
+    fontSize:5,
+    letterSpacing:0,
+    lineHeight:1.2,
+    textAlign:"left",
+    fontWeight:700,
+    fontFamily:"",
+    fontStyle:"normal"
+
+  };
+
+
+  populateElementSelect();
+
+  selectElement(
+    id,
+    false
+  );
+
+  controlText.focus();
+
+  controlText.select();
+
+  notify(
+    "New text added. Edit it from Text Content."
+  );
+
+}
+
+
+/* =========================================================
+   DELETE / HIDE
+   ========================================================= */
+
+function deleteSelectedText(){
+
+  const meta=
+    ELEMENTS[selectedKey];
+
+  const el=
+    elementFor(selectedKey);
+
+  if(!meta||!el)return;
+
+
+  if(
+    selectedKey.startsWith("customText_")
+  ){
+
+    el.remove();
+
+    delete ELEMENTS[selectedKey];
+
+    delete designState[selectedKey];
+
+    populateElementSelect();
+
+    selectElement(
+      "studentName",
+      false
+    );
+
+    notify(
+      "Custom text deleted."
+    );
+
+    return;
+  }
+
+
+  if(meta.text){
+
+    el.textContent="";
+
+    const state=
+      getState(selectedKey);
+
+    state.text="";
+
+    state.visible=true;
+
+    applyElementState(selectedKey);
+
+    controlText.value="";
+
+    refreshControls();
+
+    notify(
+      "Selected text cleared."
+    );
+
+    return;
+  }
+
+
+  const state=
+    getState(selectedKey);
+
+  state.visible=false;
+
+  applyElementState(selectedKey);
+
+  refreshControls();
+
+  notify(
+    "Selected element hidden."
+  );
+
+}
+
+
+/* =========================================================
+   TEXT
+   ========================================================= */
+
+function updateSelectedText(){
+
+  const meta=
+    ELEMENTS[selectedKey];
+
+  if(!meta||!meta.text)return;
+
+  const el=
+    elementFor(selectedKey);
+
+  if(!el)return;
+
+  const state=
+    getState(selectedKey);
+
+  state.text=
+    controlText.value;
+
+
+  if(
+    selectedKey==="verifyCertificate"
+  ){
+
+    el.innerHTML=
+      controlText.value
+        .replace(
+          /\n/g,
+          "<br>"
+        );
+
+  }else{
+
+    el.textContent=
+      controlText.value;
+
+  }
+
+  refreshControls();
+
+}
+
+
+function updateSelectedColor(){
+
+  const meta=
+    ELEMENTS[selectedKey];
+
+  if(!meta)return;
+
+  const el=
+    elementFor(selectedKey);
+
+  if(!el)return;
+
+  const state=
+    getState(selectedKey);
+
+  state.color=
+    controlColor.value;
+
+
+  if(meta.text){
+
+    el.style.color=
+      controlColor.value;
+
+  }
+
+  if(meta.shape){
+
+    applyShapeColor(
+      selectedKey,
+      controlColor.value
+    );
+
+  }
+
+}
+
+
+/* =========================================================
+   DESIGNER EVENTS
+   ========================================================= */
+
+function attachDesignerEvents(){
+
+  elementSelect.addEventListener(
+    "change",
+    ()=>{
+      selectElement(
+        elementSelect.value,
+        false
+      );
+    }
+  );
+
+
+  controlText.addEventListener(
+    "input",
+    updateSelectedText
+  );
+
+
+  controlColor.addEventListener(
+    "input",
+    updateSelectedColor
+  );
+
+
+  document
+    .getElementById("addNewText")
+    .addEventListener(
+      "click",
+      createCustomText
+    );
+
+
+  document
+    .getElementById("deleteSelectedText")
+    .addEventListener(
+      "click",
+      deleteSelectedText
+    );
+
+
+  document
+    .querySelectorAll("[data-step]")
+    .forEach(
+      btn=>
+        btn.addEventListener(
+          "click",
+          ()=>{
+
+            nudgeStep=
+              Number(btn.dataset.step)||1;
+
+            document
+              .querySelectorAll("[data-step]")
+              .forEach(
+                b=>
+                  b.classList.toggle(
+                    "active",
+                    b===btn
+                  )
+              );
+
+          }
+        )
+    );
+
+
+  document
+    .querySelectorAll("[data-nudge]")
+    .forEach(
+      btn=>
+        btn.addEventListener(
+          "click",
+          ()=>{
+            nudge(btn.dataset.nudge);
+          }
+        )
+    );
+
+
+  document
+    .getElementById("centerH")
+    .addEventListener(
+      "click",
+      ()=>centerSelected("x")
+    );
+
+
+  document
+    .getElementById("centerV")
+    .addEventListener(
+      "click",
+      ()=>centerSelected("y")
+    );
+
+
+  controls.x.addEventListener(
+    "input",
+    ()=>{
+      setNumericState(
+        "x",
+        controls.x
+      );
+    }
+  );
+
+
+  controls.y.addEventListener(
+    "input",
+    ()=>{
+      setNumericState(
+        "y",
+        controls.y
+      );
+    }
+  );
+
+
+  controls.width.addEventListener(
+    "input",
+    ()=>{
+      setNumericState(
+        "width",
+        controls.width
+      );
+    }
+  );
+
+
+  controls.height.addEventListener(
+    "input",
+    ()=>{
+      setNumericState(
+        "height",
+        controls.height
+      );
+    }
+  );
+
+
+  controls.fontSize.addEventListener(
+    "input",
+    ()=>{
+      setNumericState(
+        "fontSize",
+        controls.fontSize,
+        true
+      );
+    }
+  );
+
+
+  controls.letterSpacing.addEventListener(
+    "input",
+    ()=>{
+      setNumericState(
+        "letterSpacing",
+        controls.letterSpacing,
+        true
+      );
+    }
+  );
+
+
+  controls.lineHeight.addEventListener(
+    "input",
+    ()=>{
+      setNumericState(
+        "lineHeight",
+        controls.lineHeight,
+        true
+      );
+    }
+  );
+
+
+  controls.rotation.addEventListener(
+    "input",
+    ()=>{
+      setNumericState(
+        "rotation",
+        controls.rotation
+      );
+    }
+  );
+
+
+  controlFontFamily.addEventListener(
+    "change",
+    ()=>{
+
+      const meta=
+        ELEMENTS[selectedKey];
+
+      if(!meta||!meta.text)return;
+
+      const state=
+        getState(selectedKey);
+
+      state.fontFamily=
+        controlFontFamily.value;
+
+      applyElementState(
+        selectedKey
+      );
+
+      refreshControls();
+
+    }
+  );
+
+
+  document
+    .querySelectorAll("#styleButtons button")
+    .forEach(
+      btn=>
+        btn.addEventListener(
+          "click",
+          ()=>{
+
+            if(
+              !ELEMENTS[selectedKey]?.text
+            )return;
+
+            getState(selectedKey).fontStyle=
+              btn.dataset.style;
+
+            applyElementState(
+              selectedKey
+            );
+
+            refreshControls();
+
+          }
+        )
+    );
+
+
+  document
+    .querySelectorAll("#alignButtons button")
+    .forEach(
+      btn=>
+        btn.addEventListener(
+          "click",
+          ()=>{
+
+            if(
+              !ELEMENTS[selectedKey]?.text
+            )return;
+
+            getState(selectedKey).textAlign=
+              btn.dataset.align;
+
+            applyElementState(
+              selectedKey
+            );
+
+            refreshControls();
+
+          }
+        )
+    );
+
+
+  document
+    .querySelectorAll("#weightButtons button")
+    .forEach(
+      btn=>
+        btn.addEventListener(
+          "click",
+          ()=>{
+
+            if(
+              !ELEMENTS[selectedKey]?.text
+            )return;
+
+            getState(selectedKey).fontWeight=
+              Number(btn.dataset.weight);
+
+            applyElementState(
+              selectedKey
+            );
+
+            refreshControls();
+
+          }
+        )
+    );
+
+
+  document
+    .querySelectorAll("#visibilityButtons button")
+    .forEach(
+      btn=>
+        btn.addEventListener(
+          "click",
+          ()=>{
+
+            getState(selectedKey).visible=
+              btn.dataset.visible==="true";
+
+            applyElementState(
+              selectedKey
+            );
+
+            refreshControls();
+
+          }
+        )
+    );
+
+
+  document
+    .getElementById("resetSelectedElement")
+    .addEventListener(
+      "click",
+      resetSelectedElement
+    );
+
+
+  /* =======================================================
+     DIRECT DRAGGING
+     ======================================================= */
+
+  let drag=null;
+
+
+  certificate.addEventListener(
+    "pointerdown",
+    e=>{
+
+      if(e.button!==0)return;
+
+
+      let target=
+        e.target.closest(
+          "[data-editor-id]"
+        );
+
+
+      if(!target)return;
+
+
+      const key=
+        target.dataset.editorId;
+
+
+      if(!ELEMENTS[key])return;
+
+
+      selectElement(
+        key,
+        false
+      );
+
+
+      const s=
+        getState(key);
+
+
+      drag={
+
+        pointerId:e.pointerId,
+
+        key:key,
+
+        startX:e.clientX,
+
+        startY:e.clientY,
+
+        x:Number(s.x)||0,
+
+        y:Number(s.y)||0
+
+      };
+
+
+      target.setPointerCapture?.(
+        e.pointerId
+      );
+
+
+      e.preventDefault();
+
+    }
+  );
+
+
+  certificate.addEventListener(
+    "pointermove",
+    e=>{
+
+      if(
+        !drag||
+        drag.pointerId!==e.pointerId
+      )return;
+
+
+      const s=
+        getState(
+          drag.key
+        );
+
+
+      s.x=
+        round(
+          drag.x+
+          (
+            e.clientX-
+            drag.startX
+          )/currentScale,
+          1
+        );
+
+
+      s.y=
+        round(
+          drag.y+
+          (
+            e.clientY-
+            drag.startY
+          )/currentScale,
+          1
+        );
+
+
+      applyElementState(
+        drag.key
+      );
+
+
+      refreshControls();
+
+    }
+  );
+
+
+  const stopDrag=e=>{
+
+    if(
+      drag&&
+      (
+        !e||
+        drag.pointerId===e.pointerId
+      )
+    ){
+
+      drag=null;
+
+    }
+
+  };
+
+
+  certificate.addEventListener(
+    "pointerup",
+    stopDrag
+  );
+
+  certificate.addEventListener(
+    "pointercancel",
+    stopDrag
+  );
+
+}
+
+
+/* =========================================================
+   SIGNATURE
+   ========================================================= */
 
 function resizeSignatureDataUrl(
   dataUrl,
@@ -3103,18 +5191,16 @@ function resizeSignatureDataUrl(
           Math.round(h*scale)
         );
 
+
         const canvas=
-          document.createElement(
-            "canvas"
-          );
+          document.createElement("canvas");
 
         canvas.width=w;
         canvas.height=h;
 
+
         const ctx=
-          canvas.getContext(
-            "2d"
-          );
+          canvas.getContext("2d");
 
         ctx.clearRect(
           0,
@@ -3122,6 +5208,7 @@ function resizeSignatureDataUrl(
           w,
           h
         );
+
 
         ctx.drawImage(
           img,
@@ -3131,13 +5218,13 @@ function resizeSignatureDataUrl(
           h
         );
 
+
         resolve(
-          canvas.toDataURL(
-            "image/png"
-          )
+          canvas.toDataURL("image/png")
         );
 
       };
+
 
       img.onerror=reject;
 
@@ -3148,9 +5235,8 @@ function resizeSignatureDataUrl(
 
 }
 
-async function handleSignatureFile(
-  file
-){
+
+async function handleSignatureFile(file){
 
   if(!file)return;
 
@@ -3162,25 +5248,20 @@ async function handleSignatureFile(
           new FileReader();
 
         reader.onload=
-          ()=>resolve(
-            reader.result
-          );
+          ()=>resolve(reader.result);
 
         reader.onerror=reject;
 
-        reader.readAsDataURL(
-          file
-        );
+        reader.readAsDataURL(file);
 
       }
     );
 
+
   try{
 
     workingSignature=
-      await resizeSignatureDataUrl(
-        raw
-      );
+      await resizeSignatureDataUrl(raw);
 
   }catch{
 
@@ -3188,25 +5269,20 @@ async function handleSignatureFile(
 
   }
 
-  document
-    .getElementById(
-      "signature"
-    )
-    .src=
-      workingSignature;
 
-  document
-    .getElementById(
-      "signaturePreview"
-    )
-    .src=
-      workingSignature;
+  document.getElementById("signature").src=
+    workingSignature;
+
+  document.getElementById("signaturePreview").src=
+    workingSignature;
+
 
   notify(
     "Signature loaded. Use Save Signature to reuse it later."
   );
 
 }
+
 
 function loadSignature(){
 
@@ -3221,25 +5297,20 @@ function loadSignature(){
 
   }catch{}
 
+
   workingSignature=
     saved||
     DEFAULT_CERTIFICATE.signature;
 
-  document
-    .getElementById(
-      "signature"
-    )
-    .src=
-      workingSignature;
 
-  document
-    .getElementById(
-      "signaturePreview"
-    )
-    .src=
-      workingSignature;
+  document.getElementById("signature").src=
+    workingSignature;
+
+  document.getElementById("signaturePreview").src=
+    workingSignature;
 
 }
+
 
 function saveSignature(){
 
@@ -3250,8 +5321,8 @@ function saveSignature(){
     );
 
     return;
-
   }
+
 
   try{
 
@@ -3276,6 +5347,7 @@ function saveSignature(){
 
 }
 
+
 function removeSavedSignature(){
 
   try{
@@ -3286,34 +5358,30 @@ function removeSavedSignature(){
 
   }catch{}
 
+
   workingSignature=
     DEFAULT_CERTIFICATE.signature;
 
-  document
-    .getElementById(
-      "signature"
-    )
-    .src=
-      workingSignature;
 
-  document
-    .getElementById(
-      "signaturePreview"
-    )
-    .src=
-      workingSignature;
+  document.getElementById("signature").src=
+    workingSignature;
 
-  document
-    .getElementById(
-      "signatureUpload"
-    )
-    .value="";
+  document.getElementById("signaturePreview").src=
+    workingSignature;
+
+  document.getElementById("signatureUpload").value="";
+
 
   notify(
     "Saved signature removed. Default signature restored."
   );
 
 }
+
+
+/* =========================================================
+   RESET CERTIFICATE CONTENT
+   ========================================================= */
 
 function resetCertificate(){
 
@@ -3323,124 +5391,162 @@ function resetCertificate(){
 
   loadSignature();
 
-  const newId =
-    applyNewCertificateId();
-
   notify(
-    "Certificate content reset. New ID generated: " + newId
+    "Certificate content reset. Saved design remains unchanged."
   );
 
 }
 
-/* =========================
-   ADD CERTIFICATE TO DATABASE
-   ========================= */
+
+/* =========================================================
+   DATABASE
+   ========================================================= */
 
 async function addCertificateToDatabase(){
 
-  const certificateId =
+  const certificateId=
     document
       .getElementById("inputCertificateId")
       .value
       .trim();
 
-  const studentName =
+  const studentName=
     document
       .getElementById("inputStudentName")
       .value
       .trim();
 
-  const programme =
+  const programme=
     document
       .getElementById("inputProgramme")
       .value
       .trim();
 
-  const issueDate =
+  const issueDate=
     document
       .getElementById("inputIssueDate")
       .value
       .trim();
 
-  const status =
+  const status=
     document
       .getElementById("inputStatus")
       .value
-      .trim() || "Valid";
+      .trim()||"Valid";
+
 
   if(!certificateId){
 
-    notify("Certificate ID must not be empty.");
+    notify(
+      "Certificate ID must not be empty."
+    );
 
     return;
-
   }
+
 
   if(!studentName){
 
-    notify("Student Name must not be empty.");
+    notify(
+      "Student Name must not be empty."
+    );
 
     return;
-
   }
+
 
   if(!programme){
 
-    notify("Programme must not be empty.");
+    notify(
+      "Programme must not be empty."
+    );
 
     return;
-
   }
 
-  const certificateUrl =
-    GITHUB_VERIFICATION_BASE +
-    "?id=" +
+
+  const certificateUrl=
+    GITHUB_VERIFICATION_BASE+
+    "?id="+
     encodeURIComponent(certificateId);
+
 
   const payload={
 
-    certificateId: certificateId,
+    certificateId,
 
-    studentName: studentName,
+    studentName,
 
-    programme: programme,
+    programme,
 
-    issueDate: issueDate,
+    issueDate,
 
-    status: status,
+    status,
 
-    passportPhoto: "",
+    passportPhoto:"",
 
-    paymentStatus: "Unpaid",
+    paymentStatus:"Unpaid",
 
-    paymentReference: "",
+    paymentReference:"",
 
-    certificateUrl: certificateUrl
+    certificateUrl
 
   };
 
-  notify("Sending certificate to database...");
+
+  notify(
+    "Sending certificate to database..."
+  );
+
 
   try{
 
-    const response =
+    const response=
       await fetch(
         GOOGLE_APPS_SCRIPT_URL,
         {
-          method: "POST",
-          headers: {
-            "Content-Type": "text/plain;charset=utf-8"
+          method:"POST",
+          headers:{
+            "Content-Type":
+              "text/plain;charset=utf-8"
           },
-          body: JSON.stringify(payload)
+          body:JSON.stringify(payload)
         }
       );
 
-    const text =
+
+    const text=
       await response.text();
 
-    console.log("Apps Script response:", text);
 
-    notify("Certificate added to database successfully.");
+    console.log(
+      "Apps Script response:",
+      text
+    );
+
+
+    let result=null;
+
+    try{
+      result=JSON.parse(text);
+    }catch{}
+
+
+    if(result?.success===false){
+
+      notify(
+        result.message||
+        "Certificate could not be added."
+      );
+
+      return;
+    }
+
+
+    notify(
+      "Certificate added to database successfully."
+    );
+
 
     makeQr(certificateUrl);
 
@@ -3456,10 +5562,16 @@ async function addCertificateToDatabase(){
 
 }
 
+
+/* =========================================================
+   PREVIEW SCALE
+   ========================================================= */
+
 function updatePreviewScale(){
 
   const choice=
     previewZoom.value;
+
 
   if(choice==="auto"){
 
@@ -3468,6 +5580,7 @@ function updatePreviewScale(){
         280,
         previewScroll.clientWidth-12
       );
+
 
     currentScale=
       Math.min(
@@ -3483,16 +5596,24 @@ function updatePreviewScale(){
 
   }
 
+
   previewStage.style.transform=
     `scale(${currentScale})`;
 
+
   stageSpace.style.width=
     `${previewStage.offsetWidth*currentScale}px`;
+
 
   stageSpace.style.height=
     `${previewStage.offsetHeight*currentScale}px`;
 
 }
+
+
+/* =========================================================
+   CONTENT EVENTS
+   ========================================================= */
 
 function attachContentEvents(){
 
@@ -3514,6 +5635,7 @@ function attachContentEvents(){
         )
   );
 
+
   document
     .getElementById("autoQrUrl")
     .addEventListener(
@@ -3528,6 +5650,7 @@ function attachContentEvents(){
 
       }
     );
+
 
   document
     .getElementById("inputQrUrl")
@@ -3544,708 +5667,10 @@ function attachContentEvents(){
 
 }
 
-function updateSelectedText(){
 
-  const meta=
-    ELEMENTS[selectedKey];
-
-  if(!meta||!meta.text)return;
-
-  const el=
-    elementFor(selectedKey);
-
-  if(!el)return;
-
-  const state=
-    getState(selectedKey);
-
-  state.text=
-    controlText.value;
-
-  if(
-    selectedKey==="verifyCertificate" &&
-    controlText.value.includes("\n")
-  ){
-
-    el.innerHTML=
-      controlText.value
-        .replace(
-          /\n/g,
-          "<br>"
-        );
-
-  }else{
-
-    el.textContent=
-      controlText.value;
-
-  }
-
-  refreshControls();
-
-}
-
-function updateSelectedColor(){
-
-  const meta=
-    ELEMENTS[selectedKey];
-
-  if(!meta||!meta.text)return;
-
-  const el=
-    elementFor(selectedKey);
-
-  if(!el)return;
-
-  const state=
-    getState(selectedKey);
-
-  state.color=
-    controlColor.value;
-
-  el.style.color=
-    controlColor.value;
-
-}
-
-function createCustomText(){
-
-  const id=
-    "customText_"+Date.now();
-
-  const newText=
-    document.createElement("div");
-
-  newText.id=id;
-
-  newText.setAttribute(
-    "data-editor-id",
-    id
-  );
-
-  newText.textContent=
-    "New Text";
-
-  newText.style.position=
-    "absolute";
-
-  newText.style.left="50%";
-
-  newText.style.top="50%";
-
-  newText.style.transform=
-    "translate(-50%,-50%)";
-
-  newText.style.zIndex="50";
-
-  newText.style.fontFamily=
-    "Arial,Helvetica,sans-serif";
-
-  newText.style.fontSize=
-    "5mm";
-
-  newText.style.fontWeight=
-    "700";
-
-  newText.style.fontStyle=
-    "normal";
-
-  newText.style.color=
-    "#0B1A2E";
-
-  newText.style.whiteSpace=
-    "nowrap";
-
-  newText.style.cursor=
-    "move";
-
-  certificate.appendChild(
-    newText
-  );
-
-  ELEMENTS[id]={
-
-    label:"New Text",
-    selector:"#"+id,
-    text:true,
-    zone:"certificate"
-
-  };
-
-  designState[id]={
-
-    x:0,
-    y:0,
-    rotation:0,
-    visible:true,
-    text:"New Text",
-    color:"#0B1A2E",
-    width:null,
-    height:null,
-    fontSize:5,
-    letterSpacing:0,
-    lineHeight:1.2,
-    textAlign:"left",
-    fontWeight:700,
-    fontFamily:"",
-    fontStyle:"normal"
-
-  };
-
-  populateElementSelect();
-
-  selectElement(
-    id,
-    false
-  );
-
-  controlText.focus();
-
-  controlText.select();
-
-  notify(
-    "New text added. Edit it from Text Content."
-  );
-
-}
-
-function deleteSelectedText(){
-
-  const meta=
-    ELEMENTS[selectedKey];
-
-  const el=
-    elementFor(selectedKey);
-
-  if(!meta||!el)return;
-
-  if(
-    selectedKey.startsWith(
-      "customText_"
-    )
-  ){
-
-    el.remove();
-
-    delete ELEMENTS[selectedKey];
-
-    delete designState[selectedKey];
-
-    populateElementSelect();
-
-    selectElement(
-      "studentName",
-      false
-    );
-
-    notify(
-      "Custom text deleted."
-    );
-
-    return;
-
-  }
-
-  if(meta.text){
-
-    el.textContent="";
-
-    const state=
-      getState(selectedKey);
-
-    state.text="";
-
-    state.visible=true;
-
-    applyElementState(
-      selectedKey
-    );
-
-    controlText.value="";
-
-    refreshControls();
-
-    notify(
-      "Selected text cleared."
-    );
-
-    return;
-
-  }
-
-  const state=
-    getState(selectedKey);
-
-  state.visible=false;
-
-  applyElementState(
-    selectedKey
-  );
-
-  refreshControls();
-
-  notify(
-    "Selected element hidden."
-  );
-
-}
-
-function attachDesignerEvents(){
-
-  elementSelect.addEventListener(
-    "change",
-    ()=>{
-      selectElement(
-        elementSelect.value,
-        false
-      );
-    }
-  );
-
-  controlText.addEventListener(
-    "input",
-    updateSelectedText
-  );
-
-  controlColor.addEventListener(
-    "input",
-    updateSelectedColor
-  );
-
-  document
-    .getElementById("addNewText")
-    .addEventListener(
-      "click",
-      createCustomText
-    );
-
-  document
-    .getElementById("deleteSelectedText")
-    .addEventListener(
-      "click",
-      deleteSelectedText
-    );
-
-  document
-    .querySelectorAll("[data-step]")
-    .forEach(
-      btn=>
-        btn.addEventListener(
-          "click",
-          ()=>{
-
-            nudgeStep=
-              Number(
-                btn.dataset.step
-              )||1;
-
-            document
-              .querySelectorAll(
-                "[data-step]"
-              )
-              .forEach(
-                b=>
-                  b.classList.toggle(
-                    "active",
-                    b===btn
-                  )
-              );
-
-          }
-        )
-    );
-
-  document
-    .querySelectorAll("[data-nudge]")
-    .forEach(
-      btn=>
-        btn.addEventListener(
-          "click",
-          ()=>{
-            nudge(
-              btn.dataset.nudge
-            );
-          }
-        )
-    );
-
-  document
-    .getElementById("centerH")
-    .addEventListener(
-      "click",
-      ()=>centerSelected("x")
-    );
-
-  document
-    .getElementById("centerV")
-    .addEventListener(
-      "click",
-      ()=>centerSelected("y")
-    );
-
-  controls.x.addEventListener(
-    "input",
-    ()=>{
-      setNumericState(
-        "x",
-        controls.x
-      );
-    }
-  );
-
-  controls.y.addEventListener(
-    "input",
-    ()=>{
-      setNumericState(
-        "y",
-        controls.y
-      );
-    }
-  );
-
-  controls.width.addEventListener(
-    "input",
-    ()=>{
-      setNumericState(
-        "width",
-        controls.width
-      );
-    }
-  );
-
-  controls.height.addEventListener(
-    "input",
-    ()=>{
-      setNumericState(
-        "height",
-        controls.height
-      );
-    }
-  );
-
-  controls.fontSize.addEventListener(
-    "input",
-    ()=>{
-      setNumericState(
-        "fontSize",
-        controls.fontSize,
-        true
-      );
-    }
-  );
-
-  controls.letterSpacing.addEventListener(
-    "input",
-    ()=>{
-      setNumericState(
-        "letterSpacing",
-        controls.letterSpacing,
-        true
-      );
-    }
-  );
-
-  controls.lineHeight.addEventListener(
-    "input",
-    ()=>{
-      setNumericState(
-        "lineHeight",
-        controls.lineHeight,
-        true
-      );
-    }
-  );
-
-  controls.rotation.addEventListener(
-    "input",
-    ()=>{
-      setNumericState(
-        "rotation",
-        controls.rotation
-      );
-    }
-  );
-
-  controlFontFamily.addEventListener(
-    "change",
-    ()=>{
-
-      const meta=
-        ELEMENTS[selectedKey];
-
-      if(!meta||!meta.text)return;
-
-      const state=
-        getState(selectedKey);
-
-      state.fontFamily=
-        controlFontFamily.value;
-
-      applyElementState(
-        selectedKey
-      );
-
-      refreshControls();
-
-    }
-  );
-
-  document
-    .querySelectorAll(
-      "#styleButtons button"
-    )
-    .forEach(
-      btn=>
-        btn.addEventListener(
-          "click",
-          ()=>{
-
-            if(
-              !ELEMENTS[selectedKey]?.text
-            )return;
-
-            getState(
-              selectedKey
-            ).fontStyle=
-              btn.dataset.style;
-
-            applyElementState(
-              selectedKey
-            );
-
-            refreshControls();
-
-          }
-        )
-    );
-
-  document
-    .querySelectorAll(
-      "#alignButtons button"
-    )
-    .forEach(
-      btn=>
-        btn.addEventListener(
-          "click",
-          ()=>{
-
-            if(
-              !ELEMENTS[selectedKey]?.text
-            )return;
-
-            getState(
-              selectedKey
-            ).textAlign=
-              btn.dataset.align;
-
-            applyElementState(
-              selectedKey
-            );
-
-            refreshControls();
-
-          }
-        )
-    );
-
-  document
-    .querySelectorAll(
-      "#weightButtons button"
-    )
-    .forEach(
-      btn=>
-        btn.addEventListener(
-          "click",
-          ()=>{
-
-            if(
-              !ELEMENTS[selectedKey]?.text
-            )return;
-
-            getState(
-              selectedKey
-            ).fontWeight=
-              Number(
-                btn.dataset.weight
-              );
-
-            applyElementState(
-              selectedKey
-            );
-
-            refreshControls();
-
-          }
-        )
-    );
-
-  document
-    .querySelectorAll(
-      "#visibilityButtons button"
-    )
-    .forEach(
-      btn=>
-        btn.addEventListener(
-          "click",
-          ()=>{
-
-            getState(
-              selectedKey
-            ).visible=
-              btn.dataset.visible==="true";
-
-            applyElementState(
-              selectedKey
-            );
-
-            refreshControls();
-
-          }
-        )
-    );
-
-  document
-    .getElementById(
-      "resetSelectedElement"
-    )
-    .addEventListener(
-      "click",
-      resetSelectedElement
-    );
-
-  let drag=null;
-
-  certificate.addEventListener(
-    "pointerdown",
-    e=>{
-
-      let target=
-        e.target.closest(
-          "h1[data-editor-id]"
-        );
-
-      if(!target){
-
-        target=
-          e.target.closest(
-            "[data-editor-id]"
-          );
-
-      }
-
-      if(
-        !target ||
-        e.button!==0
-      )return;
-
-      const key=
-        target.dataset.editorId;
-
-      if(!ELEMENTS[key])return;
-
-      selectElement(
-        key,
-        false
-      );
-
-      const s=
-        getState(key);
-
-      drag={
-
-        pointerId:e.pointerId,
-
-        key,
-
-        startX:e.clientX,
-
-        startY:e.clientY,
-
-        x:Number(s.x)||0,
-
-        y:Number(s.y)||0
-
-      };
-
-      target.setPointerCapture?.(
-        e.pointerId
-      );
-
-      e.preventDefault();
-
-    }
-  );
-
-  certificate.addEventListener(
-    "pointermove",
-    e=>{
-
-      if(
-        !drag ||
-        drag.pointerId!==e.pointerId
-      )return;
-
-      const s=
-        getState(
-          drag.key
-        );
-
-      s.x=
-        round(
-          drag.x+
-          (
-            e.clientX-
-            drag.startX
-          )/currentScale,
-          1
-        );
-
-      s.y=
-        round(
-          drag.y+
-          (
-            e.clientY-
-            drag.startY
-          )/currentScale,
-          1
-        );
-
-      applyElementState(
-        drag.key
-      );
-
-      refreshControls();
-
-    }
-  );
-
-  const stopDrag=e=>{
-
-    if(
-      drag &&
-      (
-        !e ||
-        drag.pointerId===e.pointerId
-      )
-    ){
-
-      drag=null;
-
-    }
-
-  };
-
-  certificate.addEventListener(
-    "pointerup",
-    stopDrag
-  );
-
-  certificate.addEventListener(
-    "pointercancel",
-    stopDrag
-  );
-
-}
+/* =========================================================
+   ACTION EVENTS
+   ========================================================= */
 
 function attachActionEvents(){
 
@@ -4267,6 +5692,7 @@ function attachActionEvents(){
         })
     );
 
+
   document
     .getElementById("qrUpload")
     .addEventListener(
@@ -4277,14 +5703,14 @@ function attachActionEvents(){
         )
     );
 
+
   document
-    .getElementById(
-      "removeUploadedQr"
-    )
+    .getElementById("removeUploadedQr")
     .addEventListener(
       "click",
       removeUploadedQr
     );
+
 
   document
     .getElementById("saveSignature")
@@ -4293,84 +5719,75 @@ function attachActionEvents(){
       saveSignature
     );
 
+
   document
-    .getElementById(
-      "removeSavedSignature"
-    )
+    .getElementById("removeSavedSignature")
     .addEventListener(
       "click",
       removeSavedSignature
     );
 
-  const saveDesignButton =
-    document.getElementById("saveDesign");
 
-  if(saveDesignButton){
-    saveDesignButton.addEventListener(
+  document
+    .getElementById("saveDesign")
+    .addEventListener(
       "click",
-      function(event){
-        event.preventDefault();
+      e=>{
+        e.preventDefault();
         saveDesign();
       }
     );
-  }
 
-  const addCertificateButton =
-    document.getElementById("addCertificateToDatabase");
 
-  if(addCertificateButton){
-    addCertificateButton.addEventListener(
+  document
+    .getElementById("addCertificateToDatabase")
+    .addEventListener(
       "click",
-      function(event){
-        event.preventDefault();
+      e=>{
+        e.preventDefault();
         addCertificateToDatabase();
       }
     );
-  }
 
-  const resetDesignButton =
-    document.getElementById("resetDesign");
 
-  if(resetDesignButton){
-    resetDesignButton.addEventListener(
+  document
+    .getElementById("resetDesign")
+    .addEventListener(
       "click",
-      function(event){
-        event.preventDefault();
+      e=>{
+        e.preventDefault();
         resetDesign();
       }
     );
-  }
 
-  const resetCertificateButton =
-    document.getElementById("resetCertificate");
 
-  if(resetCertificateButton){
-    resetCertificateButton.addEventListener(
+  document
+    .getElementById("resetCertificate")
+    .addEventListener(
       "click",
-      function(event){
-        event.preventDefault();
+      e=>{
+        e.preventDefault();
         resetCertificate();
       }
     );
-  }
 
-  const printCertificateButton =
-    document.getElementById("printCertificate");
 
-  if(printCertificateButton){
-    printCertificateButton.addEventListener(
+  document
+    .getElementById("printCertificate")
+    .addEventListener(
       "click",
-      function(event){
-        event.preventDefault();
+      e=>{
+        e.preventDefault();
         window.print();
       }
     );
-  }
+
 
   previewZoom.addEventListener(
     "change",
     updatePreviewScale
   );
+
 
   addEventListener(
     "resize",
@@ -4383,6 +5800,7 @@ function attachActionEvents(){
     }
   );
 
+
   document.addEventListener(
     "keydown",
     event=>{
@@ -4390,20 +5808,30 @@ function attachActionEvents(){
       const tag=
         event.target.tagName;
 
+
       if(
-        tag==="INPUT" ||
-        tag==="TEXTAREA" ||
+        tag==="INPUT"||
+        tag==="TEXTAREA"||
         tag==="SELECT"
       )return;
 
+
       if(
-        event.key==="Delete" ||
+        event.key==="Delete"||
         event.key==="Backspace"
       ){
 
-        event.preventDefault();
+        const meta=
+          ELEMENTS[selectedKey];
 
-        deleteSelectedText();
+
+        if(meta){
+
+          event.preventDefault();
+
+          deleteSelectedText();
+
+        }
 
       }
 
@@ -4411,6 +5839,11 @@ function attachActionEvents(){
   );
 
 }
+
+
+/* =========================================================
+   INITIALIZATION
+   ========================================================= */
 
 function init(){
 
@@ -4421,8 +5854,6 @@ function init(){
   setInputsFromData(
     DEFAULT_CERTIFICATE
   );
-
-  applyNewCertificateId();
 
   loadSignature();
 
@@ -4445,7 +5876,13 @@ function init(){
 
 }
 
+
 init();
+
+
+/* =========================================================
+   PUBLIC API
+   ========================================================= */
 
 window.TechResonateCertificateBuilder={
 
@@ -4456,8 +5893,6 @@ window.TechResonateCertificateBuilder={
   saveDesign,
 
   addCertificateToDatabase,
-
-  applyNewCertificateId,
 
   selectElement,
 
