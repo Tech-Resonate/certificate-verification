@@ -3346,7 +3346,9 @@ async function addCertificateToDatabase(){
   }
 
   const certificateUrl =
-    `${GITHUB_VERIFICATION_BASE}?id=${encodeURIComponent(certificateId)}`;
+    GITHUB_VERIFICATION_BASE +
+    "?id=" +
+    encodeURIComponent(certificateId);
 
   const payload={
 
