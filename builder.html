@@ -40,20 +40,6 @@ function makeEditable(id, label, selector, zone){
 
 /* Detail labels */
 
-const detailLabels=[
-  ["certificateIdLabel","Certificate ID","#certificateId","Certificate ID label"],
-  ["issueDateLabel","Issue Date","#issueDate","Issue Date label"],
-  ["statusLabel","Certificate Status","#status","Certificate Status label"],
-  ["issuedByLabel","Issued By","#issuedByValue","Issued By label"]
-];
-
-
-/*
-   The labels are normal text nodes inside .detail.
-   Convert each label into its own span while keeping
-   exactly the same visual position.
-*/
-
 document.querySelectorAll(".detail").forEach(function(detail,index){
 
   const label=detail.querySelector(".label");
@@ -79,7 +65,11 @@ document.querySelectorAll(".detail").forEach(function(detail,index){
   if(id){
 
     label.id=id;
-    label.setAttribute("data-editor-id",id);
+
+    label.setAttribute(
+      "data-editor-id",
+      id
+    );
 
     ELEMENTS[id]={
       label:names[index],
@@ -93,7 +83,9 @@ document.querySelectorAll(".detail").forEach(function(detail,index){
 });
 
 
-/* Seal text */
+/* ---------------------------------------------------------
+   Seal text
+--------------------------------------------------------- */
 
 makeEditable(
   "sealLabel",
@@ -103,7 +95,9 @@ makeEditable(
 );
 
 
-/* Seal year */
+/* ---------------------------------------------------------
+   Seal year
+--------------------------------------------------------- */
 
 makeEditable(
   "sealYear",
@@ -114,18 +108,112 @@ makeEditable(
 
 
 /* ---------------------------------------------------------
+   MAKE THE LOGO FULLY EDITABLE
+--------------------------------------------------------- */
+
+const logo=
+  document.getElementById("logo");
+
+if(logo){
+
+  logo.setAttribute(
+    "data-editor-id",
+    "logo"
+  );
+
+}
+
+
+/* =========================================================
+   CERTIFICATE OF COMPLETION
+   MAKE THE WHOLE HEADING MOVABLE AS ONE ELEMENT
+========================================================= */
+
+const certificateHeading=
+  document.getElementById(
+    "certificateHeading"
+  );
+
+const ofCompletion=
+  document.getElementById(
+    "ofCompletion"
+  );
+
+if(
+  certificateHeading &&
+  ofCompletion
+){
+
+  const headingParent=
+    certificateHeading.parentElement;
+
+  /*
+     Create a wrapper ONLY if one does not
+     already exist.
+
+     The existing Certificate and
+     of Completion remain visually unchanged.
+  */
+
+  if(
+    headingParent &&
+    !headingParent.getAttribute(
+      "data-completion-group"
+    )
+  ){
+
+    headingParent.setAttribute(
+      "data-completion-group",
+      "true"
+    );
+
+    /*
+       IMPORTANT:
+       We do NOT change the parent's
+       CSS, position, width, font,
+       color, spacing, etc.
+
+       We only register it as a
+       movable editor element.
+    */
+
+    headingParent.setAttribute(
+      "data-editor-id",
+      "certificateCompletionGroup"
+    );
+
+    headingParent.id=
+      "certificateCompletionGroup";
+
+    ELEMENTS.certificateCompletionGroup={
+      label:"Certificate of Completion",
+      selector:"#certificateCompletionGroup",
+      text:true,
+      zone:"main"
+    };
+
+  }
+
+}
+
+
+/* ---------------------------------------------------------
    ADD TEXT BUTTON
 --------------------------------------------------------- */
 
 const designerSection=
-document.querySelector(
-  "#textEditorArea"
-)?.parentElement;
+  document.querySelector(
+    "#textEditorArea"
+  )?.parentElement;
 
 if(designerSection){
 
+  /* -------------------------------------------------------
+     ADD NEW TEXT BUTTON
+  ------------------------------------------------------- */
+
   const addTextButton=
-  document.createElement("button");
+    document.createElement("button");
 
   addTextButton.type="button";
 
@@ -133,7 +221,8 @@ if(designerSection){
 
   addTextButton.id="addNewText";
 
-  addTextButton.textContent="+ Add New Text";
+  addTextButton.textContent=
+    "+ Add New Text";
 
   addTextButton.style.width="100%";
 
@@ -141,7 +230,9 @@ if(designerSection){
 
   designerSection.insertBefore(
     addTextButton,
-    document.getElementById("resetSelectedElement")
+    document.getElementById(
+      "resetSelectedElement"
+    )
   );
 
 
@@ -150,13 +241,14 @@ if(designerSection){
   ------------------------------------------------------- */
 
   const deleteTextButton=
-  document.createElement("button");
+    document.createElement("button");
 
   deleteTextButton.type="button";
 
   deleteTextButton.className="small-action";
 
-  deleteTextButton.id="deleteSelectedText";
+  deleteTextButton.id=
+    "deleteSelectedText";
 
   deleteTextButton.textContent=
     "Clear / Delete Selected Text";
@@ -169,13 +261,15 @@ if(designerSection){
 
   designerSection.insertBefore(
     deleteTextButton,
-    document.getElementById("resetSelectedElement")
+    document.getElementById(
+      "resetSelectedElement"
+    )
   );
 
 
-  /* -------------------------------------------------------
+  /* =======================================================
      ADD NEW TEXT
-  ------------------------------------------------------- */
+  ======================================================= */
 
   addTextButton.addEventListener(
     "click",
@@ -198,14 +292,8 @@ if(designerSection){
       newText.textContent=
         "New Text";
 
-      /*
-         IMPORTANT:
-         This does NOT change the certificate design.
-         The new element only appears when YOU press
-         Add New Text.
-      */
-
-      newText.style.position="absolute";
+      newText.style.position=
+        "absolute";
 
       newText.style.left="50%";
 
@@ -225,11 +313,14 @@ if(designerSection){
 
       newText.style.color="#0B1A2E";
 
-      newText.style.whiteSpace="nowrap";
+      newText.style.whiteSpace=
+        "nowrap";
 
       newText.style.cursor="move";
 
-      certificate.appendChild(newText);
+      certificate.appendChild(
+        newText
+      );
 
 
       ELEMENTS[id]={
@@ -257,11 +348,6 @@ if(designerSection){
       };
 
 
-      /*
-         Rebuild element selector so the new text
-         immediately becomes selectable.
-      */
-
       populate();
 
       selectElement(id);
@@ -278,9 +364,9 @@ if(designerSection){
   );
 
 
-  /* -------------------------------------------------------
+  /* =======================================================
      CLEAR / DELETE SELECTED TEXT
-  ------------------------------------------------------- */
+  ======================================================= */
 
   deleteTextButton.addEventListener(
     "click",
@@ -296,27 +382,32 @@ if(designerSection){
         return;
 
 
-      /*
-         Custom text:
-         Completely remove it.
-      */
+      /* Custom text */
 
       if(
-        selectedKey.startsWith("customText_")
+        selectedKey.startsWith(
+          "customText_"
+        )
       ){
 
         el.remove();
 
-        delete ELEMENTS[selectedKey];
+        delete ELEMENTS[
+          selectedKey
+        ];
 
-        delete designState[selectedKey];
+        delete designState[
+          selectedKey
+        ];
 
         populate();
 
         selectedKey=
           Object.keys(ELEMENTS)[0];
 
-        selectElement(selectedKey);
+        selectElement(
+          selectedKey
+        );
 
         notify(
           "Custom text deleted."
@@ -326,22 +417,23 @@ if(designerSection){
       }
 
 
-      /*
-         Existing text:
-         Clear its content and hide it.
-         Reset Selected Element can restore
-         its original design styling.
-      */
+      /* Existing text */
 
       if(metadata.text){
 
         el.textContent="";
 
-        getState(selectedKey).text="";
+        getState(
+          selectedKey
+        ).text="";
 
-        getState(selectedKey).visible=true;
+        getState(
+          selectedKey
+        ).visible=true;
 
-        applyElementState(selectedKey);
+        applyElementState(
+          selectedKey
+        );
 
         controlText.value="";
 
@@ -353,38 +445,21 @@ if(designerSection){
       }
 
 
-      /*
-         Logo / image / QR / signature:
-         Hide instead of destroying the original
-         certificate element.
-      */
+      /* Images */
 
-      getState(selectedKey).visible=false;
+      getState(
+        selectedKey
+      ).visible=false;
 
-      applyElementState(selectedKey);
+      applyElementState(
+        selectedKey
+      );
 
       notify(
         "Selected element hidden."
       );
 
     }
-  );
-
-}
-
-
-/* ---------------------------------------------------------
-   MAKE THE LOGO FULLY EDITABLE
---------------------------------------------------------- */
-
-const logo=
-document.getElementById("logo");
-
-if(logo){
-
-  logo.setAttribute(
-    "data-editor-id",
-    "logo"
   );
 
 }
@@ -399,8 +474,18 @@ const textSelectors=[
   "#officialCertificate",
   "#academyText",
   "#achievementCompletion",
+
+  /*
+     Individual heading elements
+  */
   "#certificateHeading",
   "#ofCompletion",
+
+  /*
+     Combined heading element
+  */
+  "#certificateCompletionGroup",
+
   "#presentedTo",
   "#studentName",
   "#programmeDescription",
@@ -423,31 +508,35 @@ const textSelectors=[
 
 ];
 
-textSelectors.forEach(function(selector){
+textSelectors.forEach(
+  function(selector){
 
-  const el=
-    document.querySelector(selector);
+    const el=
+      document.querySelector(
+        selector
+      );
 
-  if(!el) return;
+    if(!el)
+      return;
 
-  /*
-     Do not overwrite existing IDs.
-     Only make sure the editor knows about
-     the element.
-  */
+    const editorId=
+      el.getAttribute(
+        "data-editor-id"
+      );
 
-  const editorId=
-    el.getAttribute("data-editor-id");
+    if(
+      editorId &&
+      ELEMENTS[editorId]
+    )
+      return;
 
-  if(editorId && ELEMENTS[editorId])
-    return;
-
-});
+  }
+);
 
 
-/* ---------------------------------------------------------
-   FIX THE ZONE FOR CUSTOM TEXT
---------------------------------------------------------- */
+/* =========================================================
+   FIX CUSTOM TEXT ZONE
+========================================================= */
 
 const originalGetZoneElement=
   getZoneElement;
@@ -464,16 +553,16 @@ function(key){
 
   }
 
-  return originalGetZoneElement(key);
+  return originalGetZoneElement(
+    key
+  );
 
 };
 
 
-/*
-   The original functions use the lexical
-   getZoneElement reference, so redefine the function
-   used by centerSelected by wrapping centerSelected.
-*/
+/* =========================================================
+   CUSTOM TEXT CENTERING
+========================================================= */
 
 const originalCenterSelected=
   centerSelected;
@@ -495,7 +584,8 @@ function(axis){
     const state=
       getState(selectedKey);
 
-    if(!el) return;
+    if(!el)
+      return;
 
     const old=
       el.style.transform;
@@ -521,7 +611,8 @@ function(axis){
               er.left+
               er.width/2
             )
-          )/currentScale,
+          )/
+          currentScale,
           1
         );
 
@@ -536,13 +627,16 @@ function(axis){
               er.top+
               er.height/2
             )
-          )/currentScale,
+          )/
+          currentScale,
           1
         );
 
     }
 
-    applyElementState(selectedKey);
+    applyElementState(
+      selectedKey
+    );
 
     refreshControls();
 
@@ -550,14 +644,16 @@ function(axis){
 
   }
 
-  originalCenterSelected(axis);
+  originalCenterSelected(
+    axis
+  );
 
 };
 
 
-/* ---------------------------------------------------------
-   CUSTOM TEXT RESET SUPPORT
---------------------------------------------------------- */
+/* =========================================================
+   CUSTOM TEXT RESET
+========================================================= */
 
 const originalResetSelectedElement=
   resetSelectedElement;
@@ -566,7 +662,9 @@ window.resetSelectedElement=
 function(){
 
   if(
-    selectedKey.startsWith("customText_")
+    selectedKey.startsWith(
+      "customText_"
+    )
   ){
 
     const el=
@@ -575,7 +673,8 @@ function(){
     if(!el)
       return;
 
-    el.textContent="New Text";
+    el.textContent=
+      "New Text";
 
     designState[selectedKey]={
       x:0,
@@ -593,7 +692,9 @@ function(){
       fontWeight:700
     };
 
-    applyElementState(selectedKey);
+    applyElementState(
+      selectedKey
+    );
 
     refreshControls();
 
@@ -610,9 +711,9 @@ function(){
 };
 
 
-/* ---------------------------------------------------------
-   ENSURE NEW TEXT IS SAVED
---------------------------------------------------------- */
+/* =========================================================
+   SAVE NEW TEXT
+========================================================= */
 
 const originalSaveDesign=
   saveDesign;
@@ -620,12 +721,9 @@ const originalSaveDesign=
 window.saveDesign=
 function(){
 
-  /*
-     Capture every editable text element,
-     including newly added text.
-  */
-
-  Object.entries(ELEMENTS).forEach(
+  Object.entries(
+    ELEMENTS
+  ).forEach(
     ([key,metadata])=>{
 
       const el=
@@ -636,13 +734,19 @@ function(){
         metadata.text
       ){
 
-        getState(key).text=
+        getState(
+          key
+        ).text=
           el.textContent;
 
-        getState(key).color=
+        getState(
+          key
+        ).color=
           getState(key).color ||
           rgbToHex(
-            getComputedStyle(el).color
+            getComputedStyle(
+              el
+            ).color
           );
 
       }
@@ -655,27 +759,13 @@ function(){
 };
 
 
-/* ---------------------------------------------------------
-   MAKE THE NEW ELEMENTS AVAILABLE TO THE SELECTOR
---------------------------------------------------------- */
-
-populate();
-
-selectElement(selectedKey);
-
-
-/* ---------------------------------------------------------
+/* =========================================================
    EXTRA KEYBOARD DELETE
---------------------------------------------------------- */
+========================================================= */
 
 document.addEventListener(
   "keydown",
   function(event){
-
-    /*
-       Do not interfere while typing in an input,
-       textarea or select.
-    */
 
     const tag=
       event.target.tagName;
@@ -686,12 +776,6 @@ document.addEventListener(
       tag==="SELECT"
     )
       return;
-
-
-    /*
-       Delete key:
-       clear/delete selected text.
-    */
 
     if(
       event.key==="Delete" ||
@@ -709,7 +793,9 @@ document.addEventListener(
         event.preventDefault();
 
         const el=
-          elementFor(selectedKey);
+          elementFor(
+            selectedKey
+          );
 
         if(
           selectedKey.startsWith(
@@ -719,9 +805,13 @@ document.addEventListener(
 
           el?.remove();
 
-          delete ELEMENTS[selectedKey];
+          delete ELEMENTS[
+            selectedKey
+          ];
 
-          delete designState[selectedKey];
+          delete designState[
+            selectedKey
+          ];
 
           populate();
 
@@ -765,21 +855,25 @@ document.addEventListener(
 );
 
 
-/* ---------------------------------------------------------
+/* =========================================================
    FINAL REFRESH
---------------------------------------------------------- */
+========================================================= */
 
-requestAnimationFrame(function(){
+requestAnimationFrame(
+  function(){
 
-  populate();
+    populate();
 
-  selectElement(selectedKey);
+    selectElement(
+      selectedKey
+    );
 
-  fitName();
+    fitName();
 
-  updatePreviewScale();
+    updatePreviewScale();
 
-});
+  }
+);
 
 })();
 </script>
