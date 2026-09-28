@@ -4135,37 +4135,77 @@ function attachActionEvents(){
       removeSavedSignature
     );
 
-  document
-    .getElementById("saveDesign")
-    .addEventListener(
-      "click",
-      saveDesign
-    );
-   document
-  .getElementById("addCertificateToDatabase")
-  .addEventListener(
+  const saveDesignButton =
+  document.getElementById("saveDesign");
+
+if(saveDesignButton){
+  saveDesignButton.addEventListener(
     "click",
-    addCertificateToDatabase
+    function(event){
+      event.preventDefault();
+      saveDesign();
+    }
   );
+}
 
-  document
-    .getElementById("resetDesign")
-    .addEventListener(
-      "click",
-      resetDesign
-    );
+const addCertificateButton =
+  document.getElementById("addCertificateToDatabase");
 
-  document
-    .getElementById("resetCertificate")
-    .addEventListener(
-      "click",
-      resetCertificate
-    );
+if(addCertificateButton){
+  addCertificateButton.addEventListener(
+    "click",
+    function(event){
+      event.preventDefault();
 
-  document
-    .getElementById("printCertificate")
-    .addEventListener(
-      "click",
+      if(typeof addCertificateToDatabase === "function"){
+        addCertificateToDatabase();
+      }else{
+        notify(
+          "Add Certificate function is not available yet."
+        );
+      }
+    }
+  );
+}
+
+const resetDesignButton =
+  document.getElementById("resetDesign");
+
+if(resetDesignButton){
+  resetDesignButton.addEventListener(
+    "click",
+    function(event){
+      event.preventDefault();
+      resetDesign();
+    }
+  );
+}
+
+const resetCertificateButton =
+  document.getElementById("resetCertificate");
+
+if(resetCertificateButton){
+  resetCertificateButton.addEventListener(
+    "click",
+    function(event){
+      event.preventDefault();
+      resetCertificate();
+    }
+  );
+}
+
+const printCertificateButton =
+  document.getElementById("printCertificate");
+
+if(printCertificateButton){
+  printCertificateButton.addEventListener(
+    "click",
+    function(event){
+      event.preventDefault();
+      window.print();
+    }
+  );
+}
       ()=>window.print()
     );
 
