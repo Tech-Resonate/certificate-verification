@@ -482,7 +482,114 @@ button{cursor:pointer}
   box-shadow:0 22px 60px rgba(11,26,46,.18)
 }
 
-/* Real editable border */
+/* =========================================================
+   NEW CERTIFICATE BACKGROUND (file 2 design)
+   Non-editable, sits behind every other element
+   ========================================================= */
+
+.certificate-background{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  pointer-events:none;
+  z-index:0;
+  overflow:hidden
+}
+
+.certificate-background .bg-main{
+  position:absolute;
+  left:0;
+  top:0;
+  width:228mm;
+  height:210mm;
+  background:#FFFFFF;
+  overflow:hidden
+}
+
+.certificate-background .bg-outer-border{
+  position:absolute;
+  left:5mm;
+  top:5mm;
+  right:0;
+  bottom:5mm;
+  border:.42mm solid #0B1A2E
+}
+
+.certificate-background .bg-inner-border{
+  position:absolute;
+  left:7mm;
+  top:7mm;
+  right:6mm;
+  bottom:7mm;
+  border:.25mm solid #8DBAFF
+}
+
+.certificate-background .bg-circle{
+  position:absolute;
+  width:116mm;
+  height:116mm;
+  left:-65mm;
+  top:-53mm;
+  border-radius:50%;
+  border:13mm solid rgba(59,130,246,.10)
+}
+
+.certificate-background .bg-circle::after{
+  content:"";
+  position:absolute;
+  inset:-2.5mm;
+  border-radius:50%;
+  border:1.4mm solid rgba(96,165,250,.045)
+}
+
+.certificate-background .bg-side{
+  position:absolute;
+  right:0;
+  top:0;
+  width:69mm;
+  height:210mm;
+  background:#0B1A2E;
+  overflow:hidden
+}
+
+.certificate-background .bg-side::before{
+  content:"";
+  position:absolute;
+  left:0;
+  top:0;
+  width:100%;
+  height:40mm;
+  background:#3B82F6;
+  clip-path:polygon(0 0,100% 0,79% 100%)
+}
+
+.certificate-background .bg-side::after{
+  content:"";
+  position:absolute;
+  left:0;
+  top:0;
+  width:34mm;
+  height:25mm;
+  background:#0B1A2E;
+  clip-path:polygon(0 0,0 100%,100% 100%)
+}
+
+/* Hide the old drawn background elements so they don't
+   double up with the new background image layer.
+   The editor panel and its JS are untouched. */
+.certificate > #certificateBorder,
+.certificate > #mainFrame,
+.certificate > #mainCircle,
+.certificate > #topStripes,
+.certificate .side > #sideBlueShape,
+.certificate .side > #sideCircleShape,
+.certificate .side > #sideGeoLineOne,
+.certificate .side > #sideGeoLineTwo{
+  display:none !important
+}
+
+/* Real editable border (kept in DOM, hidden via rule above) */
 .certificate-border-shape{
   position:absolute;
   inset:5mm;
@@ -892,7 +999,7 @@ h1 .of-completion{
   flex-direction:column;
   align-items:center;
   overflow:hidden;
-  background:var(--n);
+  background:transparent;
   color:var(--w);
   z-index:10
 }
@@ -1834,7 +1941,21 @@ id="certificate"
 >
 
 <!-- =================================================
-     EDITABLE BACKGROUND SHAPES
+     NEW CERTIFICATE BACKGROUND (non-editable, behind everything)
+     ================================================= -->
+
+<div class="certificate-background" aria-hidden="true">
+  <div class="bg-main">
+    <div class="bg-circle"></div>
+    <div class="bg-outer-border"></div>
+    <div class="bg-inner-border"></div>
+  </div>
+  <div class="bg-side"></div>
+</div>
+
+
+<!-- =================================================
+     EDITABLE BACKGROUND SHAPES (hidden by CSS, kept for editor JS)
      ================================================= -->
 
 <div
@@ -2132,7 +2253,7 @@ Technology • Practical Skills • Career Readiness
 
 <aside class="side">
 
-<!-- Editable side background shapes -->
+<!-- Editable side background shapes (hidden by CSS, kept for editor JS) -->
 
 <div
 class="side-blue-shape background-shape"
